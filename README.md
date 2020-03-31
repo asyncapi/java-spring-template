@@ -4,6 +4,8 @@
 </p>
 <br><br>
 
+# ATTENTION: This template is out of date. Please help us update it.
+
 ## Usage
 
 ### AsyncAPI extensions
