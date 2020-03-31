@@ -1,5 +1,5 @@
-{% from ".partials/AmqpConfig.java" import amqpConfig %}
-{% from ".partials/MqttConfig.java" import mqttConfig %}
+{% from "partials/AmqpConfig.java" import amqpConfig %}
+{% from "partials/MqttConfig.java" import mqttConfig %}
 
 {% for server in asyncapi.servers %}
   {% if server.scheme === 'amqp' %}
