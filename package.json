@@ -1,6 +1,6 @@
 {
   "name": "@asyncapi/java-spring-template",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Java Spring template for AsyncAPI generator.",
   "keywords": [
     "asyncapi",
