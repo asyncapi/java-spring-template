@@ -1,4 +1,5 @@
 {
+  "supportedProtocols": ["kafka", "amqp", "mqtt"],
   "nonRenderableFiles": [
     "**/*.jar"
   ]

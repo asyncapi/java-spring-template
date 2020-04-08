@@ -13,7 +13,7 @@ In order for the generator to know what names to use for some methods it's neces
 
 here is an example of how to use it:
 ```yml
-topics:
+channels:
   event.lighting.measured:
     x-service-name: measures
     publish:
@@ -23,7 +23,7 @@ topics:
 ```
 here is a complete example
 ```yml
-asyncapi: '1.0.0'
+asyncapi: '2.0.0'
 info:
   title: Streetlights API
   version: '1.0.0'
@@ -33,25 +33,27 @@ info:
   license:
     name: Apache 2.0
     url: 'https://www.apache.org/licenses/LICENSE-2.0'
-baseTopic: smartylighting.streetlights.1.0
+
 servers:
-  - url: test.mosquitto.org
-    scheme: mqtt
-    description: Test broker
+  production:
+    url: api.streetlights.smartylighting.com:{port}
+    protocol: mqtt
     variables:
       port:
-        description: Secure connection (TLS) is available through port 8883.
         default: '1883'
         enum:
           - '1883'
           - '8883'
-topics:
+
+channels:
   event.lighting.measured:
     x-service-name: measures
     publish:
-      $ref: '#/components/messages/lightMeasured'
+      message:
+        $ref: '#/components/messages/lightMeasured'
     subscribe:
-      $ref: '#/components/messages/lightMeasured'
+      message:
+        $ref: '#/components/messages/lightMeasured'
 components:
   messages:
     lightMeasured:
@@ -76,7 +78,7 @@ components:
 ### From the command-line interface (CLI)
 
 ```bash
-  Usage: ag [options] <asyncapi> java-spring
+  Usage: ag [options] <asyncapi> @asyncapi/java-spring-template
 
   Options:
 
@@ -89,16 +91,16 @@ components:
 
 The shortest possible syntax:
 ```bash
-ag asyncapi.yaml java-spring
+ag asyncapi.yaml @asyncapi/java-spring-template
 ```
 
 Specify where to put the result:
 ```bash
-ag -o ./src asyncapi.yaml java-spring
+ag -o ./src asyncapi.yaml @asyncapi/java-spring-template
 ```
 
 ### Run it
-{% if asyncapi.servers | schemeExists('amqp') %}
+{% if asyncapi.servers() | schemeExists('amqp') %}
 Start your RabbitMQ with:
 ```bash
 docker-compose -f src/main/docker/rabbitmq.yml up -d

@@ -1,11 +1,13 @@
 {% from "partials/AmqpConfig.java" import amqpConfig %}
 {% from "partials/MqttConfig.java" import mqttConfig %}
 
-{% for server in asyncapi.servers %}
-  {% if server.scheme === 'amqp' %}
+{% if asyncapi.hasServers() %}
+    {% for serverName, server in asyncapi.servers() %}
+      {% if server.protocol() === 'amqp' %}
 {{ amqpConfig(asyncapi) }}
-  {% endif %}
-  {% if server.scheme === 'mqtt' %}
+      {% endif %}
+      {% if server.protocol() === 'mqtt' %}
 {{ mqttConfig(asyncapi) }}
-  {% endif %}
-{% endfor %}
+      {% endif %}
+    {% endfor %}
+{% endif %}
