@@ -1,11 +1,9 @@
-<h1 align="center">Java Spring generator</h1>
-<p align="center">
-  <em>Use your AsyncAPI definition to generate java code to subscribe and publish messages</em>
-</p>
-<br><br>
+#Java Spring generator
+_Use your AsyncAPI definition to generate java code to subscribe and publish messages_
 
-# ATTENTION: This template is out of date. Please help us update it.
 
+# ATTENTION: This template is not complete. Please help us update it.
+Find more information in [Contribution](docs/contribution.md).
 ## Usage
 
 ### AsyncAPI definitions
