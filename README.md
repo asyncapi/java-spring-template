@@ -8,18 +8,31 @@
 
 ## Usage
 
-### AsyncAPI extensions
-In order for the generator to know what names to use for some methods it's necessary to make use of [AsyncAPI specification extensions](https://www.asyncapi.com/v1/spec.html#Specification-Extensions). The extension to use is **x-service-name** and must be applied to all topics.
-
+### AsyncAPI definitions
+In order for the generator to know what names to use for some methods it's necessary to make use of [AsyncAPI specification bindings](https://www.asyncapi.com/docs/specifications/2.0.0/#operationBindingsObject). 
 here is an example of how to use it:
 ```yml
 channels:
   event.lighting.measured:
-    x-service-name: measures
     publish:
-      $ref: '#/components/messages/lightMeasured'
+      bindings:
+        kafka:
+          groupId:
+            type: string
+            enum: ['myGroupId']
+      message:
+         $ref: '#/components/messages/lightMeasured'
     subscribe:
-      $ref: '#/components/messages/lightMeasured'
+      bindings:
+        kafka:
+          groupId:
+            type: string
+            enum: ['myGroupId']
+          clientId:
+            type: string
+            enum: ['myClientId']
+      message:
+        $ref: '#/components/messages/lightMeasured'
 ```
 here is a complete example
 ```yml
@@ -47,11 +60,23 @@ servers:
 
 channels:
   event.lighting.measured:
-    x-service-name: measures
     publish:
+      bindings:
+        kafka:
+          groupId:
+            type: string
+            enum: ['myGroupId']
       message:
         $ref: '#/components/messages/lightMeasured'
     subscribe:
+      bindings:
+        kafka:
+          groupId:
+            type: string
+            enum: ['myGroupId']
+          clientId:
+            type: string
+            enum: ['myClientId']
       message:
         $ref: '#/components/messages/lightMeasured'
 components:

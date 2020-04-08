@@ -16,7 +16,7 @@ public class CommandLinePublisher implements CommandLineRunner {
 
         {% for channelName, channel in asyncapi.channels() %}
             {% if channel.hasPublish() %}
-        publisherService.publish{{channel.x-service-name() | capitalize}}("Hello World from {{channel.x-service-name()}}");
+        publisherService.publish{{channelName | capitalize}}("Hello World from {{channelName}}");
             {% endif %}
         {% endfor %}
         System.out.println("Message sent");

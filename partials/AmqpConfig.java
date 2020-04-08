@@ -35,13 +35,13 @@ public class Config {
     private String password;
 
     {% for channelName, channel in asyncapi.channels().publish() %}
-    @Value("${amqp.exchange.{{- channel.x-service-name() -}}}")
-    private String {{channel.x-service-name()}}Exchange;
+    @Value("${amqp.exchange.{{- channelName -}}}")
+    private String {{channelName}}Exchange;
 
     {% endfor %}
     {% for channelName, channel in asyncapi.channels().subscribe() %}
-    @Value("${amqp.queue.{{- channel.x-service-name() -}}}")
-    private String {{channel.x-service-name()}}Queue;
+    @Value("${amqp.queue.{{- channelName -}}}")
+    private String {{channelName}}Queue;
 
     {% endfor %}
 
@@ -63,7 +63,7 @@ public class Config {
     public Declarables exchanges() {
         return new Declarables(
                 {% for channelName, channel in asyncapi.channels().publish() %}
-                new TopicExchange({{channel.x-service-name()}}Exchange, true, false){% if not loop.last %},{% endif %}
+                new TopicExchange({{channelName}}Exchange, true, false){% if not loop.last %},{% endif %}
                 {% endfor %}
                 );
     }
@@ -72,7 +72,7 @@ public class Config {
     public Declarables queues() {
         return new Declarables(
                 {% for channelName, channel in asyncapi.channels().subscribe() %}
-                new Queue({{channel.x-service-name()}}Queue, true, false, false){% if not loop.last %},{% endif %}
+                new Queue({{channelName}}Queue, true, false, false){% if not loop.last %},{% endif %}
                 {% endfor %}
                 );
     }
@@ -84,9 +84,9 @@ public class Config {
     {% for channelName, channel in asyncapi.channels().subscribe() %}
 
     @Bean
-    public IntegrationFlow {{channel.x-service-name() | camelCase}}Flow() {
-        return IntegrationFlows.from(Amqp.inboundGateway(connectionFactory(), {{channel.x-service-name()}}Queue))
-                .handle(messageHandlerService::handle{{channel.x-service-name() | upperFirst}})
+    public IntegrationFlow {{channelName | camelCase}}Flow() {
+        return IntegrationFlows.from(Amqp.inboundGateway(connectionFactory(), {{channelName}}Queue))
+                .handle(messageHandlerService::handle{{channelName | upperFirst}})
                 .get();
     }
     {% endfor %}
@@ -101,15 +101,15 @@ public class Config {
     {% for channelName, channel in asyncapi.channels().publish() %}
 
     @Bean
-    public MessageChannel {{channel.x-service-name() | camelCase}}OutboundChannel() {
+    public MessageChannel {{channelName | camelCase}}OutboundChannel() {
         return new DirectChannel();
     }
 
     @Bean
-    @ServiceActivator(inputChannel = "{{channel.x-service-name() | camelCase}}OutboundChannel")
-    public AmqpOutboundEndpoint {{channel.x-service-name() | camelCase}}Outbound(AmqpTemplate amqpTemplate) {
+    @ServiceActivator(inputChannel = "{{channelName | camelCase}}OutboundChannel")
+    public AmqpOutboundEndpoint {{channelName | camelCase}}Outbound(AmqpTemplate amqpTemplate) {
         AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
-        outbound.setExchangeName({{channel.x-service-name()}}Exchange);
+        outbound.setExchangeName({{channelName}}Exchange);
         outbound.setRoutingKey("#");
         return outbound;
     }
