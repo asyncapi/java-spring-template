@@ -9,6 +9,34 @@ module.exports = ({ Nunjucks }) => {
     return _.upperFirst(str);
   });
 
+  Nunjucks.addFilter('toJavaType', (str) => {
+    switch(str) {
+      case 'integer':
+      case 'int32':
+        return 'int';
+      case 'long':
+      case 'int64':
+        return 'long';
+      case 'boolean':
+        return 'boolean';
+      case 'date':
+        return 'java.time.LocalDate';
+      case 'dateTime':
+      case 'date-time':
+        return 'java.time.LocalDateTime';
+      case 'string':
+      case 'password':
+      case 'byte':
+        return 'String';
+      case 'float':
+        return 'float';
+      case 'double':
+        return 'double';
+      case 'binary':
+        return 'byte[]';
+    }
+  });
+
   Nunjucks.addFilter('schemeExists', (collection, scheme) => {
     return _.some(collection, {'scheme': scheme});
   });
