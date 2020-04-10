@@ -33,14 +33,14 @@ import java.util.Map;
 {% if hasSubscribe %}@EnableKafka{% endif %}
 public class Config {
 {%- if hasPublish or hasSubscribe %}
-    @Value("${kafka.bootstrap-servers}")
+    @Value("${kafka.bootstrap-servers:localhost:9092}")
     private String bootstrapServers;
 {% endif %}
 {%- if hasSubscribe %}
-    @Value("${kafka.subscribe.pool-timeout")
+    @Value("${kafka.subscribe.pool-timeout:3000}")
     private long poolTimeout;
 
-    @Value("${kafka.subscribe.amount-of-listeners")
+    @Value("${kafka.subscribe.amount-of-listeners:3}")
     private Integer amountOfListeners;
 {% endif %}
 {%- if hasPublish %}

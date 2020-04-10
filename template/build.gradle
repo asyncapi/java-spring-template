@@ -21,6 +21,7 @@ dependencies {
 	{% endif -%}
 	{%- if asyncapi | isProtocol('kafka') %}
 	implementation('org.springframework.kafka:spring-kafka')
+	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
 	{% endif -%}
 	implementation('org.springframework.boot:spring-boot-starter-integration')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
