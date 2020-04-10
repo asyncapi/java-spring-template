@@ -1,6 +1,14 @@
-{% if asyncapi.hasServers() %}
-  {% for serverName, server in asyncapi.servers() %}
-    {% if server.protocol() === 'amqp' %}
+{%- set hasPublish = false -%}
+{%- set hasSubscribe = false -%}
+{%- for channelName, channel in asyncapi.channels() -%}
+    {%- if channel.hasSubscribe() -%}
+        {%- set hasSubscribe = true -%}
+    {%- endif -%}
+    {%- if channel.hasPublish() -%}
+        {%- set hasPublish = true -%}
+    {%- endif -%}
+{%- endfor -%}
+{%- if asyncapi | isProtocol('amqp') %}
 amqp:
   broker:
     host: localhost
@@ -8,19 +16,20 @@ amqp:
     username: guest
     password: guest
   exchange:
-      {% for channelName, channel in asyncapi.channels() %}
-        {% if channel.hasPublish() and channel.publish().bindings('amqp') %}
+  {% for channelName, channel in asyncapi.channels() %}
+    {% if channel.hasPublish() and channel.publish().bindings('amqp') %}
     {{channel.publish().bindings('amqp').exchange().name()}}: {{channelName}}
-        {% endif %}
-      {% endfor %}
-  queue:
-      {% for channelName, channel in asyncapi.channels() %}
-        {% if channel.hasSubscribe() and channel.subscribe().bindings('amqp') %}
-    {{channel.subscribe().bindings('amqp').queue().name()}}: {{channelName}}
-        {% endif %}
-      {% endfor %}
     {% endif %}
-    {% if server.protocol() === 'mqtt' %}
+  {% endfor %}
+  queue:
+  {% for channelName, channel in asyncapi.channels() %}
+    {% if channel.hasSubscribe() and channel.subscribe().bindings('amqp') %}
+    {{channel.subscribe().bindings('amqp').queue().name()}}: {{channelName}}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{%- if asyncapi | isProtocol('mqtt') %}
+  {% for serverName, server in asyncapi.servers() %}
 mqtt:
   broker:
     host: tcp://{{server.url()}}
@@ -28,9 +37,17 @@ mqtt:
     username:
     password:
   topic:
-      {% for channelName, channel in asyncapi.channels() %}
+    {% for channelName, channel in asyncapi.channels() %}
     {{channelName}}Topic: {{channelName}}
-      {% endfor %}
-    {% endif %}
+    {% endfor %}
   {% endfor %}
+{% endif %}
+{%- if asyncapi | isProtocol('kafka') %}
+kafka:
+  bootstrap-servers: {% for serverName, server in asyncapi.servers() %}{{server.url()}}{% if not loop.last %},{% endif %}{% endfor %}
+  {%- if hasSubscribe %}
+  subscribe:
+    pool-timeout: 3000
+    amount-of-listeners: 3
+  {% endif %}
 {% endif %}

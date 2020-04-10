@@ -1,3 +1,5 @@
+package com.asyncapi.model;
+
 public class {{messageName | camelCase | upperFirst}} {
     {% set payloadName = message.payload().uid() | camelCase | upperFirst %}
     private {{payloadName}} payload;

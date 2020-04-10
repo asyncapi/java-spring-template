@@ -1,3 +1,5 @@
+package com.asyncapi.model;
+
 public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- if prop.type() === 'object' %}

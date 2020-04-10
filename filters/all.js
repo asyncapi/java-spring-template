@@ -37,6 +37,14 @@ module.exports = ({ Nunjucks }) => {
     }
   });
 
+  Nunjucks.addFilter('isProtocol', (api, protocol) => {
+    return JSON.stringify(api.json()).includes('"protocol":"' + protocol + '"');
+  });
+
+  Nunjucks.addFilter('print', (str) => {
+    console.error(str);
+  });
+
   Nunjucks.addFilter('schemeExists', (collection, scheme) => {
     return _.some(collection, {'scheme': scheme});
   });

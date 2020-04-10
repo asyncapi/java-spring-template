@@ -13,19 +13,15 @@ repositories {
 }
 
 dependencies {
-	{%- if asyncapi.hasServers() %}
-		{%- for serverName, server in asyncapi.servers() %}
-			{%- if server.protocol() === 'amqp' %}
+	{%- if asyncapi | isProtocol('amqp') %}
 	implementation('org.springframework.integration:spring-integration-amqp')
-			{% endif -%}
-			{%- if server.protocol() === 'mqtt' %}
+	{% endif -%}
+	{%- if asyncapi | isProtocol('mqtt') %}
 	implementation('org.springframework.integration:spring-integration-mqtt')
-			{% endif -%}
-			{%- if server.protocol() === 'kafka' %}
-	implementation('org.springframework.integration:spring-integration-kafka')
-			{%- endif -%}
-		{%- endfor -%}
-	{%- endif %}
+	{% endif -%}
+	{%- if asyncapi | isProtocol('kafka') %}
+	implementation('org.springframework.kafka:spring-kafka')
+	{% endif -%}
 	implementation('org.springframework.boot:spring-boot-starter-integration')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
