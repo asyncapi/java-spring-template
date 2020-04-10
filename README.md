@@ -13,22 +13,12 @@ here is an example of how to use it:
 channels:
   event.lighting.measured:
     publish:
-      bindings:
-        kafka:
-          groupId:
-            type: string
-            enum: ['myGroupId']
       message:
          $ref: '#/components/messages/lightMeasured'
     subscribe:
       bindings:
         kafka:
-          groupId:
-            type: string
-            enum: ['myGroupId']
-          clientId:
-            type: string
-            enum: ['myClientId']
+          groupId: my-group
       message:
         $ref: '#/components/messages/lightMeasured'
 ```
@@ -59,22 +49,12 @@ servers:
 channels:
   event.lighting.measured:
     publish:
-      bindings:
-        kafka:
-          groupId:
-            type: string
-            enum: ['myGroupId']
       message:
         $ref: '#/components/messages/lightMeasured'
     subscribe:
       bindings:
         kafka:
-          groupId:
-            type: string
-            enum: ['myGroupId']
-          clientId:
-            type: string
-            enum: ['myClientId']
+          groupId: my-group
       message:
         $ref: '#/components/messages/lightMeasured'
 components:
@@ -123,14 +103,17 @@ ag -o ./src asyncapi.yaml @asyncapi/java-spring-template
 ```
 
 ### Run it
+
+Go to the root folder of the generated code and run this command (you need the JDK1.8):
+```bash
+./gradlew bootRun
+```
+
+_Don't tested:_
+
 {% if asyncapi.servers() | schemeExists('amqp') %}
 Start your RabbitMQ with:
 ```bash
 docker-compose -f src/main/docker/rabbitmq.yml up -d
 ```
 {% endif %}
-
-Go to the root folder of the generated code and run this command (you need the JDK1.8):
-```bash
-./gradlew bootRun
-```
