@@ -2,6 +2,7 @@ package com.asyncapi.model;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
@@ -41,6 +42,8 @@ public class {{schemaName | camelCase | upperFirst}} {
                 {%- set propType = prop.type() | toJavaType %}
             {%- endif %}
         {%- endif %}
+
+    @JsonProperty("{{propName}}")
     {%- if propName | isRequired(schema.required()) %}@NotNull{% endif %}
     {%- if prop.minLength() or prop.maxLength() or prop.maxItems() or prop.minItems() %}@Size({% if prop.minLength() or prop.minItems() %}min = {{prop.minLength()}}{{prop.minItems()}}{% endif %}{% if prop.maxLength() or prop.maxItems() %}{% if prop.minLength() or prop.minItems() %},{% endif %}max = {{prop.maxLength()}}{{prop.maxItems()}}{% endif %}){% endif %}
     {%- if prop.pattern() %}@Pattern(regexp="{{prop.pattern()}}"){% endif %}
