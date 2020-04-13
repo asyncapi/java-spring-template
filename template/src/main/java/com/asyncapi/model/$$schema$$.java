@@ -4,6 +4,10 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+{% if schema.description() or schema.examples() %}/**
+ * {{schema.description() | safe}}{% if schema.examples() %}
+ * Examples: {{schema.examples()}}{% endif %}
+ */{% endif %}
 public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- if prop.type() === 'object' %}
@@ -43,6 +47,10 @@ public class {{schemaName | camelCase | upperFirst}} {
             {%- endif %}
         {%- endif %}
 
+    {% if prop.description() or prop.examples()%}/**
+     * {{prop.description() | safe}}{% if prop.examples() %}
+     * Examples: {{prop.examples()}}{% endif %}
+     */{% endif %}
     @JsonProperty("{{propName}}")
     {%- if propName | isRequired(schema.required()) %}@NotNull{% endif %}
     {%- if prop.minLength() or prop.maxLength() or prop.maxItems() or prop.minItems() %}@Size({% if prop.minLength() or prop.minItems() %}min = {{prop.minLength()}}{{prop.minItems()}}{% endif %}{% if prop.maxLength() or prop.maxItems() %}{% if prop.minLength() or prop.minItems() %},{% endif %}max = {{prop.maxLength()}}{{prop.maxItems()}}{% endif %}){% endif %}
