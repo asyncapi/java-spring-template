@@ -34,6 +34,8 @@ module.exports = ({ Nunjucks }) => {
         return 'double';
       case 'binary':
         return 'byte[]';
+      default:
+        return 'Object';
     }
   });
 
