@@ -45,6 +45,10 @@ module.exports = ({ Nunjucks }) => {
     console.error(str);
   });
 
+  Nunjucks.addFilter('isRequired', (name, list) => {
+    return list && list.includes(name);
+  });
+
   Nunjucks.addFilter('schemeExists', (collection, scheme) => {
     return _.some(collection, {'scheme': scheme});
   });

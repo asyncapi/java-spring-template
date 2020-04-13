@@ -20,6 +20,7 @@ dependencies {
 	implementation('org.springframework.integration:spring-integration-mqtt')
 	{% endif -%}
 	{%- if asyncapi | isProtocol('kafka') %}
+	implementation('javax.validation:validation-api')
 	implementation('org.springframework.kafka:spring-kafka')
 	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
 	{% endif -%}
