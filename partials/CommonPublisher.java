@@ -8,9 +8,9 @@ import org.springframework.integration.annotation.MessagingGateway;
 public interface PublisherService {
 
     {% for channelName, channel in asyncapi.channels() %}
-        {% if channel.hasPublish() %}
+        {% if channel.hasSubscribe() %}
     @Gateway(requestChannel = "{{channelName | camelCase}}OutboundChannel")
-    void {{channel.publish().id() | camelCase}}(String data);
+    void {{channel.subscribe().id() | camelCase}}(String data);
         {% endif %}
     {% endfor %}
 }

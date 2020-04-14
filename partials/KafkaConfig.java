@@ -1,12 +1,12 @@
 {% macro kafkaConfig(asyncapi) %}
-{%- set hasPublish = false -%}
 {%- set hasSubscribe = false -%}
+{%- set hasPublish = false -%}
 {%- for channelName, channel in asyncapi.channels() -%}
-    {%- if channel.hasSubscribe() -%}
-        {%- set hasSubscribe = true -%}
-    {%- endif -%}
     {%- if channel.hasPublish() -%}
         {%- set hasPublish = true -%}
+    {%- endif -%}
+    {%- if channel.hasSubscribe() -%}
+        {%- set hasSubscribe = true -%}
     {%- endif -%}
 {%- endfor -%}
 package com.asyncapi.infrastructure;
@@ -30,20 +30,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-{% if hasSubscribe %}@EnableKafka{% endif %}
+{% if hasPublish %}@EnableKafka{% endif %}
 public class Config {
-{%- if hasPublish or hasSubscribe %}
+{%- if hasSubscribe or hasPublish %}
     @Value("${kafka.bootstrap-servers:localhost:9092}")
     private String bootstrapServers;
 {% endif %}
-{%- if hasSubscribe %}
+{%- if hasPublish %}
     @Value("${kafka.subscribe.pool-timeout:3000}")
     private long poolTimeout;
 
     @Value("${kafka.subscribe.amount-of-listeners:3}")
     private Integer amountOfListeners;
 {% endif %}
-{%- if hasPublish %}
+{%- if hasSubscribe %}
     @Bean
     public KafkaTemplate<Integer, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
@@ -71,7 +71,7 @@ public class Config {
         return props;
     }
 {% endif %}
-{%- if hasSubscribe %}
+{%- if hasPublish %}
     @Bean
     KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>>
     kafkaListenerContainerFactory() {
