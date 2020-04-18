@@ -20,9 +20,10 @@ public class PublisherService {
     private KafkaTemplate<Integer, String> kafkaTemplate;
 {% for channelName, channel in asyncapi.channels() %}
     {%- if channel.hasSubscribe() %} {% set varName = channel.subscribe().message().payload().uid() | camelCase %}
-    public void {{channel.subscribe().id() | camelCase}}({{varName | upperFirst}} {{varName}}) {
+    public void {{channel.subscribe().id() | camelCase}}(Integer key, {{varName | upperFirst}} {{varName}}) {
         Message<{{varName | upperFirst}}> message = MessageBuilder.withPayload({{varName}})
                 .setHeader(KafkaHeaders.TOPIC, "{{channelName}}")
+                .setHeader(KafkaHeaders.MESSAGE_KEY, key)
                 .build();
         kafkaTemplate.send(message);
     }
