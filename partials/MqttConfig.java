@@ -61,7 +61,7 @@ public class Config {
 
     @Autowired
     MessageHandlerService messageHandlerService;
-    {% for channelName, channel in asyncapi.channels().subscribe() %}
+    {% for channelName, channel in asyncapi.channels().publish() %}
 
     @Bean
     public IntegrationFlow {{channelName | camelCase}}Flow() {
@@ -81,7 +81,7 @@ public class Config {
     {% endfor %}
 
     // publisher
-    {% for channelName, channel in asyncapi.channels().publish() %}
+    {% for channelName, channel in asyncapi.channels().subscribe() %}
 
     @Bean
     public MessageChannel {{channelName | camelCase}}OutboundChannel() {

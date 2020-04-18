@@ -34,12 +34,12 @@ public class Config {
     @Value("${amqp.broker.password}")
     private String password;
 
-    {% for channelName, channel in asyncapi.channels().publish() %}
+    {% for channelName, channel in asyncapi.channels().subscribe() %}
     @Value("${amqp.exchange.{{- channelName -}}}")
     private String {{channelName}}Exchange;
 
     {% endfor %}
-    {% for channelName, channel in asyncapi.channels().subscribe() %}
+    {% for channelName, channel in asyncapi.channels().publish() %}
     @Value("${amqp.queue.{{- channelName -}}}")
     private String {{channelName}}Queue;
 
@@ -62,7 +62,7 @@ public class Config {
     @Bean
     public Declarables exchanges() {
         return new Declarables(
-                {% for channelName, channel in asyncapi.channels().publish() %}
+                {% for channelName, channel in asyncapi.channels().subscribe() %}
                 new TopicExchange({{channelName}}Exchange, true, false){% if not loop.last %},{% endif %}
                 {% endfor %}
                 );
@@ -71,7 +71,7 @@ public class Config {
     @Bean
     public Declarables queues() {
         return new Declarables(
-                {% for channelName, channel in asyncapi.channels().subscribe() %}
+                {% for channelName, channel in asyncapi.channels().publish() %}
                 new Queue({{channelName}}Queue, true, false, false){% if not loop.last %},{% endif %}
                 {% endfor %}
                 );
@@ -81,7 +81,7 @@ public class Config {
 
     @Autowired
     MessageHandlerService messageHandlerService;
-    {% for channelName, channel in asyncapi.channels().subscribe() %}
+    {% for channelName, channel in asyncapi.channels().publish() %}
 
     @Bean
     public IntegrationFlow {{channelName | camelCase}}Flow() {
@@ -98,7 +98,7 @@ public class Config {
         RabbitTemplate template = new RabbitTemplate(connectionFactory());
         return template;
     }
-    {% for channelName, channel in asyncapi.channels().publish() %}
+    {% for channelName, channel in asyncapi.channels().subscribe() %}
 
     @Bean
     public MessageChannel {{channelName | camelCase}}OutboundChannel() {
