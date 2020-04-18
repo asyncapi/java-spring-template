@@ -1,16 +1,7 @@
-package com.asyncapi.service;
-
-import org.springframework.integration.annotation.Gateway;
-import org.springframework.integration.annotation.MessagingGateway;
-
-@MessagingGateway
-public interface PublisherService {
-
-  {% for topicName, topic in asyncapi.topics %}
-  {% if topic.publish %}
-
-    @Gateway(requestChannel = "{{topic.x-service-name | camelCase}}OutboundChannel")
-    void publish{{topic.x-service-name | capitalize}}(String data);
-  {% endif %}
-  {% endfor %}
-}
+{%- from "partials/CommonPublisher.java" import commonPublisher -%}
+{%- from "partials/KafkaPublisher.java" import kafkaPublisher -%}
+{%- if asyncapi | isProtocol('kafka') -%}
+{{- kafkaPublisher(asyncapi) -}}
+{%- else -%}
+{{- commonPublisher(asyncapi) -}}
+{%- endif -%}
