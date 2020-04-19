@@ -47,6 +47,14 @@ module.exports = ({ Nunjucks }) => {
     console.error(str);
   });
 
+  Nunjucks.addFilter('splitByLines', (str) => {
+    if (str) {
+      return str.split(/\r?\n/);
+    } else {
+      return "";
+    }
+  });
+
   Nunjucks.addFilter('isRequired', (name, list) => {
     return list && list.includes(name);
   });

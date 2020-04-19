@@ -1,7 +1,7 @@
 package com.asyncapi.model;
 
-{% if message.description() or message.examples()%}/**
- * {{message.description() | safe}}{% if message.examples() %}
+{% if message.description() or message.examples()%}/**{% for line in message.description() | splitByLines %}
+ * {{ line | safe}}{% endfor %}{% if message.examples() %}
  * Examples: {{message.examples()}}{% endif %}
  */{% endif %}
 public class {{messageName | camelCase | upperFirst}} {
