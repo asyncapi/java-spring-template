@@ -8,40 +8,38 @@
         {%- set hasSubscribe = true -%}
     {%- endif -%}
 {%- endfor -%}
-{%- if asyncapi | isProtocol('amqp') %}
+{%- for serverName, server in asyncapi.servers() %}{% if server.protocol() == 'amqp' %}
 amqp:
   broker:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: {{server.url()}}
+    port: {{server.variable('port').defaultValue()}}
+    username:
+    password:
   exchange:
   {% for channelName, channel in asyncapi.channels() %}
     {% if channel.hasSubscribe() and channel.subscribe().bindings('amqp') %}
-    {{channel.subscribe().bindings('amqp').exchange().name()}}: {{channelName}}
+    {{channelName}}: {{channel.subscribe().binding('amqp').exchange.name}}
     {% endif %}
   {% endfor %}
   queue:
   {% for channelName, channel in asyncapi.channels() %}
-    {% if channel.hasPublish() and channel.publish().bindings('amqp') %}
-    {{channel.publish().bindings('amqp').queue().name()}}: {{channelName}}
+    {% if channel.hasPublish() and channel.publish().binding('amqp') %}
+    {{channelName}}: {{channel.publish().binding('amqp').queue.name}}
     {% endif %}
   {% endfor %}
 {% endif %}
-{%- if asyncapi | isProtocol('mqtt') %}
-  {% for serverName, server in asyncapi.servers() %}
+{% if server.protocol() == 'mqtt' %}
 mqtt:
   broker:
     host: tcp://{{server.url()}}
-    port: {{server.variables(port).defaultValue()}}
+    port: {{server.variable('port').defaultValue()}}
     username:
     password:
   topic:
     {% for channelName, channel in asyncapi.channels() %}
     {{channelName}}Topic: {{channelName}}
     {% endfor %}
-  {% endfor %}
-{% endif %}
+{% endif %}{% endfor %}
 {%- if asyncapi | isProtocol('kafka') %}
 kafka:
   bootstrap-servers: {% for serverName, server in asyncapi.servers() %}{{server.url()}}{% if not loop.last %},{% endif %}{% endfor %}
