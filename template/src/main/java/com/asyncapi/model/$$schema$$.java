@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 {% if schema.description() or schema.examples() %}/**{% for line in schema.description() | splitByLines %}
  * {{ line | safe}}{% endfor %}{% if schema.examples() %}
- * Examples: {{schema.examples()}}{% endif %}
+ * Examples: {{schema.examples() | examplesToString | safe}}{% endif %}
  */{% endif %}
 public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
@@ -49,7 +49,7 @@ public class {{schemaName | camelCase | upperFirst}} {
 
     {% if prop.description() or prop.examples()%}/**{% for line in prop.description() | splitByLines %}
      * {{ line | safe}}{% endfor %}{% if prop.examples() %}
-     * Examples: {{prop.examples()}}{% endif %}
+     * Examples: {{prop.examples() | examplesToString | safe}}{% endif %}
      */{% endif %}
     @JsonProperty("{{propName}}")
     {%- if propName | isRequired(schema.required()) %}@NotNull{% endif %}

@@ -47,9 +47,26 @@ module.exports = ({ Nunjucks }) => {
     console.error(str);
   });
 
+  Nunjucks.addFilter('examplesToString', (ex) => {
+    let retStr = "";
+    ex.forEach(example => {
+      if (retStr !== "") {retStr += ", "}
+      if (typeof example == "object") {
+        try {
+          retStr += JSON.stringify(example);
+        } catch (ignore) {
+          retStr += example;
+        }
+      } else {
+        retStr += example;
+      }
+    });
+    return retStr;
+  });
+
   Nunjucks.addFilter('splitByLines', (str) => {
     if (str) {
-      return str.split(/\r?\n/);
+      return str.split(/\r?\n|\r/);
     } else {
       return "";
     }
