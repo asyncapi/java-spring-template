@@ -1,4 +1,4 @@
-#Java Spring generator
+# Java Spring generator
 _Use your AsyncAPI definition to generate java code to subscribe and publish messages_
 
 
@@ -120,7 +120,7 @@ See the list of features that are still missing in the component:
 - [ ] support of Kafka is done based on clear "spring-kafka" library without integration like for mqtt or amqp
 - [ ] generated code for protocols mqtt and amqp could be out of date. Please have a look to [application.yaml](template/src/main/resources/application.yml) and [AmqpConfig.java](partials/AmqpConfig.java), [MqttConfig.java](partials/MqttConfig.java) 
 - [ ] tests are not provided
-- [ ] add annotation to the [model generation](template/src/main/java/com/asyncapi/model). Consider "@Valid", "@JsonProperty", "@Size", "@NotNull" e.t.c.
+- [x] add annotation to the [model generation](template/src/main/java/com/asyncapi/model). Consider "@Valid", "@JsonProperty", "@Size", "@NotNull" e.t.c.
 - [ ] [`parameters`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#parametersObject) for topics are not supported
 - [ ] [`server variables`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#serverVariableObject) are not entirely supported 
 - [ ] [`security schemas`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#securitySchemeObject) are not supported
