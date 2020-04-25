@@ -17,7 +17,7 @@ amqp:
     password:
   exchange:
   {% for channelName, channel in asyncapi.channels() %}
-    {% if channel.hasSubscribe() and channel.subscribe().bindings('amqp') %}
+    {% if channel.hasSubscribe() and channel.subscribe().binding('amqp') %}
     {{channelName}}: {{channel.subscribe().binding('amqp').exchange.name}}
     {% endif %}
   {% endfor %}
