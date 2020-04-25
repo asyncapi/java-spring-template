@@ -84,9 +84,17 @@ components:
   Options:
 
     -V, --version                 output the version number
-    -t, --templates <templateDir> directory where templates are located (defaults to internal templates directory)
+    -o, --output <outputDir>       directory where to put the generated files (defaults to current directory)
+    -p, --param <name=value>       additional param to pass to templates
     -h, --help                    output usage information
 ```
+
+#### Supported parameters
+
+|Name|Description|Required|Default|
+|---|---|---|---|
+|listenerPollTimeout|Only for Kafka. Timeout in ms to use when polling the consumer.|No|`3000`|
+|listenerConcurrency|Only for Kafka. Number of threads to run in the listener containers.|No|`3`|
 
 #### Examples
 
@@ -95,11 +103,16 @@ The shortest possible syntax:
 ag asyncapi.yaml @asyncapi/java-spring-template
 ```
 
-Specify where to put the result:
+Specify where to put the result and define poll timeout:
 ```bash
-ag -o ./src asyncapi.yaml @asyncapi/java-spring-template
+ag -o ./src asyncapi.yaml -p listener-poll-timeout=5000 @asyncapi/java-spring-template
 ```
 
+If you don't have the AsyncAPI Generator installed, you can install it like this:
+
+```
+npm install -g @asyncapi/generator
+```
 ### Run it
 
 Go to the root folder of the generated code and run this command (you need the JDK1.8):
