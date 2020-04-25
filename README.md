@@ -105,7 +105,7 @@ ag asyncapi.yaml @asyncapi/java-spring-template
 
 Specify where to put the result and define poll timeout:
 ```bash
-ag -o ./src asyncapi.yaml -p listener-poll-timeout=5000 @asyncapi/java-spring-template
+ag -o ./src asyncapi.yaml -p listenerPollTimeout=5000 @asyncapi/java-spring-template
 ```
 
 If you don't have the AsyncAPI Generator installed, you can install it like this:
