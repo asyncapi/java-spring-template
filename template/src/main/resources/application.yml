@@ -43,11 +43,12 @@ mqtt:
   {% endfor %}
 {% endif %}
 {%- if asyncapi | isProtocol('kafka') %}
-kafka:
-  bootstrap-servers: {% for serverName, server in asyncapi.servers() %}{{server.url()}}{% if not loop.last %},{% endif %}{% endfor %}
+spring:
+  kafka:
+    bootstrap-servers: {% for serverName, server in asyncapi.servers() %}{% if server.variable('port') %}{{server.url() | replace('{port}', server.variable('port').defaultValue())}}{% else %}{{server.url()}}{% endif %}{% if not loop.last %},{% endif %}{% endfor %}
   {%- if hasPublish %}
-  subscribe:
-    pool-timeout: 3000
-    amount-of-listeners: 3
+    listener:
+      poll-timeout: {% if params.listenerPollTimeout %}{{params.listenerPollTimeout}}{% else %}3000{% endif%}
+      concurrency: {% if params.listenerConcurrency %}{{params.listenerConcurrency}}{% else %}3{% endif%}
   {% endif %}
 {% endif %}
