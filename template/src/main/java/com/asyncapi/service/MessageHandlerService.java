@@ -28,6 +28,11 @@ public class MessageHandlerService {
 {% if asyncapi | isProtocol('kafka') %}
     {% for channelName, channel in asyncapi.channels() %}
         {%- if channel.hasPublish() %}
+
+    {% if channel.description() or channel.publish().description() %}/**{% for line in channel.description() | splitByLines %}
+     * {{line | safe}}{% endfor %}{% for line in channel.publish().description() | splitByLines %}
+     * {{line | safe}}{% endfor %}
+     */{% endif %}
     @KafkaListener(topics = "{{channelName}}"{% if channel.publish().binding('kafka') %}, groupId = "{{channel.publish().binding('kafka').groupId}}"{% endif %})
     public void {{channel.publish().id() | camelCase}}(@Payload {{channel.publish().message().payload().uid() | camelCase | upperFirst}} payload,
                        @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Integer key,
@@ -40,6 +45,10 @@ public class MessageHandlerService {
 {% else %}
     {% for channelName, channel in asyncapi.channels() %}
       {% if channel.hasPublish() %}
+    {% if channel.description() or channel.publish().description() %}/**{% for line in channel.description() | splitByLines %}
+     * {{line | safe}}{% endfor %}{% for line in channel.publish().description() | splitByLines %}
+     * {{line | safe}}{% endfor %}
+     */{% endif %}
     public void handle{{channelName | upperFirst}}(Message<?> message) {
         System.out.println("handler {{channelName}}");
         System.out.println(message.getPayload());
