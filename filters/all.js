@@ -66,7 +66,7 @@ module.exports = ({ Nunjucks }) => {
 
   Nunjucks.addFilter('splitByLines', (str) => {
     if (str) {
-      return str.split(/\r?\n|\r/);
+      return str.split(/\r?\n|\r/).filter((s) => s !== "");
     } else {
       return "";
     }

@@ -10,7 +10,8 @@
 {%- endfor -%}
 {%- for serverName, server in asyncapi.servers() %}{% if server.protocol() == 'amqp' %}
 amqp:
-  broker:
+  broker: {% for line in server.description() | splitByLines %}
+    # {{line | safe}}{% endfor %}
     host: {{server.url() | replace(':{port}', '') }}
     port: {% if server.variable('port') %}{{server.variable('port').defaultValue()}}{% endif %}
     username:
@@ -30,7 +31,8 @@ amqp:
 {% endif %}
 {% if server.protocol() == 'mqtt' %}
 mqtt:
-  broker:
+  broker: {% for line in server.description() | splitByLines %}
+    # {{line | safe}}{% endfor %}
     host: tcp://{{server.url() | replace(':{port}', '')}}
     port: {% if server.variable('port') %}{{server.variable('port').defaultValue()}}{% endif %}
     username:
@@ -42,7 +44,9 @@ mqtt:
 {% endif %}{% endfor %}
 {%- if asyncapi | isProtocol('kafka') %}
 spring:
-  kafka:
+  kafka: {% for serverName, server in asyncapi.servers() %}
+    # - {{serverName}} in {{server.url()}} : {% for line in server.description() | splitByLines %}
+    # {{line | safe}}{% endfor %}{% endfor %}
     bootstrap-servers: {% for serverName, server in asyncapi.servers() %}{% if server.variable('port') %}{{server.url() | replace('{port}', server.variable('port').defaultValue())}}{% else %}{{server.url()}}{% endif %}{% if not loop.last %},{% endif %}{% endfor %}
   {%- if hasPublish %}
     listener:
