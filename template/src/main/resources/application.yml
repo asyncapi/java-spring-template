@@ -10,7 +10,7 @@
 {%- endfor -%}
 {%- for serverName, server in asyncapi.servers() %}{% if server.protocol() == 'amqp' %}
 amqp:
-  broker:{% for line in server.description() | splitByLines %}
+  broker: {% for line in server.description() | splitByLines %}
     # {{line | safe}}{% endfor %}
     host: {{server.url() | replace(':{port}', '') }}
     port: {% if server.variable('port') %}{{server.variable('port').defaultValue()}}{% endif %}
@@ -31,7 +31,7 @@ amqp:
 {% endif %}
 {% if server.protocol() == 'mqtt' %}
 mqtt:
-  broker:{% for line in server.description() | splitByLines %}
+  broker: {% for line in server.description() | splitByLines %}
     # {{line | safe}}{% endfor %}
     host: tcp://{{server.url() | replace(':{port}', '')}}
     port: {% if server.variable('port') %}{{server.variable('port').defaultValue()}}{% endif %}
