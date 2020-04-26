@@ -2,5 +2,15 @@
   "supportedProtocols": ["kafka", "amqp", "mqtt"],
   "nonRenderableFiles": [
     "**/*.jar"
-  ]
+  ],
+  "parameters": {
+    "listenerPollTimeout": {
+      "description": "Only for Kafka. Timeout to use when polling the consumer.",
+      "required": false
+    },
+    "listenerConcurrency": {
+      "description": "Only for Kafka. Number of threads to run in the listener containers.",
+      "required": false
+    }
+  }
 }
