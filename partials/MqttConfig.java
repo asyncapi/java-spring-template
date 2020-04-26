@@ -61,7 +61,7 @@ public class Config {
 
     @Autowired
     MessageHandlerService messageHandlerService;
-    {% for channelName, channel in asyncapi.channels().publish() %}
+    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
 
     @Bean
     public IntegrationFlow {{channelName | camelCase}}Flow() {
@@ -78,10 +78,10 @@ public class Config {
         adapter.setConverter(new DefaultPahoMessageConverter());
         return adapter;
     }
-    {% endfor %}
+    {% endif %}{% endfor %}
 
     // publisher
-    {% for channelName, channel in asyncapi.channels().subscribe() %}
+    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
 
     @Bean
     public MessageChannel {{channelName | camelCase}}OutboundChannel() {
@@ -96,7 +96,7 @@ public class Config {
         pahoMessageHandler.setDefaultTopic({{channelName}}Topic);
         return pahoMessageHandler;
     }
-    {% endfor %}
+    {% endif %}{% endfor %}
 
 }
 {% endmacro %}

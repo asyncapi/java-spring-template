@@ -34,16 +34,16 @@ public class Config {
     @Value("${amqp.broker.password}")
     private String password;
 
-    {% for channelName, channel in asyncapi.channels().subscribe() %}
+    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
     @Value("${amqp.exchange.{{- channelName -}}}")
     private String {{channelName}}Exchange;
 
-    {% endfor %}
-    {% for channelName, channel in asyncapi.channels().publish() %}
+    {% endif %}{% endfor %}
+    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
     @Value("${amqp.queue.{{- channelName -}}}")
     private String {{channelName}}Queue;
 
-    {% endfor %}
+    {% endif %}{% endfor %}
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -62,18 +62,18 @@ public class Config {
     @Bean
     public Declarables exchanges() {
         return new Declarables(
-                {% for channelName, channel in asyncapi.channels().subscribe() %}
+                {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
                 new TopicExchange({{channelName}}Exchange, true, false){% if not loop.last %},{% endif %}
-                {% endfor %}
+                {% endif %}{% endfor %}
                 );
     }
 
     @Bean
     public Declarables queues() {
         return new Declarables(
-                {% for channelName, channel in asyncapi.channels().publish() %}
+                {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
                 new Queue({{channelName}}Queue, true, false, false){% if not loop.last %},{% endif %}
-                {% endfor %}
+                {% endif %}{% endfor %}
                 );
     }
 
@@ -81,7 +81,7 @@ public class Config {
 
     @Autowired
     MessageHandlerService messageHandlerService;
-    {% for channelName, channel in asyncapi.channels().publish() %}
+    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
 
     @Bean
     public IntegrationFlow {{channelName | camelCase}}Flow() {
@@ -89,7 +89,7 @@ public class Config {
                 .handle(messageHandlerService::handle{{channelName | upperFirst}})
                 .get();
     }
-    {% endfor %}
+    {% endif %}{% endfor %}
 
     // publisher
 
@@ -98,7 +98,7 @@ public class Config {
         RabbitTemplate template = new RabbitTemplate(connectionFactory());
         return template;
     }
-    {% for channelName, channel in asyncapi.channels().subscribe() %}
+    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
 
     @Bean
     public MessageChannel {{channelName | camelCase}}OutboundChannel() {
@@ -113,6 +113,6 @@ public class Config {
         outbound.setRoutingKey("#");
         return outbound;
     }
-    {% endfor %}
+    {% endif %}{% endfor %}
 }
 {% endmacro %}
