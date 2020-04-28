@@ -28,7 +28,8 @@
     "access": "public"
   },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "@asyncapi/generator-filters": "https://github.com/derberg/generator-filters#use-filters-lib"
   },
   "devDependencies": {
     "@semantic-release/commit-analyzer": "^8.0.1",
