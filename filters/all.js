@@ -1,82 +1,75 @@
+const filter = module.exports;
 const _ = require('lodash');
 
-module.exports = ({ Nunjucks }) => {
-  Nunjucks.addFilter('camelCase', (str) => {
-    return _.camelCase(str);
-  });
+function toJavaType(str){
+  switch(str) {
+    case 'integer':
+    case 'int32':
+      return 'int';
+    case 'long':
+    case 'int64':
+      return 'long';
+    case 'boolean':
+      return 'boolean';
+    case 'date':
+      return 'java.time.LocalDate';
+    case 'dateTime':
+    case 'date-time':
+      return 'java.time.LocalDateTime';
+    case 'string':
+    case 'password':
+    case 'byte':
+      return 'String';
+    case 'float':
+      return 'float';
+    case 'double':
+      return 'double';
+    case 'binary':
+      return 'byte[]';
+    default:
+      return 'Object';
+  }
+}
+filter.toJavaType = toJavaType;
 
-  Nunjucks.addFilter('upperFirst', (str) => {
-    return _.upperFirst(str);
-  });
+function isProtocol(api, protocol){
+  return JSON.stringify(api.json()).includes('"protocol":"' + protocol + '"');
+};
+filter.isProtocol = isProtocol;
 
-  Nunjucks.addFilter('toJavaType', (str) => {
-    switch(str) {
-      case 'integer':
-      case 'int32':
-        return 'int';
-      case 'long':
-      case 'int64':
-        return 'long';
-      case 'boolean':
-        return 'boolean';
-      case 'date':
-        return 'java.time.LocalDate';
-      case 'dateTime':
-      case 'date-time':
-        return 'java.time.LocalDateTime';
-      case 'string':
-      case 'password':
-      case 'byte':
-        return 'String';
-      case 'float':
-        return 'float';
-      case 'double':
-        return 'double';
-      case 'binary':
-        return 'byte[]';
-      default:
-        return 'Object';
-    }
-  });
-
-  Nunjucks.addFilter('isProtocol', (api, protocol) => {
-    return JSON.stringify(api.json()).includes('"protocol":"' + protocol + '"');
-  });
-
-  Nunjucks.addFilter('print', (str) => {
-    console.error(str);
-  });
-
-  Nunjucks.addFilter('examplesToString', (ex) => {
-    let retStr = "";
-    ex.forEach(example => {
-      if (retStr !== "") {retStr += ", "}
-      if (typeof example == "object") {
-        try {
-          retStr += JSON.stringify(example);
-        } catch (ignore) {
-          retStr += example;
-        }
-      } else {
+function examplesToString(ex){
+  let retStr = "";
+  ex.forEach(example => {
+    if (retStr !== "") {retStr += ", "}
+    if (typeof example == "object") {
+      try {
+        retStr += JSON.stringify(example);
+      } catch (ignore) {
         retStr += example;
       }
-    });
-    return retStr;
-  });
-
-  Nunjucks.addFilter('splitByLines', (str) => {
-    if (str) {
-      return str.split(/\r?\n|\r/).filter((s) => s !== "");
     } else {
-      return "";
+      retStr += example;
     }
   });
-
-  Nunjucks.addFilter('isRequired', (name, list) => {
-    return list && list.includes(name);
-  });
-
-  Nunjucks.addFilter('schemeExists', (collection, scheme) => {
-    return _.some(collection, {'scheme': scheme});
-  });
+  return retStr;
 };
+filter.examplesToString = examplesToString;
+
+function splitByLines(str){
+  if (str) {
+    return str.split(/\r?\n|\r/).filter((s) => s !== "");
+  } else {
+    return "";
+  }
+};
+filter.splitByLines = splitByLines;
+
+function isRequired(name, list){
+  return list && list.includes(name);
+};
+filter.isRequired = isRequired;
+
+function schemeExists(collection, scheme){
+  return _.some(collection, {'scheme': scheme});
+};
+filter.schemeExists = schemeExists;
