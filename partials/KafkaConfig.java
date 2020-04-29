@@ -32,17 +32,6 @@ import java.util.Map;
 @Configuration
 {% if hasPublish %}@EnableKafka{% endif %}
 public class Config {
-{%- if hasSubscribe or hasPublish %}
-    @Value("${kafka.bootstrap-servers:localhost:9092}")
-    private String bootstrapServers;
-{% endif %}
-{%- if hasPublish %}
-    @Value("${kafka.subscribe.pool-timeout:3000}")
-    private long poolTimeout;
-
-    @Value("${kafka.subscribe.amount-of-listeners:3}")
-    private Integer amountOfListeners;
-{% endif %}
 {%- if hasSubscribe %}
     @Bean
     public KafkaTemplate<Integer, String> kafkaTemplate() {
@@ -57,7 +46,6 @@ public class Config {
     @Bean
     public Map<String, Object> producerConfigs() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(JsonSerializer.TYPE_MAPPINGS,
@@ -78,8 +66,6 @@ public class Config {
         ConcurrentKafkaListenerContainerFactory<Integer, String> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.setConcurrency(amountOfListeners);
-        factory.getContainerProperties().setPollTimeout(poolTimeout);
         return factory;
     }
 
@@ -91,7 +77,6 @@ public class Config {
     @Bean
     public Map<String, Object> consumerConfigs() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(JsonSerializer.TYPE_MAPPINGS,
