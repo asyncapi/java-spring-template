@@ -12,5 +12,6 @@
       "description": "Only for Kafka. Number of threads to run in the listener containers.",
       "required": false
     }
-  }
+  },
+  "generator": ">=0.40.1 <2.0.0"
 }
