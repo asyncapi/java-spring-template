@@ -2,5 +2,6 @@
   "supportedProtocols": ["kafka", "amqp", "mqtt"],
   "nonRenderableFiles": [
     "**/*.jar"
-  ]
+  ],
+  "generator": ">=0.40.1 <2.0.0"
 }
