@@ -4,9 +4,9 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-{% if schema.description() or schema.examples() %}/**
- * {{schema.description() | safe}}{% if schema.examples() %}
- * Examples: {{schema.examples()}}{% endif %}
+{% if schema.description() or schema.examples() %}/**{% for line in schema.description() | splitByLines %}
+ * {{ line | safe}}{% endfor %}{% if schema.examples() %}
+ * Examples: {{schema.examples() | examplesToString | safe}}{% endif %}
  */{% endif %}
 public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
@@ -47,9 +47,9 @@ public class {{schemaName | camelCase | upperFirst}} {
             {%- endif %}
         {%- endif %}
 
-    {% if prop.description() or prop.examples()%}/**
-     * {{prop.description() | safe}}{% if prop.examples() %}
-     * Examples: {{prop.examples()}}{% endif %}
+    {% if prop.description() or prop.examples()%}/**{% for line in prop.description() | splitByLines %}
+     * {{ line | safe}}{% endfor %}{% if prop.examples() %}
+     * Examples: {{prop.examples() | examplesToString | safe}}{% endif %}
      */{% endif %}
     @JsonProperty("{{propName}}")
     {%- if propName | isRequired(schema.required()) %}@NotNull{% endif %}
