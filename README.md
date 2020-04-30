@@ -93,6 +93,7 @@ components:
 
 |Name|Description|Required|Default|
 |---|---|---|---|
+|generateOppositeSide|Generate an application that will publish messages to `publish` operation of channels and read messages from `subscribe` operation of channels. Literally this flag will simply swap `publish` and `subscribe` operations in the channels. Be aware, generation could be incomplete e.g. if bindings are not defined for the opposite side.|No|`false`|
 |listenerPollTimeout|Only for Kafka. Timeout in ms to use when polling the consumer.|No|`3000`|
 |listenerConcurrency|Only for Kafka. Number of threads to run in the listener containers.|No|`3`|
 
@@ -139,7 +140,7 @@ See the list of features that are still missing in the component:
 - [ ] [`security schemas`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#securitySchemeObject) are not supported
 - [ ] [`traits`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#operationTraitObject) are not supported
 - [ ] Json serializer/desirializer is used always, without taking into account real [`content type`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#default-content-type)
-- [ ] client side generation mode (in general just flip subscribe and publish channels)
+- [x] client side generation mode (in general just flip subscribe and publish channels)
 - [ ] template generation of docker-compose depending on protocol of server, now the rabbitmq is hardcoded
 
 If you want to help us develop them, feel free to contribute.

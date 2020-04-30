@@ -1,7 +1,6 @@
 module.exports = register => {
     register('generate:before', generator => {
-        console.log(generator);
-        if (generator.templateParams && generator.templateParams['generateOppositeSide'] === true) {
+        if (generator.templateParams && generator.templateParams['generateOppositeSide'] === 'true') {
             console.log("Opposite side generation mode is enabled");
             const asyncapi = generator.asyncapi;
             for (let [key, value] of Object.entries(asyncapi.channels())) {
