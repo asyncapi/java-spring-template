@@ -14,6 +14,15 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "fnobilia",
+      "name": "Francesco Nobilia",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/10063590?v=4",
+      "profile": "https://www.linkedin.com/in/francesconobilia/",
+      "contributions": [
+        "review"
+      ]
     }
   ],
   "contributorsPerLine": 7,
