@@ -15,6 +15,7 @@ module.exports = register => {
         if (!hasKafka) {
             // remove filers from template related only to Kafka
             fs.unlinkSync(path.resolve(generator.targetDir, 'src/test/java/com/asyncapi/SimpleKafkaTest.java'));
+            fs.unlinkSync(path.resolve(generator.targetDir, 'src/test/java/com/asyncapi/TestcontainerKafkaTest.java'));
         }
         if (!hasAmqp) {
             // remove filers from template related only to amqp
