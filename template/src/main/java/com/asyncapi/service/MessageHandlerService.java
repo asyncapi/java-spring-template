@@ -10,6 +10,8 @@ package com.asyncapi.service;
     {%- endif -%}
 {%- endfor %}
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 {% if asyncapi | isProtocol('kafka') and hasPublish %}
@@ -25,6 +27,8 @@ import com.asyncapi.model.{{channel.publish().message().payload().uid() | camelC
 {% endif %}
 @Service
 public class MessageHandlerService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandlerService.class);
 {% if asyncapi | isProtocol('kafka') %}
     {% for channelName, channel in asyncapi.channels() %}
         {%- if channel.hasPublish() %}
@@ -38,7 +42,7 @@ public class MessageHandlerService {
                        @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Integer key,
                        @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
                        @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {
-        //
+        LOGGER.info("Key: " + key + ", Payload: " + payload + ", Timestamp: " + timestamp + ", Partition: " + partition);
     }
         {%- endif %}
     {% endfor %}
@@ -50,8 +54,8 @@ public class MessageHandlerService {
      * {{line | safe}}{% endfor %}
      */{% endif %}
     public void handle{{channelName | upperFirst}}(Message<?> message) {
-        System.out.println("handler {{channelName}}");
-        System.out.println(message.getPayload());
+        LOGGER.info("handler {{channelName}}");
+        LOGGER.info(message.getPayload());
     }
       {% endif %}
     {% endfor %}
