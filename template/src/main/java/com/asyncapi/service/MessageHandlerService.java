@@ -55,7 +55,7 @@ public class MessageHandlerService {
      */{% endif %}
     public void handle{{channelName | upperFirst}}(Message<?> message) {
         LOGGER.info("handler {{channelName}}");
-        LOGGER.info(message.getPayload());
+        LOGGER.info(String.valueOf(message.getPayload()));
     }
       {% endif %}
     {% endfor %}
