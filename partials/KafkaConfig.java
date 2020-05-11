@@ -60,7 +60,7 @@ public class Config {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
         props.put(JsonSerializer.TYPE_MAPPINGS,
-    {%- for schema in asyncapi.allSchemas().values() %}
+    {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
         {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}
         "{{schema.uid()}}:com.asyncapi.model.{{schema.uid() | camelCase | upperFirst}}{% if not loop.last %}," +{% else %}"{% endif %}
         {% endif -%}
@@ -94,7 +94,7 @@ public class Config {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(JsonDeserializer.TYPE_MAPPINGS,
-    {%- for schema in asyncapi.allSchemas().values() %}
+    {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
         {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}
         "{{schema.uid()}}:com.asyncapi.model.{{schema.uid() | camelCase | upperFirst}}{% if not loop.last %}," +{% else %}"{% endif %}
         {% endif -%}
