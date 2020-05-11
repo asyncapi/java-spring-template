@@ -41,7 +41,6 @@ function isObjectType(schemas){
   var res = [];
   for (let obj of schemas) {
     if (obj._json['type'] === 'object' && !obj._json['x-parser-schema-id'].startsWith('<')) {
-      console.log(obj);
       res.push(obj);
     }
   }
