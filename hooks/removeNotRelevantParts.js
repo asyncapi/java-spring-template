@@ -3,9 +3,7 @@ const path = require('path');
 
 module.exports = register => {
     register('generate:after', generator => {
-        let hasMqtt = false;
-        let hasAmqp = false;
-        let hasKafka = false;
+        let hasMqtt, hasAmqp, hasKafka;
         const asyncapi = generator.asyncapi;
         for (let server of Object.values(asyncapi.servers())) {
             hasAmqp = hasAmqp || server.protocol() === 'amqp';
