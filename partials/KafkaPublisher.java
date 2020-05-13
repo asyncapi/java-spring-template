@@ -17,7 +17,7 @@ import com.asyncapi.model.{{channel.subscribe().message().payload().uid() | came
 public class PublisherService {
 
     @Autowired
-    private KafkaTemplate<Integer, String> kafkaTemplate;
+    private KafkaTemplate<Integer, Object> kafkaTemplate;
 {% for channelName, channel in asyncapi.channels() %}
     {%- if channel.hasSubscribe() %} {% set varName = channel.subscribe().message().payload().uid() | camelCase %}
     {% if channel.description() or channel.subscribe().description() %}/**{% for line in channel.description() | splitByLines %}
