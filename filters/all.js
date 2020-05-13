@@ -37,6 +37,17 @@ function isProtocol(api, protocol){
 };
 filter.isProtocol = isProtocol;
 
+function isObjectType(schemas){
+  var res = [];
+  for (let obj of schemas) {
+    if (obj._json['type'] === 'object' && !obj._json['x-parser-schema-id'].startsWith('<')) {
+      res.push(obj);
+    }
+  }
+  return res;
+};
+filter.isObjectType = isObjectType;
+
 function examplesToString(ex){
   let retStr = "";
   ex.forEach(example => {

@@ -32,14 +32,23 @@ import java.util.Map;
 @Configuration
 {% if hasPublish %}@EnableKafka{% endif %}
 public class Config {
+{% if hasSubscribe or hasPublish %}
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;{% endif %}
+{% if hasPublish %}
+    @Value("${spring.kafka.listener.poll-timeout}")
+    private long pollTimeout;
+
+    @Value("${spring.kafka.listener.concurrency}")
+    private int concurrency;{% endif %}
 {%- if hasSubscribe %}
     @Bean
-    public KafkaTemplate<Integer, String> kafkaTemplate() {
+    public KafkaTemplate<Integer, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public ProducerFactory<Integer, String> producerFactory() {
+    public ProducerFactory<Integer, Object> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
@@ -48,9 +57,11 @@ public class Config {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
         props.put(JsonSerializer.TYPE_MAPPINGS,
-    {%- for schema in asyncapi.allSchemas().values() %}
-        {%- if schema.uid() | first !== '<' %}
+    {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
+        {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}
         "{{schema.uid()}}:com.asyncapi.model.{{schema.uid() | camelCase | upperFirst}}{% if not loop.last %}," +{% else %}"{% endif %}
         {% endif -%}
     {% endfor -%}
@@ -61,16 +72,18 @@ public class Config {
 {% endif %}
 {%- if hasPublish %}
     @Bean
-    KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>>
+    KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, Object>>
     kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<Integer, String> factory =
+        ConcurrentKafkaListenerContainerFactory<Integer, Object> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        factory.setConcurrency(concurrency);
+        factory.getContainerProperties().setPollTimeout(pollTimeout);
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<Integer, String> consumerFactory() {
+    public ConsumerFactory<Integer, Object> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
     }
 
@@ -79,13 +92,15 @@ public class Config {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonSerializer.TYPE_MAPPINGS,
-    {%- for schema in asyncapi.allSchemas().values() %}
-        {%- if schema.uid() | first !== '<' %}
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(JsonDeserializer.TYPE_MAPPINGS,
+    {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
+        {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}
         "{{schema.uid()}}:com.asyncapi.model.{{schema.uid() | camelCase | upperFirst}}{% if not loop.last %}," +{% else %}"{% endif %}
         {% endif -%}
     {% endfor -%}
         );
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.asyncapi.model");
         return props;
     }
 {% endif %}
