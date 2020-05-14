@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = register => {
-    register('generate:after', generator => {
+module.exports = {
+    'generate:after': generator => {
         let hasMqtt, hasAmqp, hasKafka;
         const asyncapi = generator.asyncapi;
         for (let server of Object.values(asyncapi.servers())) {
@@ -21,5 +21,5 @@ module.exports = register => {
         if (!hasMqtt) {
             // remove filers from template related only to mqtt
         }
-    });
+    }
 };
