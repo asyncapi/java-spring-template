@@ -6,10 +6,12 @@
   "parameters": {
     "listenerPollTimeout": {
       "description": "Only for Kafka. Timeout to use when polling the consumer.",
+      "default": 3000,
       "required": false
     },
     "listenerConcurrency": {
       "description": "Only for Kafka. Number of threads to run in the listener containers.",
+      "default": 3,
       "required": false
     }
   },
