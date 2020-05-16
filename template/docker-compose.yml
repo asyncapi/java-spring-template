@@ -1,0 +1,43 @@
+version: '2'
+services:
+{%- if asyncapi | isProtocol('amqp') %}
+  rabbitmq:
+    image: rabbitmq:3.6.2-management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - default
+{% endif %} {%- if asyncapi | isProtocol('mqtt') %}
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    ports:
+      - 1883:1883
+      - 9001:9001
+    networks:
+      - default
+{% endif %} {%- if asyncapi | isProtocol('kafka') %}
+  kafka:
+    image: spotify/kafka
+    container_name: kafka
+    ports:
+      - 2181:2181
+      - 9092:9092
+    networks:
+      - default
+{% endif %}
+  app:
+    build:
+      context: .
+      args:
+        JAVA_PROP: -Dspring.profiles.active=docker
+    networks:
+      - default
+    depends_on:
+      {% if asyncapi | isProtocol('amqp') %}- rabbitmq{% endif %}
+      {% if asyncapi | isProtocol('mqtt') %}- mosquitto{% endif %}
+      {% if asyncapi | isProtocol('kafka') %}- kafka{% endif %}
+networks:
+  default:

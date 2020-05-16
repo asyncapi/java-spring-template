@@ -1,0 +1,52 @@
+{%- set hasSubscribe = false -%}
+{%- set hasPublish = false -%}
+{%- for channelName, channel in asyncapi.channels() -%}
+    {%- if channel.hasPublish() -%}
+        {%- set hasPublish = true -%}
+    {%- endif -%}
+    {%- if channel.hasSubscribe() -%}
+        {%- set hasSubscribe = true -%}
+    {%- endif -%}
+{%- endfor -%}
+{%- if asyncapi | isProtocol('amqp') %}
+amqp:
+  broker:
+    host: rabbitmq
+    port: 5672
+    username:
+    password:
+  exchange:
+  {% for channelName, channel in asyncapi.channels() %}
+    {% if channel.hasSubscribe() and channel.subscribe().binding('amqp') %}
+    {{channelName}}: {{channel.subscribe().binding('amqp').exchange.name}}
+    {% endif %}
+  {% endfor %}
+  queue:
+  {% for channelName, channel in asyncapi.channels() %}
+    {% if channel.hasPublish() and channel.publish().binding('amqp') %}
+    {{channelName}}: {{channel.publish().binding('amqp').queue.name}}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{%- if asyncapi | isProtocol('mqtt') %}
+mqtt:
+  broker:
+    host: mosquitto
+    port: 1883
+    username:
+    password:
+  topic:
+    {% for channelName, channel in asyncapi.channels() %}
+    {{channelName}}Topic: {{channelName}}
+    {% endfor %}
+{% endif %}
+{%- if asyncapi | isProtocol('kafka') %}
+spring:
+  kafka:
+    bootstrap-servers: kafka:9092
+  {%- if hasPublish %}
+    listener:
+      poll-timeout: {% if params.listenerPollTimeout %}{{params.listenerPollTimeout}}{% else %}3000{% endif%}
+      concurrency: {% if params.listenerConcurrency %}{{params.listenerConcurrency}}{% else %}3{% endif%}
+  {% endif %}
+{% endif %}
