@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@asyncapi/generator-filters": "^1.0.0",
+    "@asyncapi/generator-hooks": "^0.1.0",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
