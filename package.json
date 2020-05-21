@@ -1,6 +1,6 @@
 {
   "name": "@asyncapi/java-spring-template",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Java Spring template for AsyncAPI generator.",
   "keywords": [
     "asyncapi",
@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@asyncapi/generator-filters": "^1.0.0",
+    "@asyncapi/generator-hooks": "^0.1.0",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
