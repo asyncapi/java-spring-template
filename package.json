@@ -1,6 +1,6 @@
 {
   "name": "@asyncapi/java-spring-template",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Java Spring template for AsyncAPI generator.",
   "keywords": [
     "asyncapi",
@@ -60,5 +60,39 @@
       "@semantic-release/npm",
       "@semantic-release/github"
     ]
+  },
+  "generator": {
+    "supportedProtocols": [
+      "kafka",
+      "amqp",
+      "mqtt"
+    ],
+    "nonRenderableFiles": [
+      "**/*.jar"
+    ],
+    "parameters": {
+      "listenerPollTimeout": {
+        "description": "Only for Kafka. Timeout to use when polling the consumer.",
+        "default": 3000,
+        "required": false
+      },
+      "listenerConcurrency": {
+        "description": "Only for Kafka. Number of threads to run in the listener containers.",
+        "default": 3,
+        "required": false
+      },
+      "asyncapiFileDir": {
+        "description": "Parameter of @asyncapi/generator-hooks#createAsyncapiFile, allows to specify where original AsyncAPI file will be stored.",
+        "default": "src/main/resources/api/",
+        "required": false
+      }
+    },
+    "generator": ">=0.50.0 <2.0.0",
+    "filters": [
+      "@asyncapi/generator-filters"
+    ],
+    "hooks": {
+      "@asyncapi/generator-hooks": "createAsyncapiFile"
+    }
   }
 }
