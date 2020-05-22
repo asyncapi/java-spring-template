@@ -109,4 +109,22 @@ public class {{schemaName | camelCase | upperFirst}} {
         this.{{varName}} = {{varName}};
     }
     {% endfor %}
+
+    @Override
+    public String toString() {
+        return "class {{schemaName | camelCase | upperFirst}} {\n" +
+        {% for propName, prop in schema.properties() %}{% set varName = propName | camelCase %}{% if prop.type() === 'array' %}{% set varName = propName | camelCase + 'Array' %}{% endif %}
+                "    {{varName}}: " + toIndentedString({{varName}}) + "\n" +{% endfor %}
+                "}";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
 }
