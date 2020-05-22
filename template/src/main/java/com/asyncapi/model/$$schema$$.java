@@ -2,7 +2,12 @@ package com.asyncapi.model;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.Objects;
 
 {% if schema.description() or schema.examples() %}/**{% for line in schema.description() | splitByLines %}
  * {{ line | safe}}{% endfor %}{% if schema.examples() %}
@@ -18,6 +23,43 @@ public class {{schemaName | camelCase | upperFirst}} {
             {%- else %}
     private @Valid {{prop.items().type() | toJavaType}}[] {{propName | camelCase}}Array;
             {%- endif %}
+        {%- elif prop.enum() and (prop.type() === 'string' or prop.type() === 'integer') %}
+    public enum {{propName | camelCase | upperFirst}}Enum {
+        {% for e in prop.enum() %}
+        {%- if prop.type() === 'string'%}
+        {{e | upper | replace(' ', '_')}}(String.valueOf("{{e}}")){% if not loop.last %},{% else %};{% endif %}
+        {%- else %}
+        NUMBER_{{e}}({{e}}){% if not loop.last %},{% else %};{% endif %}
+        {%- endif %}
+        {% endfor %}
+        private {% if prop.type() === 'string'%}String{% else %}Integer{% endif %} value;
+
+        {{propName | camelCase | upperFirst}}Enum ({% if prop.type() === 'string'%}String{% else %}Integer{% endif %} v) {
+            value = v;
+        }
+
+        public {% if prop.type() === 'string'%}String{% else %}Integer{% endif %} value() {
+            return value;
+        }
+
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+        @JsonCreator
+        public static {{propName | camelCase | upperFirst}}Enum fromValue({% if prop.type() === 'string'%}String{% else %}Integer{% endif %} value) {
+            for ( {{propName | camelCase | upperFirst}}Enum b :  {{propName | camelCase | upperFirst}}Enum.values()) {
+                if (Objects.equals(b.value, value)) {
+                    return b;
+                }
+            }
+            throw new IllegalArgumentException("Unexpected value '" + value + "'");
+        }
+    }
+
+    private @Valid {{propName | camelCase | upperFirst}}Enum {{propName | camelCase}};
         {%- else %}
             {%- if prop.format() %}
     private @Valid {{prop.format() | toJavaType}} {{propName | camelCase}};
@@ -39,6 +81,8 @@ public class {{schemaName | camelCase | upperFirst}} {
             {%- else %}
                 {%- set propType = prop.items().type() | toJavaType + '[]' %}
             {%- endif %}
+        {%- elif prop.enum() and (prop.type() === 'string' or prop.type() === 'integer') %}
+            {%- set propType = (propName | camelCase | upperFirst) + 'Enum' %}
         {%- else %}
             {%- if prop.format() %}
                 {%- set propType = prop.format() | toJavaType %}
