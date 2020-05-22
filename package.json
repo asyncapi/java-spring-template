@@ -71,6 +71,11 @@
       "**/*.jar"
     ],
     "parameters": {
+      "disableEqualsHashCode": {
+        "description": "Disable generation of equals and hashCode methods for model classes.",
+        "default": "false",
+        "required": false
+      },
       "listenerPollTimeout": {
         "description": "Only for Kafka. Timeout to use when polling the consumer.",
         "default": 3000,

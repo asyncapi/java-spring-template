@@ -96,6 +96,7 @@ components:
 
 |Name|Description|Required|Default|
 |---|---|---|---|
+|disableEqualsHashCode|Disable generation of equals and hashCode methods for model classes.|No|`false`|
 |listenerPollTimeout|Only for Kafka. Timeout in ms to use when polling the consumer.|No|`3000`|
 |listenerConcurrency|Only for Kafka. Number of threads to run in the listener containers.|No|`3`|
 |asyncapiFileDir| Path where original AsyncAPI file will be stored.|No|`src/main/resources/api/`|
