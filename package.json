@@ -1,6 +1,6 @@
 {
   "name": "@asyncapi/java-spring-template",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Java Spring template for AsyncAPI generator.",
   "keywords": [
     "asyncapi",
@@ -62,7 +62,11 @@
     ]
   },
   "generator": {
-    "supportedProtocols": ["kafka", "amqp", "mqtt"],
+    "supportedProtocols": [
+      "kafka",
+      "amqp",
+      "mqtt"
+    ],
     "nonRenderableFiles": [
       "**/*.jar"
     ],
@@ -90,5 +94,5 @@
     "hooks": {
       "@asyncapi/generator-hooks": "createAsyncapiFile"
     }
-  }  
+  }
 }
