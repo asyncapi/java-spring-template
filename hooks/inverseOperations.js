@@ -1,7 +1,7 @@
 module.exports = {
     'generate:before': generator => {
-        if (generator.templateParams && generator.templateParams['generateOppositeSide'] === 'true') {
-            console.log("Opposite side generation mode is enabled");
+        if (generator.templateParams && generator.templateParams['inverseOperations'] === 'true') {
+            console.log("Operations are inverted!");
             const asyncapi = generator.asyncapi;
             for (let [key, value] of Object.entries(asyncapi.channels())) {
                 let publish = value._json.publish;
