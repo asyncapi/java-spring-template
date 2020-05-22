@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 
-module.exports = register => {
-    register('generate:after', generator => {
+module.exports = {
+    'generate:after': generator => {
         const asyncapi = generator.asyncapi;
         const messages = asyncapi.allMessages();
         const schemas = asyncapi.allSchemas();
@@ -20,5 +20,5 @@ module.exports = register => {
                     path.resolve(generator.targetDir, `src/main/java/com/asyncapi/model/${_.upperFirst(key)}.java`));
             }
         }
-    });
+    }
 };

@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = register => {
-    register('generate:after', generator => {
+module.exports = {
+    'generate:after': generator => {
         const asyncapi = generator.originalAsyncAPI;
         let extension;
 
@@ -14,5 +14,5 @@ module.exports = register => {
         }
 
         fs.writeFileSync(path.resolve(generator.targetDir, `src/main/resources/api/asyncAPI.${extension}`), asyncapi);
-    });
+    }
 };

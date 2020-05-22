@@ -1,5 +1,5 @@
-module.exports = register => {
-    register('generate:before', generator => {
+module.exports = {
+    'generate:before': generator => {
         if (generator.templateParams && generator.templateParams['generateOppositeSide'] === 'true') {
             console.log("Opposite side generation mode is enabled");
             const asyncapi = generator.asyncapi;
@@ -15,5 +15,5 @@ module.exports = register => {
                 }
             }
         }
-    });
+    }
 };

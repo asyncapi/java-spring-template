@@ -6,6 +6,7 @@
   "parameters": {
     "generateOppositeSide": {
       "description": "Generate application that will publish messages to `publish` operation of channels and read messages from `subscribe` operation of channels. Literally this flag just swap `publish` and `subscribe` operations in channels.",
+      "default": false,
       "required": false
     },
     "listenerPollTimeout": {
