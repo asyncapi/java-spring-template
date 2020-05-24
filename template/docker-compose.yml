@@ -32,7 +32,7 @@ services:
     build:
       context: .
       args:
-        JAVA_PROP: -Dspring.profiles.active=docker
+        PROFILE: docker
     networks:
       - default
     depends_on:
