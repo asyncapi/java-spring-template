@@ -1,4 +1,4 @@
-package com.asyncapi.model;
+package {{ params['userJavaPackage'] }}.model;
 
 {% if message.description() or message.examples()%}/**{% for line in message.description() | splitByLines %}
  * {{ line | safe}}{% endfor %}{% if message.examples() %}

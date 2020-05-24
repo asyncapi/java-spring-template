@@ -99,7 +99,7 @@ components:
 |listenerPollTimeout|Only for Kafka. Timeout in ms to use when polling the consumer.|No|`3000`|
 |listenerConcurrency|Only for Kafka. Number of threads to run in the listener containers.|No|`3`|
 |asyncapiFileDir| Path where original AsyncAPI file will be stored.|No|`src/main/resources/api/`|
-
+|javaPackage|The Java package of the generated classes. Alternatively you can set the specification extension `info.x-java-package`. If both extension and parameter are used, parameter has more priority.|No|`com.asyncapi`|
 #### Examples
 
 The shortest possible syntax:

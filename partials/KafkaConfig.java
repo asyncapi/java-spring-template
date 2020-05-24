@@ -1,4 +1,4 @@
-{% macro kafkaConfig(asyncapi) %}
+{% macro kafkaConfig(asyncapi, params) %}
 {%- set hasSubscribe = false -%}
 {%- set hasPublish = false -%}
 {%- for channelName, channel in asyncapi.channels() -%}
@@ -8,8 +8,7 @@
     {%- if channel.hasSubscribe() -%}
         {%- set hasSubscribe = true -%}
     {%- endif -%}
-{%- endfor -%}
-package com.asyncapi.infrastructure;
+{%- endfor %}
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -62,7 +61,7 @@ public class Config {
         props.put(JsonSerializer.TYPE_MAPPINGS,
     {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
         {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}
-        "{{schema.uid()}}:com.asyncapi.model.{{schema.uid() | camelCase | upperFirst}}{% if not loop.last %}," +{% else %}"{% endif %}
+        "{{schema.uid()}}:{{params['userJavaPackage']}}.model.{{schema.uid() | camelCase | upperFirst}}{% if not loop.last %}," +{% else %}"{% endif %}
         {% endif -%}
     {% endfor -%}
         );
@@ -96,11 +95,11 @@ public class Config {
         props.put(JsonDeserializer.TYPE_MAPPINGS,
     {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
         {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}
-        "{{schema.uid()}}:com.asyncapi.model.{{schema.uid() | camelCase | upperFirst}}{% if not loop.last %}," +{% else %}"{% endif %}
+        "{{schema.uid()}}:{{params['userJavaPackage']}}.model.{{schema.uid() | camelCase | upperFirst}}{% if not loop.last %}," +{% else %}"{% endif %}
         {% endif -%}
     {% endfor -%}
         );
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.asyncapi.model");
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "{{params['userJavaPackage']}}.model");
         return props;
     }
 {% endif %}

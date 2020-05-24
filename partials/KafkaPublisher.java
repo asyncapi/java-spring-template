@@ -1,5 +1,4 @@
-{% macro kafkaPublisher(asyncapi) %}
-package com.asyncapi.service;
+{% macro kafkaPublisher(asyncapi, params) %}
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -9,7 +8,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 {% for channelName, channel in asyncapi.channels() %}
         {%- if channel.hasSubscribe() %}
-import com.asyncapi.model.{{channel.subscribe().message().payload().uid() | camelCase | upperFirst}};
+import {{params['userJavaPackage']}}.model.{{channel.subscribe().message().payload().uid() | camelCase | upperFirst}};
     {% endif -%}
 {% endfor %}
 

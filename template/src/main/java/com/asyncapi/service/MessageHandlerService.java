@@ -1,4 +1,4 @@
-package com.asyncapi.service;
+package {{ params['userJavaPackage'] }}.service;
 {%- set hasSubscribe = false -%}
 {%- set hasPublish = false -%}
 {%- for channelName, channel in asyncapi.channels() -%}
@@ -21,7 +21,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
     {% for channelName, channel in asyncapi.channels() %}
         {%- if channel.hasPublish() %}
-import com.asyncapi.model.{{channel.publish().message().payload().uid() | camelCase | upperFirst}};
+import {{ params['userJavaPackage'] }}.model.{{channel.publish().message().payload().uid() | camelCase | upperFirst}};
         {% endif -%}
     {% endfor -%}
 {% endif %}

@@ -1,4 +1,4 @@
-package com.asyncapi.model;
+package {{ params['userJavaPackage'] }}.model;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
