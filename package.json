@@ -1,6 +1,6 @@
 {
   "name": "@asyncapi/java-spring-template",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "Java Spring template for AsyncAPI generator.",
   "keywords": [
     "asyncapi",
@@ -71,6 +71,11 @@
       "**/*.jar"
     ],
     "parameters": {
+      "inverseOperations": {
+        "description": "Generate application that will publish messages to `publish` operation of channels and read messages from `subscribe` operation of channels. Literally this flag just swap `publish` and `subscribe` operations in channels.",
+        "default": false,
+        "required": false
+      },
       "listenerPollTimeout": {
         "description": "Only for Kafka. Timeout to use when polling the consumer.",
         "default": 3000,
