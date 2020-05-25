@@ -42,7 +42,7 @@ public class MessageHandlerService {
                        @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Integer key,
                        @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
                        @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {
-        LOGGER.info("Key: " + key + ", Payload: " + payload + ", Timestamp: " + timestamp + ", Partition: " + partition);
+        LOGGER.info("Key: " + key + ", Payload: " + payload.toString() + ", Timestamp: " + timestamp + ", Partition: " + partition);
     }
         {%- endif %}
     {% endfor %}
@@ -55,7 +55,7 @@ public class MessageHandlerService {
      */{% endif %}
     public void handle{{channelName | upperFirst}}(Message<?> message) {
         LOGGER.info("handler {{channelName}}");
-        LOGGER.info(String.valueOf(message.getPayload()));
+        LOGGER.info(String.valueOf(message.getPayload().toString()));
     }
       {% endif %}
     {% endfor %}
