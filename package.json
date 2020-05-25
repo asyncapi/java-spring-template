@@ -30,6 +30,7 @@
   "dependencies": {
     "@asyncapi/generator-filters": "^1.0.0",
     "@asyncapi/generator-hooks": "^0.1.0",
+    "fs-extra": "^9.0.0",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
@@ -89,6 +90,11 @@
       "asyncapiFileDir": {
         "description": "Parameter of @asyncapi/generator-hooks#createAsyncapiFile, allows to specify where original AsyncAPI file will be stored.",
         "default": "src/main/resources/api/",
+        "required": false
+      },
+      "javaPackage": {
+        "description": "The Java package of the generated classes. Alternatively you can set the specification extension info.x-java-package",
+        "default": "com.asyncapi",
         "required": false
       }
     },
