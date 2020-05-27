@@ -68,10 +68,28 @@
       "amqp",
       "mqtt"
     ],
+    "conditionalFiles": {
+      "src/test/java/com/asyncapi/SimpleKafkaTest.java": {
+        "subject": "server.protocol",
+        "validation": {
+          "const": "kafka"
+        }
+      },
+      "src/test/java/com/asyncapi/TestcontainerKafkaTest.java": {
+        "subject": "server.protocol",
+        "validation": {
+          "const": "kafka"
+        }
+      }
+    },
     "nonRenderableFiles": [
       "**/*.jar"
     ],
     "parameters": {
+      "server": {
+        "description": "The server you want to use in the code.",
+        "required": true
+      },
       "inverseOperations": {
         "description": "Generate application that will publish messages to `publish` operation of channels and read messages from `subscribe` operation of channels. Literally this flag just swap `publish` and `subscribe` operations in channels.",
         "default": false,
