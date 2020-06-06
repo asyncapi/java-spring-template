@@ -23,11 +23,20 @@ import org.springframework.util.StringUtils;
 @Configuration
 public class Config {
 
-    @Value("${mqtt.broker.host}")
-    private String host;
+    @Value("${mqtt.broker.address}")
+    private String address;
 
-    @Value("${mqtt.broker.port}")
-    private int port;
+    @Value("${mqtt.broker.timeout.connection}")
+    private int connectionTimeout;
+
+    @Value("${mqtt.broker.timeout.disconnection}")
+    private long disconnectionTimeout;
+
+    @Value("${mqtt.broker.timeout.completion}")
+    private long completionTimeout;
+
+    @Value("${mqtt.broker.clientId}")
+    private String clientId;
 
     @Value("${mqtt.broker.username}")
     private String username;
@@ -35,64 +44,93 @@ public class Config {
     @Value("${mqtt.broker.password}")
     private String password;
 
-    {% for channelName, channel in asyncapi.channels() %}
-    @Value("${mqtt.topic.{{-channelName-}}Topic}")
-    private String {{channelName}}Topic;
+    {% for serverName, server in asyncapi.servers() %}{% if server.protocol() == 'mqtt' and server.binding('mqtt') %}
+    {% if server.binding('mqtt').cleanSession | isDefined %}
+    @Value("${mqtt.broker.cleanSession}")
+    private boolean cleanSession;
+    {% endif %}{% if server.binding('mqtt').keepAlive | isDefined %}
+    @Value("${mqtt.broker.timeout.keepAlive}")
+    private int keepAliveInterval;
+    {% endif %}{% if server.binding('mqtt').lastWill %}
+    @Value("${mqtt.broker.lastWill.topic}")
+    private String lastWillTopic;
 
-    {% endfor %}
+    @Value("${mqtt.broker.lastWill.message}")
+    private String lastWillMessage;
+
+    @Value("${mqtt.broker.lastWill.qos}")
+    private int lastWillQos;
+
+    @Value("${mqtt.broker.lastWill.retain}")
+    private boolean lastWillRetain;
+    {% endif %}{% endif %}{% endfor %}
+
+    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
+    @Value("${mqtt.topic.{{-channel.publish().id() | camelCase-}}}")
+    private String {{channel.publish().id() | camelCase-}}Topic;
+    {% elif channel.hasSubscribe() %}
+    @Value("${mqtt.topic.{{-channel.subscribe().id() | camelCase-}}}")
+    private String {{channel.subscribe().id() | camelCase-}}Topic;
+    {% endif %}{% endfor %}
 
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setServerURIs(new String[] { host + ":" + port });
+        {% for serverName, server in asyncapi.servers() %}
+        {% if server.protocol() == 'mqtt' and server.binding('mqtt').lastWill %}options.setWill(lastWillTopic, lastWillMessage.getBytes(), lastWillQos, lastWillRetain);{% endif %}
+        {% if server.protocol() == 'mqtt' and server.binding('mqtt').cleanSession | isDefined %}options.setCleanSession(cleanSession);{% endif %}
+        {% if server.protocol() == 'mqtt' and server.binding('mqtt').keepAlive | isDefined %}options.setKeepAliveInterval(keepAliveInterval);{% endif %}{% endfor %}
+        options.setServerURIs(new String[] { address });
         if (!StringUtils.isEmpty(username)) {
             options.setUserName(username);
         }
         if (!StringUtils.isEmpty(password)) {
             options.setPassword(password.toCharArray());
         }
+        options.setConnectionTimeout(connectionTimeout);
         factory.setConnectionOptions(options);
         return factory;
     }
 
-    // consumer
-
     @Autowired
     MessageHandlerService messageHandlerService;
-    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
 
+    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %} // this is what i should listen
     @Bean
-    public IntegrationFlow {{channelName | camelCase}}Flow() {
-        return IntegrationFlows.from({{channelName | camelCase}}Inbound())
-                .handle(messageHandlerService::handle{{channelName | upperFirst}})
+    public IntegrationFlow {{channel.publish().id() | camelCase}}Flow() {
+        return IntegrationFlows.from({{channel.publish().id() | camelCase}}Inbound())
+                .handle(messageHandlerService::handle{{channel.publish().id() | camelCase | upperFirst}})
                 .get();
     }
 
     @Bean
-    public MessageProducerSupport {{channelName | camelCase}}Inbound() {
-        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter("{{channelName | camelCase}}Subscriber",
-                mqttClientFactory(), {{channelName}}Topic);
-        adapter.setCompletionTimeout(5000);
+    public MessageProducerSupport {{channel.publish().id() | camelCase}}Inbound() {
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(clientId,
+                mqttClientFactory(), {{channel.publish().id() | camelCase}}Topic);
+        adapter.setCompletionTimeout(connectionTimeout);
+        adapter.setDisconnectCompletionTimeout(disconnectionTimeout);
         adapter.setConverter(new DefaultPahoMessageConverter());
         return adapter;
     }
     {% endif %}{% endfor %}
 
-    // publisher
-    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
-
+    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %} // this is where i could publish
     @Bean
-    public MessageChannel {{channelName | camelCase}}OutboundChannel() {
+    public MessageChannel {{channel.subscribe().id() | camelCase}}OutboundChannel() {
         return new DirectChannel();
     }
 
     @Bean
-    @ServiceActivator(inputChannel = "{{channelName | camelCase}}OutboundChannel")
-    public MessageHandler {{channelName | camelCase}}Outbound() {
-        MqttPahoMessageHandler pahoMessageHandler = new MqttPahoMessageHandler("{{channelName | camelCase}}Publisher", mqttClientFactory());
+    @ServiceActivator(inputChannel = "{{channel.subscribe().id() | camelCase}}OutboundChannel")
+    public MessageHandler {{channel.subscribe().id() | camelCase}}Outbound() {
+        MqttPahoMessageHandler pahoMessageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
         pahoMessageHandler.setAsync(true);
-        pahoMessageHandler.setDefaultTopic({{channelName}}Topic);
+        pahoMessageHandler.setCompletionTimeout(completionTimeout);
+        pahoMessageHandler.setDisconnectCompletionTimeout(disconnectionTimeout);
+        pahoMessageHandler.setDefaultTopic({{channel.subscribe().id() | camelCase}}Topic);
+        {% if channel.subscribe().binding('mqtt') and channel.subscribe().binding('mqtt').retain | isDefined %}pahoMessageHandler.setDefaultRetained({{channel.subscribe().binding('mqtt').retain}});{% endif %}
+        {% if channel.subscribe().binding('mqtt') and channel.subscribe().binding('mqtt').qos | isDefined %}pahoMessageHandler.setDefaultQos({{channel.subscribe().binding('mqtt').qos}});{% endif %}
         return pahoMessageHandler;
     }
     {% endif %}{% endfor %}
