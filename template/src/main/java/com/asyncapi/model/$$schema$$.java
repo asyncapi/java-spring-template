@@ -1,4 +1,4 @@
-package com.asyncapi.model;
+package {{ params['userJavaPackage'] }}.model;
 
 import javax.validation.constraints.*;
 import javax.validation.Valid;
@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 {% if schema.description() or schema.examples() %}/**{% for line in schema.description() | splitByLines %}
@@ -109,6 +110,23 @@ public class {{schemaName | camelCase | upperFirst}} {
         this.{{varName}} = {{varName}};
     }
     {% endfor %}
+    {% if params.disableEqualsHashCode === 'false' %}@Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        {{schemaName | camelCase | upperFirst}} {{schemaName | camelCase}} = ({{schemaName | camelCase | upperFirst}}) o;
+        return {% for propName, prop in schema.properties() %}{% set varName = propName | camelCase %}{% if prop.type() === 'array' %}{% set varName = propName | camelCase + 'Array' %}{% endif %}
+            {% if prop.type() === 'array' %}Arrays{% else %}Objects{% endif %}.equals(this.{{varName}}, {{schemaName | camelCase}}.{{varName}}){% if not loop.last %} &&{% else %};{% endif %}{% endfor %}
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash({% for propName, prop in schema.properties() %}{{propName | camelCase}}{% if prop.type() === 'array' %}Array{% endif %}{% if not loop.last %}, {% endif %}{% endfor %});
+    }{% endif %}
 
     @Override
     public String toString() {

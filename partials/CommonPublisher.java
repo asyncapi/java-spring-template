@@ -1,5 +1,4 @@
 {% macro commonPublisher(asyncapi) %}
-package com.asyncapi.service;
 
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;

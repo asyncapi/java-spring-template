@@ -1,7 +1,6 @@
-{% macro mqttConfig(asyncapi) %}
-package com.asyncapi.infrastructure;
+{% macro mqttConfig(asyncapi, params) %}
 
-import com.asyncapi.service.MessageHandlerService;
+import {{params['userJavaPackage']}}.service.MessageHandlerService;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

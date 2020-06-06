@@ -1,4 +1,4 @@
-package com.asyncapi;
+package {{ params['userJavaPackage'] }};
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

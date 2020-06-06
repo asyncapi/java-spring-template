@@ -1,7 +1,6 @@
-{% macro amqpConfig(asyncapi) %}
-package com.asyncapi.infrastructure;
+{% macro amqpConfig(asyncapi, params) %}
 
-import com.asyncapi.service.MessageHandlerService;
+import {{params['userJavaPackage']}}.service.MessageHandlerService;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

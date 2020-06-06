@@ -1,6 +1,6 @@
 {
   "name": "@asyncapi/java-spring-template",
-  "version": "0.15.0",
+  "version": "0.18.0",
   "description": "Java Spring template for AsyncAPI generator.",
   "keywords": [
     "asyncapi",
@@ -30,6 +30,7 @@
   "dependencies": {
     "@asyncapi/generator-filters": "^1.0.0",
     "@asyncapi/generator-hooks": "^0.1.0",
+    "fs-extra": "^9.0.0",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
@@ -76,6 +77,11 @@
         "default": false,
         "required": false
       },
+      "disableEqualsHashCode": {
+        "description": "Disable generation of equals and hashCode methods for model classes.",
+        "default": "false",
+        "required": false
+      },
       "listenerPollTimeout": {
         "description": "Only for Kafka. Timeout to use when polling the consumer.",
         "default": 3000,
@@ -89,6 +95,11 @@
       "asyncapiFileDir": {
         "description": "Parameter of @asyncapi/generator-hooks#createAsyncapiFile, allows to specify where original AsyncAPI file will be stored.",
         "default": "src/main/resources/api/",
+        "required": false
+      },
+      "javaPackage": {
+        "description": "The Java package of the generated classes. Alternatively you can set the specification extension info.x-java-package",
+        "default": "com.asyncapi",
         "required": false
       }
     },

@@ -8,15 +8,15 @@
         {%- set hasSubscribe = true -%}
     {%- endif -%}
 {%- endfor -%}
-package com.asyncapi;
+package {{ params['userJavaPackage'] }};
 
 {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-import com.asyncapi.model.{{channel.subscribe().message().payload().uid() | camelCase | upperFirst}};
+import {{ params['userJavaPackage'] }}.model.{{channel.subscribe().message().payload().uid() | camelCase | upperFirst}};
 {% endif %} {% endfor %}
 {% for channelName, channel in asyncapi.channels() %} {% if channel.hasPublish() %}
-import com.asyncapi.model.{{channel.publish().message().payload().uid() | camelCase | upperFirst}};
+import {{ params['userJavaPackage'] }}.model.{{channel.publish().message().payload().uid() | camelCase | upperFirst}};
 {% endif %} {% endfor %}
-{% if hasSubscribe %}import com.asyncapi.service.PublisherService;{% endif %}
+{% if hasSubscribe %}import {{ params['userJavaPackage'] }}.service.PublisherService;{% endif %}
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;

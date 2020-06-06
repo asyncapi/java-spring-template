@@ -4,8 +4,8 @@ plugins {
 	id 'java'
 }
 
-group = 'com.asyncapi'
-version = '0.0.1-SNAPSHOT'
+group = "{{ params['userJavaPackage'] }}"
+version = "0.0.1-SNAPSHOT"
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
