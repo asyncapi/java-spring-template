@@ -96,7 +96,7 @@ public class Config {
     @Autowired
     MessageHandlerService messageHandlerService;
 
-    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %} // this is what i should listen
+    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
     @Bean
     public IntegrationFlow {{channel.publish().id() | camelCase}}Flow() {
         return IntegrationFlows.from({{channel.publish().id() | camelCase}}Inbound())
@@ -115,7 +115,7 @@ public class Config {
     }
     {% endif %}{% endfor %}
 
-    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %} // this is where i could publish
+    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
     @Bean
     public MessageChannel {{channel.subscribe().id() | camelCase}}OutboundChannel() {
         return new DirectChannel();
