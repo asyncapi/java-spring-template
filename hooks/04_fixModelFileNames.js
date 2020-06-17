@@ -15,7 +15,7 @@ module.exports = {
             }
         }
         for (let [key, value] of schemas) {
-            if (_.upperFirst(key) !== key) {
+            if (_.upperFirst(key) !== key && value.type() === 'object') {
                 fs.renameSync(path.resolve(generator.targetDir, `src/main/java/com/asyncapi/model/${key}.java`),
                     path.resolve(generator.targetDir, `src/main/java/com/asyncapi/model/${_.upperFirst(key)}.java`));
             }
