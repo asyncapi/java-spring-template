@@ -56,9 +56,9 @@ import static org.junit.Assert.assertNotEquals;
 public class TestcontainerKafkaTest {
 
     {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-    private static final String {{channelName | upper}}_TOPIC = "{{channelName}}";
+    private static final String {{channel.subscribe().id() | upper-}}_TOPIC = "{{channelName}}";
     {% endif %} {% if channel.hasPublish() %}
-    private static final String {{channelName | upper}}_TOPIC = "{{channelName}}";
+    private static final String {{channel.publish().id() | upper-}}_TOPIC = "{{channelName}}";
     {% endif %} {% endfor %}
     @ClassRule
     public static KafkaContainer kafka = new KafkaContainer();
@@ -72,27 +72,27 @@ public class TestcontainerKafkaTest {
     }
     {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
     @Test
-    public void {{channelName}}ProducerTestcontainers() {
+    public void {{channel.subscribe().id() | camelCase}}ProducerTestcontainers() {
         {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}();
         Integer key = 1;
         Integer wrongKey = key + 1;
 
-        consumeMessages({{channelName | upper}}_TOPIC);
+        consumeMessages({{channel.subscribe().id() | upper-}}_TOPIC);
 
-        publisherService.notifyHouseChanges(key, payload);
+        publisherService.{{channel.subscribe().id() | camelCase}}(key, payload);
 
-        ConsumerRecord<Integer, Object> consumedMessage = consumeMessage({{channelName | upper}}_TOPIC);
+        ConsumerRecord<Integer, Object> consumedMessage = consumeMessage({{channel.subscribe().id() |  upper-}}_TOPIC);
 
         assertEquals("Key is wrong", key, consumedMessage.key());
         assertNotEquals("Key is wrong", wrongKey, consumedMessage.key());
     }
     {% endif %} {% if channel.hasPublish() %}
     @Test
-    public void {{channelName}}ConsumerTestcontainers() throws Exception {
+    public void {{channel.publish().id() | camelCase}}ConsumerTestcontainers() throws Exception {
         Integer key = 1;
         {{channel.publish().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.publish().message().payload().uid() | camelCase | upperFirst}}();
 
-        ProducerRecord<Integer, Object> producerRecord = new ProducerRecord<>({{channelName | upper}}_TOPIC, key, payload);
+        ProducerRecord<Integer, Object> producerRecord = new ProducerRecord<>({{channel.publish().id() |  upper-}}_TOPIC, key, payload);
 
         sendMessage(producerRecord);
 

@@ -55,12 +55,12 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 @SpringBootTest
 public class SimpleKafkaTest {
     {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-    private static final String {{channelName | upper}}_TOPIC = "{{channelName}}";
+    private static final String {{channel.subscribe().id() | upper-}}_TOPIC = "{{channelName}}";
     {% endif %} {% if channel.hasPublish() %}
-    private static final String {{channelName | upper}}_TOPIC = "{{channelName}}";
+    private static final String {{channel.publish().id() | upper-}}_TOPIC = "{{channelName}}";
     {% endif %} {% endfor %}
     @ClassRule
-    public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, false, 1{% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}, {{channelName | upper}}_TOPIC{% endif %}{% endfor %});
+    public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, false, 1{% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}, {{channel.subscribe().id() | upper-}}_TOPIC{% endif %}{% endfor %});
 
     private static EmbeddedKafkaBroker embeddedKafkaBroker = embeddedKafka.getEmbeddedKafka();
 
@@ -84,7 +84,7 @@ public class SimpleKafkaTest {
         consumerConfigs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
         consumer{{ channelName | camelCase | upperFirst}} = new DefaultKafkaConsumerFactory<>(consumerConfigs, new IntegerDeserializer(), new JsonDeserializer<>({{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}.class)).createConsumer();
-        consumer{{ channelName | camelCase | upperFirst}}.subscribe(Collections.singleton({{channelName | upper}}_TOPIC));
+        consumer{{ channelName | camelCase | upperFirst}}.subscribe(Collections.singleton({{channel.subscribe().id() | upper-}}_TOPIC));
         consumer{{ channelName | camelCase | upperFirst}}.poll(Duration.ZERO);
         {% endif %} {% endfor %} {% endif %} {% if hasPublish %}
         Map<String, Object> producerConfigs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafkaBroker));
@@ -93,25 +93,25 @@ public class SimpleKafkaTest {
     }
     {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
     @Test
-    public void {{channelName}}ProducerTest() {
+    public void {{channel.subscribe().id() | camelCase}}ProducerTest() {
         {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}();
         Integer key = 1;
 
         KafkaTestUtils.getRecords(consumer{{ channelName | camelCase | upperFirst}});
 
-        publisherService.notifyHouseChanges(key, payload);
+        publisherService.{{channel.subscribe().id() | camelCase}}(key, payload);
 
-        ConsumerRecord<Integer, {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}> singleRecord = KafkaTestUtils.getSingleRecord(consumer{{ channelName | camelCase | upperFirst}}, {{channelName | upper}}_TOPIC);
+        ConsumerRecord<Integer, {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}> singleRecord = KafkaTestUtils.getSingleRecord(consumer{{ channelName | camelCase | upperFirst}}, {{channel.subscribe().id() | upper-}}_TOPIC);
 
         assertEquals("Key is wrong", key, singleRecord.key());
     }
         {% endif %} {% if channel.hasPublish() %}
     @Test
-    public void {{channelName}}ConsumerTest() throws InterruptedException {
+    public void {{channel.publish().id() | camelCase}}ConsumerTest() throws InterruptedException {
         Integer key = 1;
         {{channel.publish().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.publish().message().payload().uid() | camelCase | upperFirst}}();
 
-        ProducerRecord<Integer, Object> producerRecord = new ProducerRecord<>({{channelName | upper}}_TOPIC, key, payload);
+        ProducerRecord<Integer, Object> producerRecord = new ProducerRecord<>({{channel.publish().id() | upper-}}_TOPIC, key, payload);
         producer.send(producerRecord);
         producer.flush();
         Thread.sleep(1_000);
