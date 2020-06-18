@@ -25,10 +25,21 @@ dependencies {
 	testImplementation('junit:junit:4.12')
 	testCompile('org.testcontainers:kafka:1.14.1')
 	{% endif -%}
-    implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
+	{%- if asyncapi | isProtocol('pulsar') %}
+	implementation('org.apache.pulsar:pulsar-client:2.5.2')
+	{% endif -%}
+	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
 	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
-    implementation('javax.validation:validation-api')
+	implementation('javax.validation:validation-api')
 	implementation('org.springframework.boot:spring-boot-starter-integration')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.testcontainers:testcontainers:1.14.1')
+}
+
+bootJar {
+  enabled = false
+}
+
+jar {
+  enabled = true
 }
