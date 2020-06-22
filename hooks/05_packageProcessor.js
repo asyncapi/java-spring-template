@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const tmp = require('tmp');
 
 module.exports = {
     /**
@@ -14,10 +15,15 @@ module.exports = {
         javaPackage = javaPackage.replace(/\./g, '/');
 
         if (javaPackage !== 'com/asyncapi') {
-            fs.moveSync(sourcePath + 'com/asyncapi', sourcePath + javaPackage);
-            fs.moveSync(testPath + 'com/asyncapi', testPath + javaPackage);
+            const tmpSrc = tmp.dirSync();
+            const tmpTest = tmp.dirSync();
+            fs.copySync(sourcePath + 'com/asyncapi', tmpSrc.name);
+            fs.copySync(testPath + 'com/asyncapi', tmpTest.name);
             fs.removeSync(sourcePath + 'com');
             fs.removeSync(testPath + 'com');
+            fs.copySync(tmpSrc.name, sourcePath + javaPackage);
+            fs.copySync(tmpTest.name, testPath + javaPackage);
+            tmp.setGracefulCleanup();
         }
     },
 
