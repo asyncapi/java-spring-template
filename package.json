@@ -93,6 +93,21 @@
         "default": 3,
         "required": false
       },
+      "connectionTimeout": {
+        "description": "Only for MQTT. This value, measured in seconds, defines the maximum time interval the client will wait for the network connection to the MQTT server to be established. The default timeout is 30 seconds. A value of 0 disables timeout processing meaning the client will wait until the network connection is made successfully or fails.",
+        "default": 30,
+        "required": false
+      },
+      "disconnectionTimeout": {
+        "description": "Only for MQTT. The completion timeout in milliseconds when disconnecting. The default disconnect completion timeout is 5000 milliseconds.",
+        "default": 5000,
+        "required": false
+      },
+      "completionTimeout": {
+        "description": "Only for MQTT. The completion timeout in milliseconds for operations. The default completion timeout is 30000 milliseconds.",
+        "default": 30000,
+        "required": false
+      },
       "asyncapiFileDir": {
         "description": "Parameter of @asyncapi/generator-hooks#createAsyncapiFile, allows to specify where original AsyncAPI file will be stored.",
         "default": "src/main/resources/api/",

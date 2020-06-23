@@ -100,12 +100,12 @@ public class Config {
     {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
 
     @Bean
-    public MessageChannel {{channelName | camelCase}}OutboundChannel() {
+    public MessageChannel {{channel.subscribe().id() | camelCase}}OutboundChannel() {
         return new DirectChannel();
     }
 
     @Bean
-    @ServiceActivator(inputChannel = "{{channelName | camelCase}}OutboundChannel")
+    @ServiceActivator(inputChannel = "{{channel.subscribe().id() | camelCase}}OutboundChannel")
     public AmqpOutboundEndpoint {{channelName | camelCase}}Outbound(AmqpTemplate amqpTemplate) {
         AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
         outbound.setExchangeName({{channelName}}Exchange);

@@ -8,8 +8,14 @@ _Use your AsyncAPI definition to generate java code to subscribe and publish mes
 ## Usage
 
 ### AsyncAPI definitions
-In order for the generator to know what names to use for some methods it's necessary to make use of [AsyncAPI specification bindings](https://www.asyncapi.com/docs/specifications/2.0.0/#operationBindingsObject). 
+To have correctly generated code, your AsyncAPI file MUST define `operationId` for every operation.
+
+In order for the generator to know what names to use for some parameters it's necessary to make use of [AsyncAPI specification bindings](https://www.asyncapi.com/docs/specifications/2.0.0/#operationBindingsObject). 
 here is an example of how to use it:
+
+<details><summary>Kafka</summary>
+<p>
+
 ```yml
 channels:
   event.lighting.measured:
@@ -38,14 +44,14 @@ info:
 
 servers:
   production:
-    url: api.streetlights.smartylighting.com:{port}
-    protocol: mqtt
+    url: kafka.bootstrap:{port}
+    protocol: kafka
     variables:
       port:
-        default: '1883'
+        default: '9092'
         enum:
-          - '1883'
-          - '8883'
+          - '9092'
+          - '9093'
 
 channels:
   event.lighting.measured:
@@ -53,9 +59,11 @@ channels:
       bindings:
         kafka:
           groupId: my-group
+      operationId: readLightMeasurement
       message:
         $ref: '#/components/messages/lightMeasured'
     subscribe:
+      operationId: updateLightMeasurement
       message:
         $ref: '#/components/messages/lightMeasured'
 components:
@@ -79,6 +87,127 @@ components:
       format: date-time
       description: Date and time when the message was sent.
 ```
+
+</p>
+</details>
+
+<details><summary>MQTT</summary>
+<p>
+
+```yml
+asyncapi: '2.0.0'
+info:
+  title: Streetlights API
+  version: '1.0.0'
+  description: |
+    The Smartylighting Streetlights API allows you to remotely manage the city lights.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  production:
+    url: mqtt://localhost:{port}
+    protocol: mqtt
+    description: dummy MQTT broker
+    bindings:
+      mqtt:
+        clientId: guest
+        cleanSession: false
+        keepAlive: 0
+        lastWill:
+          topic: /will
+          qos: 0
+          message: Guest gone offline.
+          retain: false
+    variables:
+      port:
+        enum:
+          - '8883'
+          - '8884'
+        default: '8883'
+    
+          
+defaultContentType: application/json
+
+channels:
+  smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured:
+    description: The topic on which measured values may be produced and consumed.
+    parameters:
+      streetlightId:
+        $ref: '#/components/parameters/streetlightId'
+    publish:
+      summary: Inform about environmental lighting conditions of a particular streetlight.
+      operationId: receiveLightMeasurement
+      message:
+        $ref: '#/components/messages/lightMeasured'
+
+  smartylighting/streetlights/1/0/action/{streetlightId}/turn/on:
+    parameters:
+      streetlightId:
+        $ref: '#/components/parameters/streetlightId'
+    subscribe:
+      bindings:
+        mqtt:
+          qos: 0
+          retain: false
+      operationId: turnOn
+      message:
+        $ref: '#/components/messages/turnOnOff'
+
+components:
+  messages:
+    lightMeasured:
+      name: lightMeasured
+      title: Light measured
+      summary: Inform about environmental lighting conditions of a particular streetlight.
+      payload:
+        $ref: "#/components/schemas/lightMeasuredPayload"
+    turnOnOff:
+      name: turnOnOff
+      title: Turn on/off
+      summary: Command a particular streetlight to turn the lights on or off.
+      payload:
+        $ref: "#/components/schemas/turnOnOffPayload"
+
+  schemas:
+    lightMeasuredPayload:
+      type: object
+      properties:
+        lumens:
+          type: integer
+          minimum: 0
+          description: Light intensity measured in lumens.
+          x-pi: false
+        sentAt:
+          $ref: "#/components/schemas/sentAt"
+    turnOnOffPayload:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+            - on
+            - off
+          description: Whether to turn on or off the light.
+          x-pi: false
+        sentAt:
+          $ref: "#/components/schemas/sentAt"
+    sentAt:
+      type: string
+      format: date-time
+      description: Date and time when the message was sent.
+
+  parameters:
+    streetlightId:
+      description: The ID of the streetlight.
+      schema:
+        type: string
+```
+
+</p>
+</details>
+
 ### From the command-line interface (CLI)
 
 ```bash
@@ -98,10 +227,13 @@ components:
 |---|---|---|---|
 |disableEqualsHashCode|Disable generation of equals and hashCode methods for model classes.|No|`false`|
 |inverseOperations|Generate an application that will publish messages to `publish` operation of channels and read messages from `subscribe` operation of channels. Literally this flag will simply swap `publish` and `subscribe` operations in the channels. <br> This flag will be useful when you want to generate a code of mock for your main application. Be aware, generation could be incomplete and manual changes will be required e.g. if bindings are defined only for case of main application.|No|`false`|
+|javaPackage|The Java package of the generated classes. Alternatively you can set the specification extension `info.x-java-package`. If both extension and parameter are used, parameter has more priority.|No|`com.asyncapi`|
 |listenerPollTimeout|Only for Kafka. Timeout in ms to use when polling the consumer.|No|`3000`|
 |listenerConcurrency|Only for Kafka. Number of threads to run in the listener containers.|No|`3`|
+|connectionTimeout|Only for MQTT. This value, measured in seconds, defines the maximum time interval the client will wait for the network connection to the MQTT server to be established. The default timeout is 30 seconds. A value of 0 disables timeout processing meaning the client will wait until the network connection is made successfully or fails.|No|`30`|
+|disconnectionTimeout|Only for MQTT. The completion timeout in milliseconds when disconnecting. The default disconnect completion timeout is 5000 milliseconds.|No|`5000`|
+|completionTimeout|Only for MQTT. The completion timeout in milliseconds for operations. The default completion timeout is 30000 milliseconds.|No|`30000`|
 |asyncapiFileDir| Path where original AsyncAPI file will be stored.|No|`src/main/resources/api/`|
-|javaPackage|The Java package of the generated classes. Alternatively you can set the specification extension `info.x-java-package`. If both extension and parameter are used, parameter has more priority.|No|`com.asyncapi`|
 #### Examples
 
 The shortest possible syntax:
@@ -137,8 +269,8 @@ docker-compose -f src/main/docker/rabbitmq.yml up -d
 See the list of features that are still missing in the component:
 
 - [ ] support of Kafka is done based on clear "spring-kafka" library without integration like for mqtt or amqp
-- [ ] generated code for protocols mqtt and amqp could be out of date. Please have a look to [application.yaml](template/src/main/resources/application.yml) and [AmqpConfig.java](partials/AmqpConfig.java), [MqttConfig.java](partials/MqttConfig.java) 
-- [ ] tests are not provided
+- [ ] generated code for protocol `amqp` could be out of date. Please have a look to [application.yaml](template/src/main/resources/application.yml) and [AmqpConfig.java](partials/AmqpConfig.java) 
+- [ ] tests for protocol `amqp` are not provided
 - [x] add annotation to the [model generation](template/src/main/java/com/asyncapi/model). Consider "@Valid", "@JsonProperty", "@Size", "@NotNull" e.t.c.
 - [ ] [`parameters`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#parametersObject) for topics are not supported
 - [ ] [`server variables`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#serverVariableObject) are not entirely supported 

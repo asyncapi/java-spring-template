@@ -53,7 +53,7 @@ public class MessageHandlerService {
      * {{line | safe}}{% endfor %}{% for line in channel.publish().description() | splitByLines %}
      * {{line | safe}}{% endfor %}
      */{% endif %}
-    public void handle{{channelName | upperFirst}}(Message<?> message) {
+    public void handle{{channel.publish().id() | camelCase | upperFirst}}(Message<?> message) {
         LOGGER.info("handler {{channelName}}");
         LOGGER.info(String.valueOf(message.getPayload().toString()));
     }

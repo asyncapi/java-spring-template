@@ -12,7 +12,7 @@ public interface PublisherService {
      * {{line | safe}}{% endfor %}{% for line in channel.subscribe().description() | splitByLines %}
      * {{line | safe}}{% endfor %}
      */{% endif %}
-    @Gateway(requestChannel = "{{channelName | camelCase}}OutboundChannel")
+    @Gateway(requestChannel = "{{channel.subscribe().id() | camelCase}}OutboundChannel")
     void {{channel.subscribe().id() | camelCase}}(String data);
         {% endif %}
     {% endfor %}
