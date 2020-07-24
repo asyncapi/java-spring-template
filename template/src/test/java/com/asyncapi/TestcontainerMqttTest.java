@@ -11,10 +11,10 @@
 package {{ params['userJavaPackage'] }};
 
 {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-import {{ params['userJavaPackage'] }}.model.{{channel.subscribe().message().payload().uid() | camelCase | upperFirst}};
+import {{ params['userJavaPackage'] }}.model.{{payloadClass}};
 {% endif %} {% endfor %}
 {% for channelName, channel in asyncapi.channels() %} {% if channel.hasPublish() %}
-import {{ params['userJavaPackage'] }}.model.{{channel.publish().message().payload().uid() | camelCase | upperFirst}};
+import {{ params['userJavaPackage'] }}.model.{{payloadClass}};
 {% endif %} {% endfor %}
 {% if hasSubscribe %}import {{ params['userJavaPackage'] }}.service.PublisherService;{% endif %}
 import org.eclipse.paho.client.mqttv3.*;
@@ -81,7 +81,7 @@ public class TestcontainerMqttTest {
     {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
     @Test
     public void {{channel.subscribe().id() | camelCase}}ProducerTestcontainers() throws MqttException {
-        {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}();
+        {{payloadClass}} payload = new {{payloadClass}}();
 
         List<MqttMessage> receivedMessages = new ArrayList<>();
         publisher.subscribe({{channel.subscribe().id() | camelCase-}}Topic, (topic, message) -> {
@@ -97,7 +97,7 @@ public class TestcontainerMqttTest {
     {% endif %} {% if channel.hasPublish() %}
     @Test
     public void {{channel.publish().id() | camelCase}}ConsumerTestcontainers() throws Exception {
-        {{channel.publish().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.publish().message().payload().uid() | camelCase | upperFirst}}();
+        {{payloadClass}} payload = new {{payloadClass}}();
 
         sendMessage({{channel.publish().id() | camelCase-}}Topic, payload.toString().getBytes());
 

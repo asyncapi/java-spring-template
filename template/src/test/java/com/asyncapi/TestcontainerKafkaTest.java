@@ -11,10 +11,10 @@
 package {{ params['userJavaPackage'] }};
 
 {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-import {{ params['userJavaPackage'] }}.model.{{channel.subscribe().message().payload().uid() | camelCase | upperFirst}};
+import {{ params['userJavaPackage'] }}.model.{{payloadClass}};
 {% endif %} {% endfor %}
 {% for channelName, channel in asyncapi.channels() %} {% if channel.hasPublish() %}
-import {{ params['userJavaPackage'] }}.model.{{channel.publish().message().payload().uid() | camelCase | upperFirst}};
+import {{ params['userJavaPackage'] }}.model.{{payloadClass}};
 {% endif %} {% endfor %}
 {% if hasSubscribe %}import {{ params['userJavaPackage'] }}.service.PublisherService;{% endif %}
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -73,7 +73,7 @@ public class TestcontainerKafkaTest {
     {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
     @Test
     public void {{channel.subscribe().id() | camelCase}}ProducerTestcontainers() {
-        {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}();
+        {{payloadClass}} payload = new {{payloadClass}}();
         Integer key = 1;
         Integer wrongKey = key + 1;
 
@@ -90,7 +90,7 @@ public class TestcontainerKafkaTest {
     @Test
     public void {{channel.publish().id() | camelCase}}ConsumerTestcontainers() throws Exception {
         Integer key = 1;
-        {{channel.publish().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.publish().message().payload().uid() | camelCase | upperFirst}}();
+        {{payloadClass}} payload = new {{payloadClass}}();
 
         ProducerRecord<Integer, Object> producerRecord = new ProducerRecord<>({{channel.publish().id() |  upper-}}_TOPIC, key, payload);
 
