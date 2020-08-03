@@ -23,7 +23,7 @@ module.exports = {
         }
         if (!hasMqtt) {
             // remove filers from template related only to mqtt
-            fs.unlinkSync(path.resolve(generator.targetDir, 'src/test/java/com/asyncapi/TestcontainerMqttTest.java'));
+            fs.unlinkSync(path.resolve(generator.targetDir, 'src/test/java/' + javaPackage + '/TestcontainerMqttTest.java'));
         }
         if (!hasPulsar) {
             // remove filers from template related only to pulsar
