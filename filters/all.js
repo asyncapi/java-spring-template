@@ -32,6 +32,11 @@ function toJavaType(str){
 }
 filter.toJavaType = toJavaType;
 
+function isDefined(obj) {
+  return typeof obj !== 'undefined'
+}
+filter.isDefined = isDefined;
+
 function isProtocol(api, protocol){
   return JSON.stringify(api.json()).includes('"protocol":"' + protocol + '"');
 };
