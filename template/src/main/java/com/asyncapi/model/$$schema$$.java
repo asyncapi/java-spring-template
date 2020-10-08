@@ -28,7 +28,7 @@ public class {{schemaName | camelCase | upperFirst}} {
     public enum {{propName | camelCase | upperFirst}}Enum {
         {% for e in prop.enum() %}
         {%- if prop.type() === 'string'%}
-        {{e | upper | replace(' ', '_')}}(String.valueOf("{{e}}")){% if not loop.last %},{% else %};{% endif %}
+        {{e | upper | createEnum}}(String.valueOf("{{e}}")){% if not loop.last %},{% else %};{% endif %}
         {%- else %}
         NUMBER_{{e}}({{e}}){% if not loop.last %},{% else %};{% endif %}
         {%- endif %}
