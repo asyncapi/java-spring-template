@@ -89,3 +89,15 @@ function schemeExists(collection, scheme){
   return _.some(collection, {'scheme': scheme});
 };
 filter.schemeExists = schemeExists;
+
+function createEnum(val){
+  let result;
+  let withoutNonWordChars = val.replace(/[^A-Z^a-z^0-9]/g, "_");
+  if ((new RegExp('^[^A-Z^a-z]', 'i')).test(withoutNonWordChars)) {
+    result = '_' + withoutNonWordChars;
+  } else {
+    result = withoutNonWordChars;
+  }
+  return result;
+};
+filter.createEnum = createEnum;
