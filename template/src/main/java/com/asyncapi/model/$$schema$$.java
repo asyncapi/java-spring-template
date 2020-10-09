@@ -61,6 +61,24 @@ public class {{schemaName | camelCase | upperFirst}} {
     }
 
     private @Valid {{propName | camelCase | upperFirst}}Enum {{propName | camelCase}};
+        {%- elif prop.anyOf() or prop.oneOf() %}
+            {%- set propType = 'OneOf' %}{%- set hasPrimitive = false %}
+            {%- for obj in prop.anyOf() %}
+                {%- set hasPrimitive = hasPrimitive or obj.type() !== 'object' %}
+                {%- set propType = propType + obj.uid() | camelCase | upperFirst %}
+            {%- endfor %}
+            {%- for obj in prop.oneOf() %}
+                {%- set hasPrimitive = hasPrimitive or obj.type() !== 'object' %}
+                {%- set propType = propType + obj.uid() | camelCase | upperFirst %}
+            {%- endfor %}
+            {%- if hasPrimitive %}
+                {%- set propType = 'Object' %}
+            {%- else %}
+    public interface {{propType}} {
+
+    }
+            {%- endif %}
+    private @Valid {{propType}} {{propName | camelCase}};
         {%- else %}
             {%- if prop.format() %}
     private @Valid {{prop.format() | toJavaType}} {{propName | camelCase}};
@@ -84,6 +102,19 @@ public class {{schemaName | camelCase | upperFirst}} {
             {%- endif %}
         {%- elif prop.enum() and (prop.type() === 'string' or prop.type() === 'integer') %}
             {%- set propType = (propName | camelCase | upperFirst) + 'Enum' %}
+        {%- elif prop.anyOf() or prop.oneOf() %}
+            {%- set propType = 'OneOf' %}{%- set hasPrimitive = false %}
+            {%- for obj in prop.anyOf() %}
+                {%- set hasPrimitive = hasPrimitive or obj.type() !== 'object' %}
+                {%- set propType = propType + obj.uid() | camelCase | upperFirst %}
+            {%- endfor %}
+            {%- for obj in prop.oneOf() %}
+                {%- set hasPrimitive = hasPrimitive or obj.type() !== 'object' %}
+                {%- set propType = propType + obj.uid() | camelCase | upperFirst %}
+            {%- endfor %}
+            {%- if hasPrimitive %}
+                {%- set propType = 'Object' %}
+            {%- endif %}
         {%- else %}
             {%- if prop.format() %}
                 {%- set propType = prop.format() | toJavaType %}
