@@ -7,7 +7,26 @@ import java.util.Objects;
  * Examples: {{message.examples() | examplesToString | safe}}{% endif %}
  */{% endif %}
 public class {{messageName | camelCase | upperFirst}} {
-    {% set payloadName = message.payload().uid() | camelCase | upperFirst %}
+    {%- if message.payload().anyOf() or message.payload().oneOf() %}
+        {%- set payloadName = 'OneOf' %}{%- set hasPrimitive = false %}
+        {%- for obj in message.payload().anyOf() %}
+            {%- set hasPrimitive = hasPrimitive or obj.type() !== 'object' %}
+            {%- set payloadName = payloadName + obj.uid() | camelCase | upperFirst %}
+        {%- endfor %}
+        {%- for obj in message.payload().oneOf() %}
+            {%- set hasPrimitive = hasPrimitive or obj.type() !== 'object' %}
+            {%- set payloadName = payloadName + obj.uid() | camelCase | upperFirst %}
+        {%- endfor %}
+        {%- if hasPrimitive %}
+            {%- set payloadName = 'Object' %}
+        {%- else %}
+    public interface {{payloadName}} {
+
+    }
+        {%- endif %}
+    {%- else %}
+        {%- set payloadName = message.payload().uid() | camelCase | upperFirst %}
+    {%- endif %}
     private {{payloadName}} payload;
 
     public {{payloadName}} getPayload() {
