@@ -88,7 +88,7 @@ public class {{schemaName | camelCase | upperFirst}} {
             {%- for obj in prop.allOf() %}
                 {%- set varName = obj.uid() | camelCase %}
                 {%- set className = obj.uid() | camelCase | upperFirst %}
-                {%- set propType = obj | defineType %}
+                {%- set propType = obj | defineType(obj.uid()) %}
 
                 {%- if obj.type() === 'array' %}
                     {%- set varName = obj.uid() | camelCase + 'Array' %}
@@ -118,7 +118,7 @@ public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- set varName = propName | camelCase %}
         {%- set className = propName | camelCase | upperFirst %}
-        {%- set propType = prop | defineType %}
+        {%- set propType = prop | defineType(propName) %}
 
         {%- if prop.type() === 'array' %}
             {%- set varName = propName | camelCase + 'Array' %}

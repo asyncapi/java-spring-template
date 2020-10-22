@@ -1,7 +1,7 @@
 const filter = module.exports;
 const _ = require('lodash');
 
-function defineType(prop) {
+function defineType(prop, propName) {
     if (prop.type() === 'object') {
         return _.upperFirst(_.camelCase(prop.uid()));
     } else if (prop.type() === 'array') {

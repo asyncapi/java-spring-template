@@ -34,7 +34,7 @@ public class {{messageName | camelCase | upperFirst}} {
         {%- for obj in message.payload().allOf() %}
             {%- set varName = obj.uid() | camelCase %}
             {%- set className = obj.uid() | camelCase | upperFirst %}
-            {%- set propType = obj | defineType %}
+            {%- set propType = obj | defineType(obj.uid()) %}
 
             {%- if obj.type() === 'array' %}
                 {%- set varName = obj.uid() | camelCase + 'Array' %}
