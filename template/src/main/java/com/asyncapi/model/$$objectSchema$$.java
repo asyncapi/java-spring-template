@@ -26,13 +26,13 @@ public class {{schemaName | camelCase | upperFirst}} {
             {%- endif %}
         {%- elif prop.enum() and (prop.type() === 'string' or prop.type() === 'integer') %}
     public enum {{propName | camelCase | upperFirst}}Enum {
-        {% for e in prop.enum() %}
-        {%- if prop.type() === 'string'%}
+            {% for e in prop.enum() %}
+                {%- if prop.type() === 'string'%}
         {{e | upper | createEnum}}(String.valueOf("{{e}}")){% if not loop.last %},{% else %};{% endif %}
-        {%- else %}
+                {%- else %}
         NUMBER_{{e}}({{e}}){% if not loop.last %},{% else %};{% endif %}
-        {%- endif %}
-        {% endfor %}
+                {%- endif %}
+            {% endfor %}
         private {% if prop.type() === 'string'%}String{% else %}Integer{% endif %} value;
 
         {{propName | camelCase | upperFirst}}Enum ({% if prop.type() === 'string'%}String{% else %}Integer{% endif %} v) {
@@ -79,6 +79,33 @@ public class {{schemaName | camelCase | upperFirst}} {
     }
             {%- endif %}
     private @Valid {{propType}} {{propName | camelCase}};
+        {%- elif prop.allOf() %}
+            {%- set allName = 'AllOf' %}
+            {%- for obj in prop.allOf() %}
+                {%- set allName = allName + obj.uid() | camelCase | upperFirst %}
+            {%- endfor %}
+    public class {{allName}} {
+            {%- for obj in prop.allOf() %}
+                {%- set varName = obj.uid() | camelCase %}
+                {%- set className = obj.uid() | camelCase | upperFirst %}
+                {%- set propType = obj | defineType %}
+
+                {%- if obj.type() === 'array' %}
+                    {%- set varName = obj.uid() | camelCase + 'Array' %}
+                {%- endif %}
+        private @Valid {{propType}} {{varName}};
+
+        public {{propType}} get{{className}}() {
+            return {{varName}};
+        }
+
+        public void set{{className}}({{propType}} {{varName}}) {
+            this.{{varName}} = {{varName}};
+        }
+            {%- endfor %}
+    }
+
+    private @Valid {{allName}} {{propName | camelCase}};
         {%- else %}
             {%- if prop.format() %}
     private @Valid {{prop.format() | toJavaType}} {{propName | camelCase}};
@@ -91,36 +118,10 @@ public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- set varName = propName | camelCase %}
         {%- set className = propName | camelCase | upperFirst %}
-        {%- if prop.type() === 'object' %}
-            {%- set propType = prop.uid() | camelCase | upperFirst %}
-        {%- elif prop.type() === 'array' %}
+        {%- set propType = prop | defineType %}
+
+        {%- if prop.type() === 'array' %}
             {%- set varName = propName | camelCase + 'Array' %}
-            {%- if prop.items().format() %}
-                {%- set propType = prop.items().format() | toJavaType + '[]' %}
-            {%- else %}
-                {%- set propType = prop.items().type() | toJavaType + '[]' %}
-            {%- endif %}
-        {%- elif prop.enum() and (prop.type() === 'string' or prop.type() === 'integer') %}
-            {%- set propType = (propName | camelCase | upperFirst) + 'Enum' %}
-        {%- elif prop.anyOf() or prop.oneOf() %}
-            {%- set propType = 'OneOf' %}{%- set hasPrimitive = false %}
-            {%- for obj in prop.anyOf() %}
-                {%- set hasPrimitive = hasPrimitive or obj.type() !== 'object' %}
-                {%- set propType = propType + obj.uid() | camelCase | upperFirst %}
-            {%- endfor %}
-            {%- for obj in prop.oneOf() %}
-                {%- set hasPrimitive = hasPrimitive or obj.type() !== 'object' %}
-                {%- set propType = propType + obj.uid() | camelCase | upperFirst %}
-            {%- endfor %}
-            {%- if hasPrimitive %}
-                {%- set propType = 'Object' %}
-            {%- endif %}
-        {%- else %}
-            {%- if prop.format() %}
-                {%- set propType = prop.format() | toJavaType %}
-            {%- else %}
-                {%- set propType = prop.type() | toJavaType %}
-            {%- endif %}
         {%- endif %}
 
     {% if prop.description() or prop.examples()%}/**{% for line in prop.description() | splitByLines %}
