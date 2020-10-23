@@ -13,9 +13,11 @@ function toJavaType(str){
       return 'boolean';
     case 'date':
       return 'java.time.LocalDate';
+    case 'time':
+      return 'java.time.OffsetTime';
     case 'dateTime':
     case 'date-time':
-      return 'java.time.LocalDateTime';
+      return 'java.time.OffsetDateTime';
     case 'string':
     case 'password':
     case 'byte':
