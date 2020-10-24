@@ -1,6 +1,44 @@
 const filter = module.exports;
 const _ = require('lodash');
 
+function defineType(prop, propName) {
+    if (prop.type() === 'object') {
+        return _.upperFirst(_.camelCase(prop.uid()));
+    } else if (prop.type() === 'array') {
+        if (prop.items().format()) {
+            return toJavaType(prop.items().format()) + '[]';
+        } else {
+            return toJavaType(prop.items().type()) + '[]';
+        }
+    } else if (prop.enum() && (prop.type() === 'string' || prop.type() === 'integer')) {
+            return _.upperFirst(_.camelCase(propName)) + 'Enum';
+    } else if (prop.anyOf() || prop.oneOf()) {
+        let propType = 'OneOf';
+        let hasPrimitive = false;
+        [].concat(prop.anyOf(), prop.oneOf()).filter(obj != null).forEach(obj => {
+            hasPrimitive |= obj.type() !== 'object';
+            propType += _.upperFirst(_.camelCase(obj.uid()));
+        });
+        if (hasPrimitive) {
+            propType = 'Object';
+        }
+        return propType;
+    } else if (prop.allOf()) {
+        let propType = 'AllOf';
+        prop.allOf().forEach(obj => {
+            propType += _.upperFirst(_.camelCase(obj.uid()));
+        });
+        return propType;
+    } else {
+        if (prop.format()) {
+            return toJavaType(prop.format());
+        } else {
+            return toJavaType(prop.type());
+        }
+    }
+}
+filter.defineType = defineType;
+
 function toJavaType(str){
   switch(str) {
     case 'integer':
