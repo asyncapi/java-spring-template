@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 {% if schema.description() or schema.examples() %}/**{% for line in schema.description() | splitByLines %}
@@ -19,10 +19,12 @@ public class {{schemaName | camelCase | upperFirst}} {
         {%- if prop.type() === 'object' %}
     private @Valid {{prop.uid() | camelCase | upperFirst}} {{propName | camelCase}};
         {%- elif prop.type() === 'array' %}
-            {%- if prop.items().format() %}
-    private @Valid {{prop.items().format() | toJavaType}}[] {{propName | camelCase}}Array;
+            {%- if prop.items().type() === 'object' %}
+    private @Valid List<{{prop.items().uid() | camelCase | upperFirst}}> {{propName | camelCase}}List;
+            {%- elif prop.items().format() %}
+    private @Valid List<{{prop.items().format() | toJavaType | toClass}}> {{propName | camelCase}}List;
             {%- else %}
-    private @Valid {{prop.items().type() | toJavaType}}[] {{propName | camelCase}}Array;
+    private @Valid List<{{prop.items().type() | toJavaType | toClass}}> {{propName | camelCase}}List;
             {%- endif %}
         {%- elif prop.enum() and (prop.type() === 'string' or prop.type() === 'integer') %}
     public enum {{propName | camelCase | upperFirst}}Enum {
@@ -88,10 +90,10 @@ public class {{schemaName | camelCase | upperFirst}} {
             {%- for obj in prop.allOf() %}
                 {%- set varName = obj.uid() | camelCase %}
                 {%- set className = obj.uid() | camelCase | upperFirst %}
-                {%- set propType = obj | defineType(obj.uid()) %}
+                {%- set propType = obj | defineType(obj.uid()) | safe %}
 
                 {%- if obj.type() === 'array' %}
-                    {%- set varName = obj.uid() | camelCase + 'Array' %}
+                    {%- set varName = obj.uid() | camelCase + 'List' %}
                 {%- endif %}
         private @Valid {{propType}} {{varName}};
 
@@ -118,10 +120,10 @@ public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- set varName = propName | camelCase %}
         {%- set className = propName | camelCase | upperFirst %}
-        {%- set propType = prop | defineType(propName) %}
+        {%- set propType = prop | defineType(propName) | safe %}
 
         {%- if prop.type() === 'array' %}
-            {%- set varName = propName | camelCase + 'Array' %}
+            {%- set varName = propName | camelCase + 'List' %}
         {%- endif %}
 
     {% if prop.description() or prop.examples()%}/**{% for line in prop.description() | splitByLines %}
@@ -151,19 +153,19 @@ public class {{schemaName | camelCase | upperFirst}} {
             return false;
         }
         {{schemaName | camelCase | upperFirst}} {{schemaName | camelCase}} = ({{schemaName | camelCase | upperFirst}}) o;
-        return {% for propName, prop in schema.properties() %}{% set varName = propName | camelCase %}{% if prop.type() === 'array' %}{% set varName = propName | camelCase + 'Array' %}{% endif %}
-            {% if prop.type() === 'array' %}Arrays{% else %}Objects{% endif %}.equals(this.{{varName}}, {{schemaName | camelCase}}.{{varName}}){% if not loop.last %} &&{% else %};{% endif %}{% endfor %}
+        return {% for propName, prop in schema.properties() %}{% set varName = propName | camelCase %}{% if prop.type() === 'array' %}{% set varName = propName | camelCase + 'List' %}{% endif %}
+            Objects.equals(this.{{varName}}, {{schemaName | camelCase}}.{{varName}}){% if not loop.last %} &&{% else %};{% endif %}{% endfor %}
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash({% for propName, prop in schema.properties() %}{{propName | camelCase}}{% if prop.type() === 'array' %}Array{% endif %}{% if not loop.last %}, {% endif %}{% endfor %});
+        return Objects.hash({% for propName, prop in schema.properties() %}{{propName | camelCase}}{% if prop.type() === 'array' %}List{% endif %}{% if not loop.last %}, {% endif %}{% endfor %});
     }{% endif %}
 
     @Override
     public String toString() {
         return "class {{schemaName | camelCase | upperFirst}} {\n" +
-        {% for propName, prop in schema.properties() %}{% set varName = propName | camelCase %}{% if prop.type() === 'array' %}{% set varName = propName | camelCase + 'Array' %}{% endif %}
+        {% for propName, prop in schema.properties() %}{% set varName = propName | camelCase %}{% if prop.type() === 'array' %}{% set varName = propName | camelCase + 'List' %}{% endif %}
                 "    {{varName}}: " + toIndentedString({{varName}}) + "\n" +{% endfor %}
                 "}";
     }

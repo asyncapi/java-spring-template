@@ -5,10 +5,12 @@ function defineType(prop, propName) {
     if (prop.type() === 'object') {
         return _.upperFirst(_.camelCase(prop.uid()));
     } else if (prop.type() === 'array') {
-        if (prop.items().format()) {
-            return toJavaType(prop.items().format()) + '[]';
+        if (prop.items().type() === 'object') {
+            return 'List<' + _.upperFirst(_.camelCase(prop.items().uid())) + '>';
+        } else if (prop.items().format()) {
+            return 'List<' + toClass(toJavaType(prop.items().format())) + '>';
         } else {
-            return toJavaType(prop.items().type()) + '[]';
+            return 'List<' + toClass(toJavaType(prop.items().type())) + '>';
         }
     } else if (prop.enum() && (prop.type() === 'string' || prop.type() === 'integer')) {
             return _.upperFirst(_.camelCase(propName)) + 'Enum';
@@ -38,6 +40,24 @@ function defineType(prop, propName) {
     }
 }
 filter.defineType = defineType;
+
+function toClass(couldBePrimitive) {
+    switch(couldBePrimitive) {
+        case 'int':
+            return 'Integer';
+        case 'long':
+            return 'Long';
+        case 'boolean':
+            return 'Boolean';
+        case 'float':
+            return 'Float';
+        case 'double':
+            return 'Double';
+        default:
+            return couldBePrimitive;
+    }
+}
+filter.toClass = toClass;
 
 function toJavaType(str){
   switch(str) {

@@ -1,7 +1,9 @@
 package {{ params['userJavaPackage'] }}.model;
 
-import java.util.Objects;
 import javax.validation.Valid;
+
+import java.util.Objects;
+import java.util.List;
 
 {% if message.description() or message.examples()%}/**{% for line in message.description() | splitByLines %}
  * {{ line | safe}}{% endfor %}{% if message.examples() %}
@@ -34,10 +36,10 @@ public class {{messageName | camelCase | upperFirst}} {
         {%- for obj in message.payload().allOf() %}
             {%- set varName = obj.uid() | camelCase %}
             {%- set className = obj.uid() | camelCase | upperFirst %}
-            {%- set propType = obj | defineType(obj.uid()) %}
+            {%- set propType = obj | defineType(obj.uid()) | safe %}
 
             {%- if obj.type() === 'array' %}
-                {%- set varName = obj.uid() | camelCase + 'Array' %}
+                {%- set varName = obj.uid() | camelCase + 'List' %}
             {%- endif %}
         private @Valid {{propType}} {{varName}};
 
