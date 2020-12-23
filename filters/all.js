@@ -17,7 +17,7 @@ function defineType(prop, propName) {
     } else if (prop.anyOf() || prop.oneOf()) {
         let propType = 'OneOf';
         let hasPrimitive = false;
-        [].concat(prop.anyOf(), prop.oneOf()).filter(obj != null).forEach(obj => {
+        [].concat(prop.anyOf(), prop.oneOf()).filter(obj => obj != null).forEach(obj => {
             hasPrimitive |= obj.type() !== 'object';
             propType += _.upperFirst(_.camelCase(obj.uid()));
         });
