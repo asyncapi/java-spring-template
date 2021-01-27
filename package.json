@@ -21,6 +21,7 @@
   "homepage": "https://github.com/asyncapi/java-spring-template#readme",
   "scripts": {
     "test": "echo \"No test specified yet\"",
+    "lint": "echo \"No linter specified yet\"",
     "release": "semantic-release",
     "generate:assets": "echo 'No additional assets need to be generated at the moment'",
     "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION"
