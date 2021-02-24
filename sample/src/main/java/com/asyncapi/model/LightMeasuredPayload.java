@@ -15,12 +15,64 @@ public class LightMeasuredPayload {
   private Integer lumens;
   @Valid
   private java.time.OffsetDateTime sentAt;
+  public class AllOfAnonymousSchema_6ObjectWithKey2 {
+    @Valid
+    private AnonymousSchema_6 anonymousSchema_6;
+    @Valid
+    private ObjectWithKey2 objectWithKey2;
+
+    @JsonProperty("anonymousSchema_6")
+    public AnonymousSchema_6 getAnonymousSchema_6() { return this.anonymousSchema_6; }
+    public void setAnonymousSchema_6(AnonymousSchema_6 anonymousSchema_6) { this.anonymousSchema_6 = anonymousSchema_6; }
+
+    @JsonProperty("objectWithKey2")
+    public ObjectWithKey2 getObjectWithKey2() { return this.objectWithKey2; }
+    public void setObjectWithKey2(ObjectWithKey2 objectWithKey2) { this.objectWithKey2 = objectWithKey2; }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      AllOfAnonymousSchema_6ObjectWithKey2 self = (AllOfAnonymousSchema_6ObjectWithKey2) o;
+        return 
+          Objects.equals(this.anonymousSchema_6, self.anonymousSchema_6) &&
+          Objects.equals(this.objectWithKey2, self.objectWithKey2);
+    }
+    
+    @Override
+    public int hashCode() {
+      return Objects.hash(anonymousSchema_6, objectWithKey2);
+    }
+
+    @Override
+    public String toString() {
+      return "class AllOfAnonymousSchema_6ObjectWithKey2 {\n" +   
+        "    anonymousSchema_6: " + toIndentedString(anonymousSchema_6) + "\n" +
+        "    objectWithKey2: " + toIndentedString(objectWithKey2) + "\n" +
+        "}";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+      if (o == null) {
+        return "null";
+      }
+      return o.toString().replace("\n", "\n    ");
+    }
+  }
   @Valid
-  private allOfProp allOfProp;
+  private AllOfAnonymousSchema_6ObjectWithKey2 allOfProp;
+  public interface OneOfAnonymousSchema_10ObjectWithKey2 {}
   @Valid
-  private oneOfProp oneOfProp;
+  private OneOfAnonymousSchema_10ObjectWithKey2 oneOfProp;
   @Valid
-  private nestedOneOf nestedOneOf;
+  private Object nestedOneOf;
 
   /**
    * Light intensity measured in lumens.
@@ -38,16 +90,16 @@ public class LightMeasuredPayload {
   public void setSentAt(java.time.OffsetDateTime sentAt) { this.sentAt = sentAt; }
 
   @JsonProperty("allOfProp")
-  public allOfProp getAllOfProp() { return this.allOfProp; }
-  public void setAllOfProp(allOfProp allOfProp) { this.allOfProp = allOfProp; }
+  public AllOfAnonymousSchema_6ObjectWithKey2 getAllOfProp() { return this.allOfProp; }
+  public void setAllOfProp(AllOfAnonymousSchema_6ObjectWithKey2 allOfProp) { this.allOfProp = allOfProp; }
 
   @JsonProperty("oneOfProp")
-  public oneOfProp getOneOfProp() { return this.oneOfProp; }
-  public void setOneOfProp(oneOfProp oneOfProp) { this.oneOfProp = oneOfProp; }
+  public OneOfAnonymousSchema_10ObjectWithKey2 getOneOfProp() { return this.oneOfProp; }
+  public void setOneOfProp(OneOfAnonymousSchema_10ObjectWithKey2 oneOfProp) { this.oneOfProp = oneOfProp; }
 
   @JsonProperty("nestedOneOf")
-  public nestedOneOf getNestedOneOf() { return this.nestedOneOf; }
-  public void setNestedOneOf(nestedOneOf nestedOneOf) { this.nestedOneOf = nestedOneOf; }
+  public Object getNestedOneOf() { return this.nestedOneOf; }
+  public void setNestedOneOf(Object nestedOneOf) { this.nestedOneOf = nestedOneOf; }
 
   @Override
   public boolean equals(Object o) {
