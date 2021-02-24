@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
 import java.util.Objects;
 
+{{ schema | renderJavaModel(schemaName, params) | safe }}
+
 {% if schema.description() or schema.examples() %}/**{% for line in schema.description() | splitByLines %}
  * {{ line | safe}}{% endfor %}{% if schema.examples() %}
  * Examples: {{schema.examples() | examplesToString | safe}}{% endif %}
