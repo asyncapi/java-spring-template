@@ -1,58 +1,13 @@
 const filter = module.exports;
 
-const { JavaGenerator, FormatHelpers } = require('@asyncapi/generator-model-sdk');
+const { 
+  JavaGenerator,
+  TypeHelpers,
+  ModelKind,
+  FormatHelpers,
+} = require('@asyncapi/generator-model-sdk');
 
-function renderSelf({ content }) {
-  return content;
-}
-
-function renderProperty({ renderer, content }) {
-  const annotation = renderer.renderAnnotation('Valid');
-  return renderer.renderBlock([annotation, content]);
-}
-
-function renderGetter({ renderer, propertyName, property, content, model }) {
-  const annotations = [];
-  annotations.push(renderer.renderAnnotation('JsonProperty', `"${propertyName}"`));
-  
-  const isRequired = model.isRequired(propertyName);
-  if (isRequired) {
-    annotations.push(renderer.renderAnnotation('NotNull') );
-  }
-
-  const pattern = property.getFromSchema('pattern');
-  if (pattern) {
-    annotations.push(renderer.renderAnnotation('Pattern', { regexp: `"${pattern}"` }));
-  }
-
-  const minimum = property.getFromSchema('minimum');
-  if (minimum) {
-    annotations.push(renderer.renderAnnotation('Min', minimum));
-  }
-
-  const exclusiveMinimum = property.getFromSchema('exclusiveMinimum');
-  if (exclusiveMinimum) {
-    annotations.push(renderer.renderAnnotation('Min', exclusiveMinimum + 1));
-  }
-
-  const maximum = property.getFromSchema('maximum');
-  if (maximum) {
-    annotations.push(renderer.renderAnnotation('Max', maximum));
-  }
-
-  const exclusiveMaximum = property.getFromSchema('exclusiveMaximum');
-  if (exclusiveMaximum) {
-    annotations.push(renderer.renderAnnotation('Min', exclusiveMaximum - 1));
-  }
-
-  const minItems = property.getFromSchema('minItems');
-  const maxItems = property.getFromSchema('maxItems');
-  if (minItems !== undefined || maxItems !== undefined) {
-    annotations.push(renderer.renderAnnotation('Size', { min: minItems, max: maxItems }));
-  }
-
-  return renderer.renderBlock([...annotations, content]);
-}
+let javaGenerator = undefined;
 
 function renderEqualsHashCode({ renderer, upperCasedName, properties, options }) {
   if (options.params.disableEqualsHashCode === 'true') return "";
@@ -112,10 +67,129 @@ private String toIndentedString(Object o) {
 
 const TEMPLATE_PRESET = {
   class: {
-    self: renderSelf,
-    property: renderProperty,
-    getter: renderGetter,
+    async property({ renderer, content }) {
+      const annotation = renderer.renderAnnotation('Valid');
+      return renderer.renderBlock([annotation, content]);
+    },
     additionalContent: renderAdditionalContent,
+  },
+}
+
+const INLINE_ENUM_PRESET = {
+  class: {
+    async property({ renderer, propertyName, property, content }) {
+      if (ModelKind.ENUM !== TypeHelpers.extractKind(property)) {
+        return content;
+      }
+      const enumName = FormatHelpers.toPascalCase(`${propertyName}Enum`);
+    
+      propertyName = FormatHelpers.toCamelCase(propertyName);
+      const renderedProperty = `private ${enumName} ${propertyName};`;
+    
+      const newSchema = Object.assign({}, property.originalSchema);
+      newSchema.$id = enumName;
+      const enumModel = await javaGenerator.render(newSchema);
+    
+      const annotation = renderer.renderAnnotation('Valid');
+      return renderer.renderBlock([enumModel, annotation, renderedProperty]);
+    },
+    getter({ renderer, propertyName, property, content }) {
+      if (ModelKind.ENUM !== TypeHelpers.extractKind(property)) {
+        return content;
+      }
+
+      propertyName = FormatHelpers.toCamelCase(propertyName);
+      const getterName = FormatHelpers.toPascalCase(propertyName);
+      const type = FormatHelpers.toPascalCase(`${propertyName}Enum`);
+      return `public ${type} get${getterName}() { return this.${propertyName}; }`;
+    },
+    setter({ renderer, propertyName, property, content }) {
+      if (ModelKind.ENUM !== TypeHelpers.extractKind(property)) {
+        return content;
+      }
+
+      propertyName = FormatHelpers.toCamelCase(propertyName);
+      const setterName = FormatHelpers.toPascalCase(propertyName);
+      const type = FormatHelpers.toPascalCase(`${propertyName}Enum`);
+      return `public void set${setterName}(${type} ${propertyName}) { this.${propertyName} = ${propertyName}; }`;
+    },
+  }
+}
+
+const INLINE_ONE_ANY_OF = {
+  class: {
+    async property({ renderer, propertyName, property, content }) {
+      const originalSchema = property.originalSchema;
+      console.log(originalSchema)
+      if (originalSchema && (originalSchema.oneOf || originalSchema.anyOf)) {
+        console.log(originalSchema)
+      }
+
+      return content;
+    },
+    getter({ renderer, propertyName, property, content }) {
+      const originalSchema = property.originalSchema;
+      if (originalSchema && (originalSchema.oneOf || originalSchema.anyOf)) {
+        console.log(originalSchema)
+      }
+
+      return content;
+    },
+    setter({ renderer, propertyName, property, content }) {
+      const originalSchema = property.originalSchema;
+      if (originalSchema && (originalSchema.oneOf || originalSchema.anyOf)) {
+        console.log(originalSchema)
+      }
+
+      return content;
+    },
+  }
+}
+
+const JACKSON_ANNOTATION_PRESET = {
+  class: {
+    getter({ renderer, propertyName, property, content, model }) {
+      const annotations = [];
+      annotations.push(renderer.renderAnnotation('JsonProperty', `"${propertyName}"`));
+      
+      const isRequired = model.isRequired(propertyName);
+      if (isRequired) {
+        annotations.push(renderer.renderAnnotation('NotNull') );
+      }
+    
+      const pattern = property.getFromSchema('pattern');
+      if (pattern) {
+        annotations.push(renderer.renderAnnotation('Pattern', { regexp: `"${pattern}"` }));
+      }
+    
+      const minimum = property.getFromSchema('minimum');
+      if (minimum) {
+        annotations.push(renderer.renderAnnotation('Min', minimum));
+      }
+    
+      const exclusiveMinimum = property.getFromSchema('exclusiveMinimum');
+      if (exclusiveMinimum) {
+        annotations.push(renderer.renderAnnotation('Min', exclusiveMinimum + 1));
+      }
+    
+      const maximum = property.getFromSchema('maximum');
+      if (maximum) {
+        annotations.push(renderer.renderAnnotation('Max', maximum));
+      }
+    
+      const exclusiveMaximum = property.getFromSchema('exclusiveMaximum');
+      if (exclusiveMaximum) {
+        annotations.push(renderer.renderAnnotation('Min', exclusiveMaximum - 1));
+      }
+    
+      const minItems = property.getFromSchema('minItems');
+      const maxItems = property.getFromSchema('maxItems');
+      if (minItems !== undefined || maxItems !== undefined) {
+        annotations.push(renderer.renderAnnotation('Size', { min: minItems, max: maxItems }));
+      }
+    
+      return renderer.renderBlock([...annotations, content]);
+    },
   }
 }
 
@@ -160,17 +234,21 @@ const DESCRIPTION_PRESET = {
 }
 
 async function renderJavaModel(schema, schemaName, params, callback) {
-  // copy schema
-  const newSchema = Object.assign({}, schema)._json;
-  newSchema.title = schemaName;
-
-  const javaGenerator = new JavaGenerator({ presets: [
+  javaGenerator = new JavaGenerator({ presets: [
     {
       preset: TEMPLATE_PRESET,
       options: { params },
     },
+    INLINE_ONE_ANY_OF,
+    INLINE_ENUM_PRESET,
+    JACKSON_ANNOTATION_PRESET,
     DESCRIPTION_PRESET,
   ] });
+
+  // copy schema
+  const newSchema = Object.assign({}, schema)._json;
+  newSchema.title = schemaName;
+
   try {
     const models = await javaGenerator.generate(newSchema);
     const result = models[0].result;

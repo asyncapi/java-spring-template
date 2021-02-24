@@ -14,8 +14,37 @@ import java.util.Objects;
  * Example: {"command":"on","sentAt":"lol"}, {"command":"off","sentAt":"lol"}
  */
 public class TurnOnOffPayload {
+  public enum CommandEnum {
+    ON("on"), OFF("off");
+
+    private String value;
+
+    CommandEnum(String value) {
+      this.value = value;
+    }
+    
+    @JsonValue
+    public String getValue() {
+      return value;
+    }
+
+    @Override
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static CommandEnum fromValue(String value) {
+      for (CommandEnum e : CommandEnum.values()) {
+        if (e.value.equals(value)) {
+          return e;
+        }
+      }
+      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+    }
+  }
   @Valid
-  private String command;
+  private CommandEnum command;
   @Valid
   private java.time.OffsetDateTime sentAt;
 
@@ -23,8 +52,8 @@ public class TurnOnOffPayload {
    * Whether to turn on or off the light.
    */
   @JsonProperty("command")
-  public String getCommand() { return this.command; }
-  public void setCommand(String command) { this.command = command; }
+  public CommandEnum getCommand() { return this.command; }
+  public void setCommand(CommandEnum command) { this.command = command; }
 
   /**
    * Date and time when the message was sent.
