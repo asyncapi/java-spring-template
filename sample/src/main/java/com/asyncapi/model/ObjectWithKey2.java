@@ -30,7 +30,7 @@ public class ObjectWithKey2 implements LightMeasuredPayload.OneOfAnonymousSchema
       return 
         Objects.equals(this.key2, self.key2);
   }
-    
+        
   @Override
   public int hashCode() {
     return Objects.hash(key2);
@@ -42,9 +42,10 @@ public class ObjectWithKey2 implements LightMeasuredPayload.OneOfAnonymousSchema
       "    key2: " + toIndentedString(key2) + "\n" +
       "}";
   }
-
+    
   /**
-   * Convert the given object to string with each line indented by 4 spaces (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
    */
   private String toIndentedString(Object o) {
     if (o == null) {

@@ -42,7 +42,7 @@ public class LightMeasuredPayload {
           Objects.equals(this.anonymousSchema_6, self.anonymousSchema_6) &&
           Objects.equals(this.objectWithKey2, self.objectWithKey2);
     }
-    
+        
     @Override
     public int hashCode() {
       return Objects.hash(anonymousSchema_6, objectWithKey2);
@@ -55,9 +55,10 @@ public class LightMeasuredPayload {
         "    objectWithKey2: " + toIndentedString(objectWithKey2) + "\n" +
         "}";
     }
-
+    
     /**
-     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
      */
     private String toIndentedString(Object o) {
       if (o == null) {
@@ -117,7 +118,7 @@ public class LightMeasuredPayload {
         Objects.equals(this.oneOfProp, self.oneOfProp) &&
         Objects.equals(this.nestedOneOf, self.nestedOneOf);
   }
-    
+        
   @Override
   public int hashCode() {
     return Objects.hash(lumens, sentAt, allOfProp, oneOfProp, nestedOneOf);
@@ -133,9 +134,10 @@ public class LightMeasuredPayload {
       "    nestedOneOf: " + toIndentedString(nestedOneOf) + "\n" +
       "}";
   }
-
+    
   /**
-   * Convert the given object to string with each line indented by 4 spaces (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
    */
   private String toIndentedString(Object o) {
     if (o == null) {

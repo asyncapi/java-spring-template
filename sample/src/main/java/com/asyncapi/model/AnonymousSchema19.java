@@ -31,7 +31,7 @@ public class AnonymousSchema_19 {
       return 
         Objects.equals(this.myAppHeader, self.myAppHeader);
   }
-    
+        
   @Override
   public int hashCode() {
     return Objects.hash(myAppHeader);
@@ -43,9 +43,10 @@ public class AnonymousSchema_19 {
       "    my-app-header: " + toIndentedString(myAppHeader) + "\n" +
       "}";
   }
-
+    
   /**
-   * Convert the given object to string with each line indented by 4 spaces (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
    */
   private String toIndentedString(Object o) {
     if (o == null) {

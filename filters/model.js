@@ -6,6 +6,10 @@ const {
   ModelKind,
   FormatHelpers,
   CommonModel,
+
+  JAVA_VALIDATORS_PRESET,
+  JAVA_JACKSON_PRESET,
+  JAVA_DESCRIPTION_PRESET,
 } = require('@asyncapi/generator-model-sdk');
 
 let javaGenerator = undefined;
@@ -40,72 +44,6 @@ function getTypeFromCombinedSchema({ combinedSchema, type = 'OneOf' }) {
     type += FormatHelpers.toPascalCase(schema['x-parser-schema-id']);
   }
   return type;
-}
-
-function renderEqualsHashCode({ renderer, upperCasedName, properties, options }) {
-  if (options.params.disableEqualsHashCode === 'true') return "";
-
-  const hashProperties = Object.keys(properties).map(prop => FormatHelpers.toCamelCase(prop)).join(', ');
-  const equalProperties = Object.keys(properties).map(prop => {
-    const camelCasedProp = FormatHelpers.toCamelCase(prop);
-    return `Objects.equals(this.${camelCasedProp}, self.${camelCasedProp})`;
-  }).join(' &&\n');
-
-  return `@Override
-public boolean equals(Object o) {
-  if (this == o) {
-    return true;
-  }
-  if (o == null || getClass() != o.getClass()) {
-    return false;
-  }
-  ${upperCasedName} self = (${upperCasedName}) o;
-    return 
-${renderer.indent(equalProperties, 6)};
-}
-    
-@Override
-public int hashCode() {
-  return Objects.hash(${hashProperties});
-}
-`;
-}
-
-function renderAdditionalContent({ renderer, model, content = "", options }) {
-  const camelCasedName = FormatHelpers.toCamelCase(model.$id);
-  const upperCasedName = FormatHelpers.upperFirst(camelCasedName);
-  const properties = model.properties || {};
-  const toStringProperties = Object.keys(properties).map(prop => `"    ${prop}: " + toIndentedString(${FormatHelpers.toCamelCase(prop)}) + "\\n" +`);
-
-  const equalHashCode = renderEqualsHashCode({ renderer, upperCasedName, properties, options });
-
-  return content + equalHashCode + `
-@Override
-public String toString() {
-  return "class ${upperCasedName} {\\n" +   
-${renderer.indent(renderer.renderBlock(toStringProperties), 4)}
-    "}";
-}
-
-/**
- * Convert the given object to string with each line indented by 4 spaces (except the first line).
- */
-private String toIndentedString(Object o) {
-  if (o == null) {
-    return "null";
-  }
-  return o.toString().replace("\\n", "\\n    ");
-}`;
-}
-
-const TEMPLATE_PRESET = {
-  class: {
-    async property({ renderer, content }) {
-      const annotation = renderer.renderAnnotation('Valid');
-      return renderer.renderBlock([annotation, content]);
-    },
-    additionalContent: renderAdditionalContent,
-  },
 }
 
 const INLINE_ENUM_PRESET = {
@@ -264,104 +202,98 @@ const INLINE_ALL_OF = {
   }
 }
 
-const JACKSON_ANNOTATION_PRESET = {
+const CLASS_TO_STRING_PRESET = {
   class: {
-    getter({ renderer, propertyName, property, content, model }) {
-      const annotations = [];
-      annotations.push(renderer.renderAnnotation('JsonProperty', `"${propertyName}"`));
-      
-      const isRequired = model.isRequired(propertyName);
-      if (isRequired) {
-        annotations.push(renderer.renderAnnotation('NotNull') );
-      }
+    additionalContent({ renderer, model, content = "" }) {
+      const formattedModelName = FormatHelpers.toPascalCase(model.$id);
+      const properties = model.properties || {};
+      const toStringProperties = Object.keys(properties).map(prop => `"    ${prop}: " + toIndentedString(${FormatHelpers.toCamelCase(prop)}) + "\\n" +`);
     
-      const pattern = property.getFromSchema('pattern');
-      if (pattern) {
-        annotations.push(renderer.renderAnnotation('Pattern', { regexp: `"${pattern}"` }));
-      }
-    
-      const minimum = property.getFromSchema('minimum');
-      if (minimum) {
-        annotations.push(renderer.renderAnnotation('Min', minimum));
-      }
-    
-      const exclusiveMinimum = property.getFromSchema('exclusiveMinimum');
-      if (exclusiveMinimum) {
-        annotations.push(renderer.renderAnnotation('Min', exclusiveMinimum + 1));
-      }
-    
-      const maximum = property.getFromSchema('maximum');
-      if (maximum) {
-        annotations.push(renderer.renderAnnotation('Max', maximum));
-      }
-    
-      const exclusiveMaximum = property.getFromSchema('exclusiveMaximum');
-      if (exclusiveMaximum) {
-        annotations.push(renderer.renderAnnotation('Min', exclusiveMaximum - 1));
-      }
-    
-      const minItems = property.getFromSchema('minItems');
-      const maxItems = property.getFromSchema('maxItems');
-      if (minItems !== undefined || maxItems !== undefined) {
-        annotations.push(renderer.renderAnnotation('Size', { min: minItems, max: maxItems }));
-      }
-    
-      return renderer.renderBlock([...annotations, content]);
-    },
-  }
+      return content + `
+@Override
+public String toString() {
+  return "class ${formattedModelName} {\\n" +   
+${renderer.indent(renderer.renderBlock(toStringProperties), 4)}
+    "}";
 }
-
-function renderDescription({ renderer, content, item }) {
-  let desc = item.getFromSchema('description');
-  
-  const examples = item.getFromSchema('examples');
-  if (examples) {
-    let renderedExamples = "";
-    examples.forEach(example => {
-      if (renderedExamples !== "") {renderedExamples += ", "}
-      if (typeof example == "object") {
-        try {
-          renderedExamples += JSON.stringify(example);
-        } catch (ignore) {
-          renderedExamples += example;
-        }
-      } else {
-        renderedExamples += example;
-      }
-    });
-    const exampleDesc = `Example: ${renderedExamples}`;
-    desc = desc ? desc + `\n${exampleDesc}` : exampleDesc;
+    
+/**
+ * Convert the given object to string with each line indented by 4 spaces
+ * (except the first line).
+ */
+private String toIndentedString(Object o) {
+  if (o == null) {
+    return "null";
   }
-
-  if (desc) {
-    const renderedDesc = renderer.renderComments(desc);
-    return `${renderedDesc}\n${content}`;
-  }
-  return content;
-}
-
-const DESCRIPTION_PRESET = {
-  class: {
-    self({ renderer, model, content }) {
-      return renderDescription({ renderer, content, item: model });
-    },
-    getter({ renderer, property, content }) {
-      return renderDescription({ renderer, content, item: property });
+  return o.toString().replace("\\n", "\\n    ");
+}`;
     }
   }
 }
 
+const EQUAL_AND_HAS_PRESET = {
+  class: {
+    additionalContent({ renderer, model, options, content = '' }) {
+      if (options.disableEqualsHashCode === 'true') return "";
+  
+      const formattedModelName = FormatHelpers.toPascalCase(model.$id);
+      const properties = model.properties || {};
+  
+      const hashProperties = Object.keys(properties).map(prop => FormatHelpers.toCamelCase(prop)).join(', ');
+      const equalProperties = Object.keys(properties).map(prop => {
+        const camelCasedProp = FormatHelpers.toCamelCase(prop);
+        return `Objects.equals(this.${camelCasedProp}, self.${camelCasedProp})`;
+      }).join(' &&\n');
+    
+      return `@Override
+public boolean equals(Object o) {
+  if (this == o) {
+    return true;
+  }
+  if (o == null || getClass() != o.getClass()) {
+    return false;
+  }
+  ${formattedModelName} self = (${formattedModelName}) o;
+    return 
+${renderer.indent(equalProperties, 6)};
+}
+        
+@Override
+public int hashCode() {
+  return Objects.hash(${hashProperties});
+}
+${content}`;
+    }
+  }
+}
+
+const TEMPLATE_PRESET = {
+  class: {
+    property({ renderer, content }) {
+      const annotation = renderer.renderAnnotation('Valid');
+      return renderer.renderBlock([annotation, content]);
+    },
+  },
+}
+
 async function renderJavaModel(schema, schemaName, params, callback) {
   javaGenerator = new JavaGenerator({ presets: [
-    {
-      preset: TEMPLATE_PRESET,
-      options: { params },
-    },
+    TEMPLATE_PRESET,
     INLINE_ONE_ANY_OF,
     INLINE_ALL_OF,
     INLINE_ENUM_PRESET,
-    JACKSON_ANNOTATION_PRESET,
-    DESCRIPTION_PRESET,
+
+    JAVA_VALIDATORS_PRESET,
+    JAVA_JACKSON_PRESET,
+    JAVA_DESCRIPTION_PRESET,
+
+    CLASS_TO_STRING_PRESET,
+    {
+      preset: EQUAL_AND_HAS_PRESET,
+      options: {
+        disableEqualsHashCode: params.disableEqualsHashCode,
+      }
+    }
   ] });
 
   // copy schema
@@ -379,33 +311,4 @@ async function renderJavaModel(schema, schemaName, params, callback) {
   }
 }
 
-async function renderMessageWrapper(message, messageName, params, callback) {
-  // copy schema
-  const newSchema = Object.assign({}, message)._json;
-  newSchema.properties = {};
-
-  const payload = newSchema.payload;
-  if (payload) {
-    if (payload['x-parser-schema-id']) {
-      newSchema.properties['payload'] = { $ref: `#/${FormatHelpers.toPascalCase(payload['x-parser-schema-id'])}` }
-    } else {
-      newSchema.properties['payload'] = payload;
-    }
-  }
-
-  const headers = newSchema.headers;
-  if (headers) {
-    if (headers['x-parser-schema-id']) {
-      newSchema.properties['headers'] = { $ref: `#/${FormatHelpers.toPascalCase(headers['x-parser-schema-id'])}` }
-    } else {
-      newSchema.properties['headers'] = headers;
-    }
-  }
-
-  console.log(newSchema)
-
-  renderJavaModel(message, messageName, params, callback);
-}
-
 filter.renderJavaModel = renderJavaModel;
-filter.renderMessageWrapper = renderMessageWrapper;

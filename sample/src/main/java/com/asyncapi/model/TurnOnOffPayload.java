@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Example: {"command":"on","sentAt":"lol"}, {"command":"off","sentAt":"lol"}
+ * Examples: {"command":"on","sentAt":"lol"}, {"command":"off","sentAt":"lol"}
  */
 public class TurnOnOffPayload {
   public enum CommandEnum {
@@ -76,7 +76,7 @@ public class TurnOnOffPayload {
         Objects.equals(this.command, self.command) &&
         Objects.equals(this.sentAt, self.sentAt);
   }
-    
+        
   @Override
   public int hashCode() {
     return Objects.hash(command, sentAt);
@@ -89,9 +89,10 @@ public class TurnOnOffPayload {
       "    sentAt: " + toIndentedString(sentAt) + "\n" +
       "}";
   }
-
+    
   /**
-   * Convert the given object to string with each line indented by 4 spaces (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
    */
   private String toIndentedString(Object o) {
     if (o == null) {

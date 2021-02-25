@@ -22,7 +22,7 @@ public class DimLightPayload {
    * Percentage to which the light should be dimmed to.
    */
   @JsonProperty("percentage")
-  @Min(99)
+  @Max(99)
   public Integer getPercentage() { return this.percentage; }
   public void setPercentage(Integer percentage) { this.percentage = percentage; }
 
@@ -35,7 +35,7 @@ public class DimLightPayload {
   public void setSentAt(java.time.OffsetDateTime sentAt) { this.sentAt = sentAt; }
 
   @JsonProperty("arrayProp")
-  @Size(min=2, max=3)
+  @Size(max=3)
   public String[] getArrayProp() { return this.arrayProp; }
   public void setArrayProp(String[] arrayProp) { this.arrayProp = arrayProp; }
 
@@ -53,7 +53,7 @@ public class DimLightPayload {
         Objects.equals(this.sentAt, self.sentAt) &&
         Objects.equals(this.arrayProp, self.arrayProp);
   }
-    
+        
   @Override
   public int hashCode() {
     return Objects.hash(percentage, sentAt, arrayProp);
@@ -67,9 +67,10 @@ public class DimLightPayload {
       "    arrayProp: " + toIndentedString(arrayProp) + "\n" +
       "}";
   }
-
+    
   /**
-   * Convert the given object to string with each line indented by 4 spaces (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
    */
   private String toIndentedString(Object o) {
     if (o == null) {
@@ -118,7 +119,7 @@ public class DimLightPayload {
     
 
     
-    @JsonProperty("arrayProp")@Size(min = 2,max = 3)
+    @JsonProperty("arrayProp")@Size(max = 3)
     public List<String> getArrayProp() {
         return arrayPropList;
     }

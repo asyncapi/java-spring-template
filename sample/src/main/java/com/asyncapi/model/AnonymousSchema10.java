@@ -30,7 +30,7 @@ public class AnonymousSchema_10 {
       return 
         Objects.equals(this.key, self.key);
   }
-    
+        
   @Override
   public int hashCode() {
     return Objects.hash(key);
@@ -42,9 +42,10 @@ public class AnonymousSchema_10 {
       "    key: " + toIndentedString(key) + "\n" +
       "}";
   }
-
+    
   /**
-   * Convert the given object to string with each line indented by 4 spaces (except the first line).
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
    */
   private String toIndentedString(Object o) {
     if (o == null) {
