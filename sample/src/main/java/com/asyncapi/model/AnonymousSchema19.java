@@ -15,6 +15,7 @@ public class AnonymousSchema_19 {
   private Integer myAppHeader;
 
   @JsonProperty("my-app-header")
+  @Min(1)
   @Max(100)
   public Integer getMyAppHeader() { return this.myAppHeader; }
   public void setMyAppHeader(Integer myAppHeader) { this.myAppHeader = myAppHeader; }

@@ -79,6 +79,7 @@ public class LightMeasuredPayload {
    * Light intensity measured in lumens.
    */
   @JsonProperty("lumens")
+  @Min(0)
   public Integer getLumens() { return this.lumens; }
   public void setLumens(Integer lumens) { this.lumens = lumens; }
 

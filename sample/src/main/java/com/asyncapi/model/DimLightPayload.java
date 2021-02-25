@@ -22,6 +22,7 @@ public class DimLightPayload {
    * Percentage to which the light should be dimmed to.
    */
   @JsonProperty("percentage")
+  @Min(0)
   @Max(99)
   public Integer getPercentage() { return this.percentage; }
   public void setPercentage(Integer percentage) { this.percentage = percentage; }

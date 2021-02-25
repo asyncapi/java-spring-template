@@ -7,7 +7,7 @@ const {
   FormatHelpers,
   CommonModel,
 
-  JAVA_VALIDATORS_PRESET,
+  JAVA_CONSTRAINTS_PRESET,
   JAVA_JACKSON_PRESET,
   JAVA_DESCRIPTION_PRESET,
 } = require('@asyncapi/generator-model-sdk');
@@ -283,7 +283,7 @@ async function renderJavaModel(schema, schemaName, params, callback) {
     INLINE_ALL_OF,
     INLINE_ENUM_PRESET,
 
-    JAVA_VALIDATORS_PRESET,
+    JAVA_CONSTRAINTS_PRESET,
     JAVA_JACKSON_PRESET,
     JAVA_DESCRIPTION_PRESET,
 
