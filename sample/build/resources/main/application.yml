@@ -1,0 +1,27 @@
+
+
+mqtt:
+  broker: 
+    # dummy MQTT broker
+    address: mqtt://localhost:8883
+    username:
+    password:
+    clientId: guest
+    cleanSession: false
+    lastWill:
+      topic: /will
+      message: Guest gone offline.
+      qos: 0
+      retain: false
+    
+    timeout:
+      completion: 30000
+      disconnection: 5000
+      connection: 30
+      keepAlive: 0
+  topic:
+    
+    receiveLightMeasurement: smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured
+    
+    turnOn: smartylighting/streetlights/1/0/action/{streetlightId}/turn/on
+    
