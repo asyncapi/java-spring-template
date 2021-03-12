@@ -55,71 +55,57 @@ public class ObjectWithKey2 implements LightMeasuredPayload.OneOfAnonymousSchema
   }
 }
 
-// 
-// public class ObjectWithKey2 implements LightMeasuredPayload.OneOfAnonymousSchema10ObjectWithKey2 {
-//     
-//
-//
-//     private @Valid String key2;
-//
-//
-//     
 
-//     
-//
-//
-//
+public class ObjectWithKey2 implements LightMeasuredPayload.OneOfAnonymousSchema10ObjectWithKey2 {
+    
+    private @Valid String key2;
+    
 
-//
+    
 
-//     
-//     @JsonProperty("key2")
-//
-//
-//
-//
-//
-//     public String getKey2() {
-//         return key2;
-//     }
+    
+    @JsonProperty("key2")
+    public String getKey2() {
+        return key2;
+    }
 
-//     public void setKey2(String key2) {
-//         this.key2 = key2;
-//     }
-//     
-//     @Override
-//     public boolean equals(Object o) {
-//         if (this == o) {
-//             return true;
-//         }
-//         if (o == null || getClass() != o.getClass()) {
-//             return false;
-//         }
-//         ObjectWithKey2 objectWithKey2 = (ObjectWithKey2) o;
-//         return 
-//             Objects.equals(this.key2, objectWithKey2.key2);
-//     }
+    public void setKey2(String key2) {
+        this.key2 = key2;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ObjectWithKey2 objectWithKey2 = (ObjectWithKey2) o;
+        return 
+            Objects.equals(this.key2, objectWithKey2.key2);
+    }
 
-//     @Override
-//     public int hashCode() {
-//         return Objects.hash(key2);
-//     }
+    @Override
+    public int hashCode() {
+        return Objects.hash(key2);
+    }
 
-//     @Override
-//     public String toString() {
-//         return "class ObjectWithKey2 {\n" +
-//         
-//                 "    key2: " + toIndentedString(key2) + "\n" +
-//                 "}";
-//     }
+    @Override
+    public String toString() {
+        return "class ObjectWithKey2 {\n" +
+        
+                "    key2: " + toIndentedString(key2) + "\n" +
+                "}";
+    }
 
-//     /**
-//      * Convert the given object to string with each line indented by 4 spaces (except the first line).
-//      */
-//     private String toIndentedString(Object o) {
-//         if (o == null) {
-//            return "null";
-//         }
-//         return o.toString().replace("\n", "\n    ");
-//     }
-// }
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+}

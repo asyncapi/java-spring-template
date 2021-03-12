@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const filter = module.exports;
 
 const { 
@@ -7,13 +9,15 @@ const {
   FormatHelpers,
   CommonModel,
 
+  JAVA_COMMON_PRESET,
   JAVA_CONSTRAINTS_PRESET,
   JAVA_JACKSON_PRESET,
   JAVA_DESCRIPTION_PRESET,
 } = require('@asyncapi/generator-model-sdk');
 
-let javaGenerator = undefined;
-
+/**
+ * Get from given CommonModel original `oneOf`, `anyOf` or `allOf` schema.
+ */
 function getCombinedSchema({ model, inputModel, type = 'oneOf' }) {
   let combined = undefined;
 
@@ -34,6 +38,9 @@ function getCombinedSchema({ model, inputModel, type = 'oneOf' }) {
   return combined;
 }
 
+/**
+ * Get type for combined schema (`oneOf`, `anyOf` or `allOf`) by concatenating name of each element to single string.
+ */
 function getTypeFromCombinedSchema({ combinedSchema, type = 'OneOf' }) {
   for (const schema of combinedSchema) {
     // render as Object type
@@ -41,233 +48,114 @@ function getTypeFromCombinedSchema({ combinedSchema, type = 'OneOf' }) {
       type = "Object";
       break;
     }
-    type += FormatHelpers.toPascalCase(schema['x-parser-schema-id']);
+    type += _.upperFirst(_.camelCase(schema['x-parser-schema-id']));
   }
-  return type;
+  return type
 }
 
+/**
+ * Custom naming convention for types in Java class.
+ * It concatenates name of each element to single string from combined schema (`oneOf`, `anyOf` or `allOf`).
+ * For enum type it adds `Enum` suffix.
+ */
+function customTypeNaming(name, { model, inputModel }) {
+  name = name || model.originalSchema['x-modelgen-inferred-name'];
+  if (ModelKind.ENUM === TypeHelpers.extractKind(model)) {
+    return FormatHelpers.toPascalCase(`${name}Enum`);
+  }
+
+  const anyOfSchema = 
+    getCombinedSchema({ model, inputModel, type: 'oneOf' }) ||
+    getCombinedSchema({ model, inputModel, type: 'anyOf' });
+  if (anyOfSchema) {
+    const type = getTypeFromCombinedSchema({ combinedSchema: anyOfSchema, type: "OneOf" });
+    return type;
+  }
+
+  const allOfSchema = getCombinedSchema({ model, inputModel, type: 'allOf' });
+  if (allOfSchema) {
+    const type = getTypeFromCombinedSchema({ combinedSchema: allOfSchema, type: "AllOf" });
+    return type;
+  }
+
+  return _.upperFirst(_.camelCase(name));
+}
+
+/**
+ * Preset which renders enum type as local class.
+ */
 const INLINE_ENUM_PRESET = {
   class: {
-    async property({ renderer, propertyName, property, content }) {
+    async property({ renderer, property, inputModel, content }) {
       if (ModelKind.ENUM !== TypeHelpers.extractKind(property)) {
         return content;
       }
-      const enumName = FormatHelpers.toPascalCase(`${propertyName}Enum`);
-    
-      propertyName = FormatHelpers.toCamelCase(propertyName);
-      const renderedProperty = `private ${enumName} ${propertyName};`;
-    
-      const newSchema = Object.assign({}, property.originalSchema);
-      newSchema.$id = enumName;
-      const enumModel = await javaGenerator.render(newSchema);
-    
-      const annotation = renderer.renderAnnotation('Valid');
-      return renderer.renderBlock([enumModel, annotation, renderedProperty]);
-    },
-    getter({ renderer, propertyName, property, content }) {
-      if (ModelKind.ENUM !== TypeHelpers.extractKind(property)) {
-        return content;
-      }
-
-      propertyName = FormatHelpers.toCamelCase(propertyName);
-      const getterName = FormatHelpers.toPascalCase(propertyName);
-      const type = FormatHelpers.toPascalCase(`${propertyName}Enum`);
-      return `public ${type} get${getterName}() { return this.${propertyName}; }`;
-    },
-    setter({ renderer, propertyName, property, content }) {
-      if (ModelKind.ENUM !== TypeHelpers.extractKind(property)) {
-        return content;
-      }
-
-      propertyName = FormatHelpers.toCamelCase(propertyName);
-      const setterName = FormatHelpers.toPascalCase(propertyName);
-      const type = FormatHelpers.toPascalCase(`${propertyName}Enum`);
-      return `public void set${setterName}(${type} ${propertyName}) { this.${propertyName} = ${propertyName}; }`;
+      const enumModel = await renderer.generator.renderEnum(property, inputModel);
+      return renderer.renderBlock([enumModel, content]);
     },
   }
 }
 
-const INLINE_ONE_ANY_OF = {
+/**
+ * Preset which renders `anyOf` or `oneOf` combined schema as local interface.
+ */
+const INLINE_ANY_OF = {
   class: {
-    async property({ renderer, propertyName, property, content, inputModel }) {
+    async property({ renderer, property, content, inputModel }) {
       const combinedSchema = 
         getCombinedSchema({ model: property, inputModel, type: 'oneOf' }) ||
         getCombinedSchema({ model: property, inputModel, type: 'anyOf' });
-
       if (!combinedSchema) {
         return content;
       }
 
       const type = getTypeFromCombinedSchema({ combinedSchema, type: "OneOf" })
-      let interfaceModel = undefined;
-      if (type !== "Object") {
-        interfaceModel = `public interface ${type} {}`;
-      }
-
-      propertyName = FormatHelpers.toCamelCase(propertyName);
-      const renderedProperty = `private ${type} ${propertyName};`;
-  
-      const annotation = renderer.renderAnnotation('Valid');
-      return renderer.renderBlock([interfaceModel, annotation, renderedProperty]);
-    },
-    getter({ propertyName, property, inputModel, content }) {
-      const combinedSchema = 
-        getCombinedSchema({ model: property, inputModel, type: 'oneOf' }) ||
-        getCombinedSchema({ model: property, inputModel, type: 'anyOf' });
-
-      if (!combinedSchema) {
+      if (type === "Object") {
         return content;
       }
 
-      const type = getTypeFromCombinedSchema({ combinedSchema, type: "OneOf" })
-      propertyName = FormatHelpers.toCamelCase(propertyName);
-      const getterName = FormatHelpers.toPascalCase(propertyName);
-      return `public ${type} get${getterName}() { return this.${propertyName}; }`;
-    },
-    setter({ propertyName, property, inputModel, content }) {
-      const combinedSchema = 
-        getCombinedSchema({ model: property, inputModel, type: 'oneOf' }) ||
-        getCombinedSchema({ model: property, inputModel, type: 'anyOf' });
-
-      if (!combinedSchema) {
-        return content;
-      }
-
-      const type = getTypeFromCombinedSchema({ combinedSchema, type: "OneOf" })
-      propertyName = FormatHelpers.toCamelCase(propertyName);
-      const setterName = FormatHelpers.toPascalCase(propertyName);
-      return `public void set${setterName}(${type} ${propertyName}) { this.${propertyName} = ${propertyName}; }`;
+      const interfaceModel = `public interface ${type} {}`;
+      return renderer.renderBlock([interfaceModel, content]);
     },
   }
 }
 
+/**
+ * Preset which renders `allOf` combined schema as local class.
+ */
 const INLINE_ALL_OF = {
   class: {
-    async property({ renderer, propertyName, property, content, inputModel }) {
+    async property({ renderer, property, content, inputModel }) {
       const combinedSchema = getCombinedSchema({ model: property, inputModel, type: 'allOf' });
       if (!combinedSchema) {
         return content;
       }
 
-      const type = getTypeFromCombinedSchema({ combinedSchema, type: "AllOf" })
-      let classModel = undefined;
-      if (type !== "Object") {
-        const commonModel = new CommonModel();
-        commonModel.$id = type;
-        commonModel.properties = {};
-
-        for (const schema of combinedSchema) {
-          const cm = new CommonModel();
-
-          const schemaId = schema['x-parser-schema-id'];
-          const type = FormatHelpers.toCamelCase(schemaId);
-          cm.$ref = FormatHelpers.toPascalCase(schemaId);
-
-          commonModel.properties[type] = cm;
-        }
-
-        classModel = await javaGenerator.render(commonModel);
-      }
-
-      propertyName = FormatHelpers.toCamelCase(propertyName);
-      const renderedProperty = `private ${type} ${propertyName};`;
-  
-      const annotation = renderer.renderAnnotation('Valid');
-      return renderer.renderBlock([classModel, annotation, renderedProperty]);
-    },
-    getter({ propertyName, property, inputModel, content }) {
-      const combinedSchema = getCombinedSchema({ model: property, inputModel, type: 'allOf' });
-
-      if (!combinedSchema) {
+      const type = getTypeFromCombinedSchema({ combinedSchema, type: "AllOf" });
+      if (type === "Object") {
         return content;
       }
 
-      const type = getTypeFromCombinedSchema({ combinedSchema, type: "AllOf" })
-      propertyName = FormatHelpers.toCamelCase(propertyName);
-      const getterName = FormatHelpers.toPascalCase(propertyName);
-      return `public ${type} get${getterName}() { return this.${propertyName}; }`;
-    },
-    setter({ propertyName, property, inputModel, content }) {
-      const combinedSchema = getCombinedSchema({ model: property, inputModel, type: 'allOf' });
-
-      if (!combinedSchema) {
-        return content;
+      const commonModel = new CommonModel();
+      commonModel.$id = type;
+      commonModel.properties = {};
+      for (const schema of combinedSchema) {
+        const cm = new CommonModel();
+        const schemaId = schema['x-parser-schema-id'];
+        const type = _.camelCase(schemaId);
+        cm.$ref = _.upperFirst(type); // pascalCase
+        commonModel.properties[type] = cm;
       }
-
-      const type = getTypeFromCombinedSchema({ combinedSchema, type: "AllOf" })
-      propertyName = FormatHelpers.toCamelCase(propertyName);
-      const setterName = FormatHelpers.toPascalCase(propertyName);
-      return `public void set${setterName}(${type} ${propertyName}) { this.${propertyName} = ${propertyName}; }`;
+      const classModel = await renderer.generator.renderClass(commonModel, inputModel);
+      return renderer.renderBlock([classModel, content]);
     },
   }
 }
 
-const CLASS_TO_STRING_PRESET = {
-  class: {
-    additionalContent({ renderer, model, content = "" }) {
-      const formattedModelName = FormatHelpers.toPascalCase(model.$id);
-      const properties = model.properties || {};
-      const toStringProperties = Object.keys(properties).map(prop => `"    ${prop}: " + toIndentedString(${FormatHelpers.toCamelCase(prop)}) + "\\n" +`);
-    
-      return content + `
-@Override
-public String toString() {
-  return "class ${formattedModelName} {\\n" +   
-${renderer.indent(renderer.renderBlock(toStringProperties), 4)}
-    "}";
-}
-    
 /**
- * Convert the given object to string with each line indented by 4 spaces
- * (except the first line).
+ * Preset which adds for each property the `@Valid` annotation.
  */
-private String toIndentedString(Object o) {
-  if (o == null) {
-    return "null";
-  }
-  return o.toString().replace("\\n", "\\n    ");
-}`;
-    }
-  }
-}
-
-const EQUAL_AND_HAS_PRESET = {
-  class: {
-    additionalContent({ renderer, model, options, content = '' }) {
-      if (options.disableEqualsHashCode === 'true') return "";
-  
-      const formattedModelName = FormatHelpers.toPascalCase(model.$id);
-      const properties = model.properties || {};
-  
-      const hashProperties = Object.keys(properties).map(prop => FormatHelpers.toCamelCase(prop)).join(', ');
-      const equalProperties = Object.keys(properties).map(prop => {
-        const camelCasedProp = FormatHelpers.toCamelCase(prop);
-        return `Objects.equals(this.${camelCasedProp}, self.${camelCasedProp})`;
-      }).join(' &&\n');
-    
-      return `@Override
-public boolean equals(Object o) {
-  if (this == o) {
-    return true;
-  }
-  if (o == null || getClass() != o.getClass()) {
-    return false;
-  }
-  ${formattedModelName} self = (${formattedModelName}) o;
-    return 
-${renderer.indent(equalProperties, 6)};
-}
-        
-@Override
-public int hashCode() {
-  return Objects.hash(${hashProperties});
-}
-${content}`;
-    }
-  }
-}
-
-const TEMPLATE_PRESET = {
+const VALID_ANNOTATION_PRESET = {
   class: {
     property({ renderer, content }) {
       const annotation = renderer.renderAnnotation('Valid');
@@ -276,25 +164,40 @@ const TEMPLATE_PRESET = {
   },
 }
 
+/**
+ * Render Java's class based on schema and schemaName using `@asyncapi/generator-model-sdk`.
+ * 
+ * For more info checks docs:
+ * - generator: https://github.com/asyncapi/generator-model-sdk/blob/master/docs/generators.md
+ * - customisation (presets): https://github.com/asyncapi/generator-model-sdk/blob/master/docs/customisation.md
+ * 
+ * @param schema to render
+ * @param schemaName to render
+ * @param params passed to template
+ * @returns {string}
+ */
 async function renderJavaModel(schema, schemaName, params, callback) {
-  javaGenerator = new JavaGenerator({ presets: [
-    TEMPLATE_PRESET,
-    INLINE_ONE_ANY_OF,
-    INLINE_ALL_OF,
-    INLINE_ENUM_PRESET,
-
-    JAVA_CONSTRAINTS_PRESET,
-    JAVA_JACKSON_PRESET,
-    JAVA_DESCRIPTION_PRESET,
-
-    CLASS_TO_STRING_PRESET,
-    {
-      preset: EQUAL_AND_HAS_PRESET,
-      options: {
-        disableEqualsHashCode: params.disableEqualsHashCode,
-      }
-    }
-  ] });
+  javaGenerator = new JavaGenerator({ 
+    namingConvention: {
+      type: customTypeNaming,
+    },
+    presets: [
+      VALID_ANNOTATION_PRESET,
+      JAVA_CONSTRAINTS_PRESET,
+      JAVA_JACKSON_PRESET,
+      JAVA_DESCRIPTION_PRESET,
+      {
+        preset: JAVA_COMMON_PRESET,
+        options: {
+          equal: !(params.disableEqualsHashCode === 'true'),
+          hashCode: !(params.disableEqualsHashCode === 'true'),
+        }
+      },
+      INLINE_ANY_OF,
+      INLINE_ALL_OF,
+      INLINE_ENUM_PRESET,
+    ] 
+  });
 
   // copy schema
   const newSchema = Object.assign({}, schema)._json;
@@ -310,5 +213,4 @@ async function renderJavaModel(schema, schemaName, params, callback) {
     callback(error);
   }
 }
-
 filter.renderJavaModel = renderJavaModel;

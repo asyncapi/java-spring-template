@@ -4,10 +4,10 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 _Use your AsyncAPI definition to generate java code to subscribe and publish messages_
 
-
 ## Usage
 
 ### AsyncAPI definitions
+
 To have correctly generated code, your AsyncAPI file MUST define `operationId` for every operation.
 
 In order for the generator to know what names to use for some parameters it's necessary to make use of [AsyncAPI specification bindings](https://www.asyncapi.com/docs/specifications/2.0.0/#operationBindingsObject). 
@@ -234,14 +234,17 @@ components:
 |disconnectionTimeout|Only for MQTT. The completion timeout in milliseconds when disconnecting. The default disconnect completion timeout is 5000 milliseconds.|No|`5000`|
 |completionTimeout|Only for MQTT. The completion timeout in milliseconds for operations. The default completion timeout is 30000 milliseconds.|No|`30000`|
 |asyncapiFileDir| Path where original AsyncAPI file will be stored.|No|`src/main/resources/api/`|
+
 #### Examples
 
 The shortest possible syntax:
+
 ```bash
 ag asyncapi.yaml @asyncapi/java-spring-template
 ```
 
 Specify where to put the result and define poll timeout:
+
 ```bash
 ag -o ./src asyncapi.yaml -p listenerPollTimeout=5000 @asyncapi/java-spring-template
 ```
@@ -251,15 +254,17 @@ If you don't have the AsyncAPI Generator installed, you can install it like this
 ```
 npm install -g @asyncapi/generator
 ```
+
 ### Run it
 
 Go to the root folder of the generated code and run this command (you need the JDK1.8):
+
 ```bash
 ./gradlew bootRun
 ```
 
-
 Generated source contains RabbitMQ docker-compose. So you could use it to test amqp with:
+
 ```bash
 docker-compose -f src/main/docker/rabbitmq.yml up -d
 ```

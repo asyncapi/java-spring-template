@@ -55,71 +55,57 @@ public class AnonymousSchema14 {
   }
 }
 
-// 
-// public class AnonymousSchema14 {
-//     
-//
-//
-//     private @Valid String key;
-//
-//
-//     
 
-//     
-//
-//
-//
+public class AnonymousSchema14 {
+    
+    private @Valid String key;
+    
 
-//
+    
 
-//     
-//     @JsonProperty("key")
-//
-//
-//
-//
-//
-//     public String getKey() {
-//         return key;
-//     }
+    
+    @JsonProperty("key")
+    public String getKey() {
+        return key;
+    }
 
-//     public void setKey(String key) {
-//         this.key = key;
-//     }
-//     
-//     @Override
-//     public boolean equals(Object o) {
-//         if (this == o) {
-//             return true;
-//         }
-//         if (o == null || getClass() != o.getClass()) {
-//             return false;
-//         }
-//         AnonymousSchema14 anonymousSchema14 = (AnonymousSchema14) o;
-//         return 
-//             Objects.equals(this.key, anonymousSchema14.key);
-//     }
+    public void setKey(String key) {
+        this.key = key;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        AnonymousSchema14 anonymousSchema14 = (AnonymousSchema14) o;
+        return 
+            Objects.equals(this.key, anonymousSchema14.key);
+    }
 
-//     @Override
-//     public int hashCode() {
-//         return Objects.hash(key);
-//     }
+    @Override
+    public int hashCode() {
+        return Objects.hash(key);
+    }
 
-//     @Override
-//     public String toString() {
-//         return "class AnonymousSchema14 {\n" +
-//         
-//                 "    key: " + toIndentedString(key) + "\n" +
-//                 "}";
-//     }
+    @Override
+    public String toString() {
+        return "class AnonymousSchema14 {\n" +
+        
+                "    key: " + toIndentedString(key) + "\n" +
+                "}";
+    }
 
-//     /**
-//      * Convert the given object to string with each line indented by 4 spaces (except the first line).
-//      */
-//     private String toIndentedString(Object o) {
-//         if (o == null) {
-//            return "null";
-//         }
-//         return o.toString().replace("\n", "\n    ");
-//     }
-// }
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+}
