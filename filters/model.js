@@ -136,6 +136,10 @@ const INLINE_ALL_OF = {
         return content;
       }
 
+      /**
+       * Create CommonModel to render `allOf` combined schema as local class.
+       * Propagate each element of `allOf` array as a single property.
+       */
       const commonModel = new CommonModel();
       commonModel.$id = type;
       commonModel.properties = {};
@@ -170,10 +174,12 @@ const VALID_ANNOTATION_PRESET = {
  * For more info checks docs:
  * - generator: https://github.com/asyncapi/generator-model-sdk/blob/master/docs/generators.md
  * - customisation (presets): https://github.com/asyncapi/generator-model-sdk/blob/master/docs/customisation.md
+ * - callback as a last argument: https://github.com/asyncapi/generator/blob/master/docs/authoring.md#filters
  * 
  * @param schema to render
  * @param schemaName to render
  * @param params passed to template
+ * @param callback
  * @returns {string}
  */
 async function renderJavaModel(schema, schemaName, params, callback) {
