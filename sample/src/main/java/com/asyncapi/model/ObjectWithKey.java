@@ -30,7 +30,7 @@ public class ObjectWithKey {
       return 
         Objects.equals(this.key, self.key);
   }
-        
+
   @Override
   public int hashCode() {
     return Objects.hash(key);
@@ -40,9 +40,9 @@ public class ObjectWithKey {
   public String toString() {
     return "class ObjectWithKey {\n" +   
       "    key: " + toIndentedString(key) + "\n" +
-      "}";
+    "}";
   }
-    
+
   /**
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
@@ -55,57 +55,71 @@ public class ObjectWithKey {
   }
 }
 
+// 
+// public class ObjectWithKey {
+//     
+//
+//
+//     private @Valid String key;
+//
+//
+//     
 
-public class ObjectWithKey {
-    
-    private @Valid String key;
-    
+//     
+//
+//
+//
 
-    
+//
 
-    
-    @JsonProperty("key")
-    public String getKey() {
-        return key;
-    }
+//     
+//     @JsonProperty("key")
+//
+//
+//
+//
+//
+//     public String getKey() {
+//         return key;
+//     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ObjectWithKey objectWithKey = (ObjectWithKey) o;
-        return 
-            Objects.equals(this.key, objectWithKey.key);
-    }
+//     public void setKey(String key) {
+//         this.key = key;
+//     }
+//     
+//     @Override
+//     public boolean equals(Object o) {
+//         if (this == o) {
+//             return true;
+//         }
+//         if (o == null || getClass() != o.getClass()) {
+//             return false;
+//         }
+//         ObjectWithKey objectWithKey = (ObjectWithKey) o;
+//         return 
+//             Objects.equals(this.key, objectWithKey.key);
+//     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(key);
-    }
+//     @Override
+//     public int hashCode() {
+//         return Objects.hash(key);
+//     }
 
-    @Override
-    public String toString() {
-        return "class ObjectWithKey {\n" +
-        
-                "    key: " + toIndentedString(key) + "\n" +
-                "}";
-    }
+//     @Override
+//     public String toString() {
+//         return "class ObjectWithKey {\n" +
+//         
+//                 "    key: " + toIndentedString(key) + "\n" +
+//                 "}";
+//     }
 
-    /**
-     * Convert the given object to string with each line indented by 4 spaces (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-           return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
-}
+//     /**
+//      * Convert the given object to string with each line indented by 4 spaces (except the first line).
+//      */
+//     private String toIndentedString(Object o) {
+//         if (o == null) {
+//            return "null";
+//         }
+//         return o.toString().replace("\n", "\n    ");
+//     }
+// }

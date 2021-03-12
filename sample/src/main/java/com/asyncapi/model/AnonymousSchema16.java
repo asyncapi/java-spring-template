@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
 import java.util.Objects;
 
-public class AnonymousSchema_16 {
+public class AnonymousSchema16 {
   @Valid
   private Integer myAppHeader;
 
@@ -28,11 +28,11 @@ public class AnonymousSchema_16 {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AnonymousSchema_16 self = (AnonymousSchema_16) o;
+    AnonymousSchema16 self = (AnonymousSchema16) o;
       return 
         Objects.equals(this.myAppHeader, self.myAppHeader);
   }
-        
+
   @Override
   public int hashCode() {
     return Objects.hash(myAppHeader);
@@ -40,11 +40,11 @@ public class AnonymousSchema_16 {
 
   @Override
   public String toString() {
-    return "class AnonymousSchema_16 {\n" +   
-      "    my-app-header: " + toIndentedString(myAppHeader) + "\n" +
-      "}";
+    return "class AnonymousSchema16 {\n" +   
+      "    myAppHeader: " + toIndentedString(myAppHeader) + "\n" +
+    "}";
   }
-    
+
   /**
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
@@ -57,57 +57,71 @@ public class AnonymousSchema_16 {
   }
 }
 
+// 
+// public class AnonymousSchema16 {
+//     
+//
+//
+//     private @Valid int myAppHeader;
+//
+//
+//     
 
-public class AnonymousSchema16 {
-    
-    private @Valid int myAppHeader;
-    
+//     
+//
+//
+//
 
-    
+//
 
-    
-    @JsonProperty("my-app-header")@Max(100)
-    public int getMyAppHeader() {
-        return myAppHeader;
-    }
+//     
+//     @JsonProperty("my-app-header")
+//
+//
+//
+//
+//@Max(100)
+//     public int getMyAppHeader() {
+//         return myAppHeader;
+//     }
 
-    public void setMyAppHeader(int myAppHeader) {
-        this.myAppHeader = myAppHeader;
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        AnonymousSchema16 anonymousSchema16 = (AnonymousSchema16) o;
-        return 
-            Objects.equals(this.myAppHeader, anonymousSchema16.myAppHeader);
-    }
+//     public void setMyAppHeader(int myAppHeader) {
+//         this.myAppHeader = myAppHeader;
+//     }
+//     
+//     @Override
+//     public boolean equals(Object o) {
+//         if (this == o) {
+//             return true;
+//         }
+//         if (o == null || getClass() != o.getClass()) {
+//             return false;
+//         }
+//         AnonymousSchema16 anonymousSchema16 = (AnonymousSchema16) o;
+//         return 
+//             Objects.equals(this.myAppHeader, anonymousSchema16.myAppHeader);
+//     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(myAppHeader);
-    }
+//     @Override
+//     public int hashCode() {
+//         return Objects.hash(myAppHeader);
+//     }
 
-    @Override
-    public String toString() {
-        return "class AnonymousSchema16 {\n" +
-        
-                "    myAppHeader: " + toIndentedString(myAppHeader) + "\n" +
-                "}";
-    }
+//     @Override
+//     public String toString() {
+//         return "class AnonymousSchema16 {\n" +
+//         
+//                 "    myAppHeader: " + toIndentedString(myAppHeader) + "\n" +
+//                 "}";
+//     }
 
-    /**
-     * Convert the given object to string with each line indented by 4 spaces (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-           return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
-}
+//     /**
+//      * Convert the given object to string with each line indented by 4 spaces (except the first line).
+//      */
+//     private String toIndentedString(Object o) {
+//         if (o == null) {
+//            return "null";
+//         }
+//         return o.toString().replace("\n", "\n    ");
+//     }
+// }
