@@ -120,6 +120,11 @@
         "description": "The Java package of the generated classes. Alternatively you can set the specification extension info.x-java-package",
         "default": "com.asyncapi",
         "required": false
+      },
+      "addTypeInfoHeader": {
+        "description": "Only for Kafka. Add type information to the message header",
+        "default": "true",
+        "required": false
       }
     },
     "generator": ">=0.50.0 <2.0.0",
