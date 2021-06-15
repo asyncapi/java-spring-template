@@ -57,7 +57,9 @@ public class Config {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    {% if params.addTypeInfoHeader === 'false' %}
         props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
+    {% endif -%}
         props.put(JsonSerializer.TYPE_MAPPINGS,
     {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
         {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}
