@@ -161,3 +161,9 @@ function createEnum(val){
   return result;
 };
 filter.createEnum = createEnum;
+
+function addBackSlashToPattern(val) {  
+  let result = val.replace(/\\/g, "\\\\");
+  return result;
+}
+filter.addBackSlashToPattern = addBackSlashToPattern;
