@@ -23,6 +23,15 @@
       "contributions": [
         "review"
       ]
+    },
+    {
+      "login": "amrutprabhu",
+      "name": "Amrut Prabhu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8725949?v=4",
+      "profile": "http://www.amrutprabhu.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
