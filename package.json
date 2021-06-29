@@ -30,7 +30,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@asyncapi/generator-filters": "^1.0.0",
+    "@asyncapi/generator-filters": "^2.0.0",
     "@asyncapi/generator-hooks": "^0.1.0",
     "fs-extra": "^9.0.0",
     "lodash": "^4.17.15",
