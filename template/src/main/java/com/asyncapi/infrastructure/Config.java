@@ -10,6 +10,6 @@ package {{ params['userJavaPackage'] }}.infrastructure;
 {%- if asyncapi | isProtocol('mqtt') -%}
 {{- mqttConfig(asyncapi, params) -}}
 {%- endif -%}
-{%- if asyncapi | isProtocol('kafka') -%}
+{%- if (asyncapi | isProtocol('kafka')) or (asyncapi | isProtocol('kafka-secure')) -%}
 {{- kafkaConfig(asyncapi, params) -}}
 {%- endif -%}
