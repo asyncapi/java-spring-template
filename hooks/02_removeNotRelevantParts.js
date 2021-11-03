@@ -8,7 +8,7 @@ module.exports = {
         for (let server of Object.values(asyncapi.servers())) {
             hasAmqp = hasAmqp || server.protocol() === 'amqp';
             hasMqtt = hasMqtt || server.protocol() === 'mqtt';
-            hasKafka = hasKafka || server.protocol() === 'kafka';
+            hasKafka = hasKafka || server.protocol() === 'kafka' || server.protocol() === 'kafka-secure';
         }
         if (!hasKafka) {
             // remove filers from template related only to Kafka

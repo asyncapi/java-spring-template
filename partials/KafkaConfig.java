@@ -10,10 +10,60 @@
     {%- endif -%}
 {%- endfor %}
 
+{%- set securityProtocol = "PLAINTEXT" -%}
+{%- set saslMechanism = null -%}
+{%- set saslJaasConfig = null -%}
+{%- for serverName, server in asyncapi.servers() -%}
+    {%- if server.protocol() == "kafka" -%}
+        {%- if server.security() -%}
+            {%- set securityProtocol = "SASL_PLAINTEXT" -%}
+        {%- else -%}
+            {%- set securityProtocol = "PLAINTEXT" -%}
+        {%- endif -%}
+    {%- elif server.protocol() == "kafka-secure" -%}
+        {%- if server.security() -%}
+            {%- set securityProtocol = "SASL_SSL" -%}
+        {%- else -%}
+            {%- set securityProtocol = "SSL" -%}
+        {%- endif -%}
+    {%- endif -%}
+
+    {%- if asyncapi.hasComponents() and asyncapi.components().hasSecuritySchemes() and server.security() -%}
+        {%- for securityRef in server.security() -%}
+            {%- for securityName, securityObj in securityRef -%}
+                {%- for securityRefName, securityRefObj in securityObj -%}
+                    {%- for securitySchemeRef, securityScheme in asyncapi.components().securitySchemes()[securityRefName] -%}
+                        {%- if securityScheme.type == "plain" -%}
+                            {%- set saslMechanism = "PLAIN" -%}
+                            {%- set saslJaasConfig = "org.apache.kafka.common.security.plain.PlainLoginModule required username='USERNAME' password='PASSWORD';" -%}
+                        {%- elif securityScheme.type == "scramSha256" -%}
+                            {%- set saslMechanism = "SCRAM-SHA-256" -%}
+                            {%- set saslJaasConfig = "org.apache.kafka.common.security.scram.ScramLoginModule required username='USERNAME' password='PASSWORD';" -%}
+                        {%- elif securityScheme.type == "scramSha512" -%}
+                            {%- set saslMechanism = "SCRAM-SHA-512" -%}
+                            {%- set saslJaasConfig = "org.apache.kafka.common.security.scram.ScramLoginModule required username='USERNAME' password='PASSWORD';" -%}
+                        {%- elif securityScheme.type == "oauth2" -%}
+                            {%- set saslMechanism = "OAUTHBEARER" -%}
+                            {%- set saslJaasConfig = "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required unsecuredLoginStringClaim_sub='LOGINSTRING';" -%}
+                        {%- elif securityScheme.type == "gssapi" -%}
+                            {%- set saslMechanism = "GSSAPI" -%}
+                            {%- set saslJaasConfig = "com.sun.security.auth.module.Krb5LoginModule required useKeyTab=true storeKey=true keyTab='CLIENT.KEYTAB' principal='EMAIL@DOMAIN.COM';" -%}
+                        {%- elif securityScheme.type == "X509" -%}
+                            {%- set securityProtocol = "SSL" -%}
+                        {%- endif -%}
+                    {%- endfor -%}
+                {%- endfor -%}
+            {%- endfor -%}
+        {%- endfor -%}
+    {%- endif -%}
+{%- endfor %}
+
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.IntegerSerializer;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,9 +107,16 @@ public class Config {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    {% if params.addTypeInfoHeader === 'false' %}
-        props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
+        props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "{{ securityProtocol }}");
+    {%- if saslMechanism %}
+        props.put(SaslConfigs.SASL_MECHANISM, "{{ saslMechanism }}");
+    {%- endif -%}
+    {%- if saslJaasConfig %}
+        props.put(SaslConfigs.SASL_JAAS_CONFIG, "{{ saslJaasConfig | safe }}");
     {% endif -%}
+    {%- if params.addTypeInfoHeader === 'false' %}
+        props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
+    {% endif %}
         props.put(JsonSerializer.TYPE_MAPPINGS,
     {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
         {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}
@@ -94,6 +151,13 @@ public class Config {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "{{ securityProtocol }}");
+    {%- if saslMechanism %}
+        props.put(SaslConfigs.SASL_MECHANISM, "{{ saslMechanism }}");
+    {%- endif -%}
+    {%- if saslJaasConfig %}
+        props.put(SaslConfigs.SASL_JAAS_CONFIG, "{{ saslJaasConfig | safe }}");
+    {% endif -%}
         props.put(JsonDeserializer.TYPE_MAPPINGS,
     {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
         {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}
