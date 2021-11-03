@@ -128,7 +128,7 @@ See the list of features that are still missing in the component:
 - [ ] [`server variables`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#serverVariableObject) are not entirely supported 
 - [ ] [`security schemas`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#securitySchemeObject) are not supported
 - [ ] [`traits`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#operationTraitObject) are not supported
-- [ ] Json serializer/desirializer is used always, without taking into account real [`content type`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#default-content-type)
+- [ ] Json serializer/deserializer is used always, without taking into account real [`content type`](https://github.com/asyncapi/asyncapi/blob/master/versions/2.0.0/asyncapi.md#default-content-type)
 - [x] client side generation mode (in general just flip subscribe and publish channels)
 - [ ] template generation of docker-compose depending on protocol of server, now the rabbitmq is hardcoded
 
