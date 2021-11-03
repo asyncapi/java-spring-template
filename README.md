@@ -252,7 +252,36 @@ If you don't have the AsyncAPI Generator installed, you can install it like this
 ```
 npm install -g @asyncapi/generator
 ```
-### Run it
+
+## Development
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/asyncapi/java-spring-template
+   cd java-spring-template
+   ```
+1. Make sure template has all the dependencies:
+   ```
+   npm install
+   ```
+1. Install AsyncAPI Generator:
+   ```
+   npm install -g @asyncapi/generator
+   ```
+1. Run generation:
+   ```bash
+   # for MQTT protocol test with below
+   ag tests/mqtt.yml ./ --output output
+   # for Kafka protocol test with below
+   ag tests/kafka.yml ./ --output output
+1. Explore generated files in `output` directory
+
+> For local development, you need different variations of this command. First of all, you need to know about three important CLI flags:
+- `--debug` enables the debug mode. 
+- `--watch-template` enables a watcher of changes that you make in the template. It regenerates your template whenever it detects a change.
+- `--install` enforces reinstallation of the template.
+
+## Run it
 
 Go to the root folder of the generated code and run this command (you need the JDK1.8):
 ```bash
