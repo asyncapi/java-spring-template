@@ -96,6 +96,7 @@ npm install -g @asyncapi/generator
    ag tests/mqtt.yml ./ --output output
    # for Kafka protocol test with below
    ag tests/kafka.yml ./ --output output
+   ```
 1. Explore generated files in `output` directory
 
 > For local development, you need different variations of this command. First of all, you need to know about three important CLI flags:
