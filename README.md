@@ -11,202 +11,24 @@ _Use your AsyncAPI definition to generate java code to subscribe and publish mes
 To have correctly generated code, your AsyncAPI file MUST define `operationId` for every operation.
 
 In order for the generator to know what names to use for some parameters it's necessary to make use of [AsyncAPI specification bindings](https://www.asyncapi.com/docs/specifications/2.0.0/#operationBindingsObject). 
-here is an example of how to use it:
 
-<details><summary>Kafka</summary>
-<p>
 
-```yml
-channels:
-  event.lighting.measured:
-    publish:
-      bindings:
-        kafka:
-          groupId: my-group
-      message:
-         $ref: '#/components/messages/lightMeasured'
-    subscribe:
-      message:
-        $ref: '#/components/messages/lightMeasured'
-```
-here is a complete example
-```yml
-asyncapi: '2.0.0'
-info:
-  title: Streetlights API
-  version: '1.0.0'
-  description: |
-    The Smartylighting Streetlights API allows you
-    to remotely manage the city lights.
-  license:
-    name: Apache 2.0
-    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+- Complete example for Kafka is [here](tests/kafka.yml). Notice information about binding.
+  ```yml
+  channels:
+    event.lighting.measured:
+      publish:
+        bindings:
+          kafka:
+            groupId: my-group
+        message:
+          $ref: '#/components/messages/lightMeasured'
+      subscribe:
+        message:
+          $ref: '#/components/messages/lightMeasured'
+  ```  
+- Complete example for MQTT is [here](tests/mqtt.yml).
 
-servers:
-  production:
-    url: kafka.bootstrap:{port}
-    protocol: kafka
-    variables:
-      port:
-        default: '9092'
-        enum:
-          - '9092'
-          - '9093'
-
-channels:
-  event.lighting.measured:
-    publish:
-      bindings:
-        kafka:
-          groupId: my-group
-      operationId: readLightMeasurement
-      message:
-        $ref: '#/components/messages/lightMeasured'
-    subscribe:
-      operationId: updateLightMeasurement
-      message:
-        $ref: '#/components/messages/lightMeasured'
-components:
-  messages:
-    lightMeasured:
-      summary: Inform about environmental lighting conditions for a particular streetlight.
-      payload:
-        $ref: "#/components/schemas/lightMeasuredPayload"
-  schemas:
-    lightMeasuredPayload:
-      type: object
-      properties:
-        lumens:
-          type: integer
-          minimum: 0
-          description: Light intensity measured in lumens.
-        sentAt:
-          $ref: "#/components/schemas/sentAt"
-    sentAt:
-      type: string
-      format: date-time
-      description: Date and time when the message was sent.
-```
-
-</p>
-</details>
-
-<details><summary>MQTT</summary>
-<p>
-
-```yml
-asyncapi: '2.0.0'
-info:
-  title: Streetlights API
-  version: '1.0.0'
-  description: |
-    The Smartylighting Streetlights API allows you to remotely manage the city lights.
-  license:
-    name: Apache 2.0
-    url: https://www.apache.org/licenses/LICENSE-2.0
-
-servers:
-  production:
-    url: mqtt://localhost:{port}
-    protocol: mqtt
-    description: dummy MQTT broker
-    bindings:
-      mqtt:
-        clientId: guest
-        cleanSession: false
-        keepAlive: 0
-        lastWill:
-          topic: /will
-          qos: 0
-          message: Guest gone offline.
-          retain: false
-    variables:
-      port:
-        enum:
-          - '8883'
-          - '8884'
-        default: '8883'
-    
-          
-defaultContentType: application/json
-
-channels:
-  smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured:
-    description: The topic on which measured values may be produced and consumed.
-    parameters:
-      streetlightId:
-        $ref: '#/components/parameters/streetlightId'
-    publish:
-      summary: Inform about environmental lighting conditions of a particular streetlight.
-      operationId: receiveLightMeasurement
-      message:
-        $ref: '#/components/messages/lightMeasured'
-
-  smartylighting/streetlights/1/0/action/{streetlightId}/turn/on:
-    parameters:
-      streetlightId:
-        $ref: '#/components/parameters/streetlightId'
-    subscribe:
-      bindings:
-        mqtt:
-          qos: 0
-          retain: false
-      operationId: turnOn
-      message:
-        $ref: '#/components/messages/turnOnOff'
-
-components:
-  messages:
-    lightMeasured:
-      name: lightMeasured
-      title: Light measured
-      summary: Inform about environmental lighting conditions of a particular streetlight.
-      payload:
-        $ref: "#/components/schemas/lightMeasuredPayload"
-    turnOnOff:
-      name: turnOnOff
-      title: Turn on/off
-      summary: Command a particular streetlight to turn the lights on or off.
-      payload:
-        $ref: "#/components/schemas/turnOnOffPayload"
-
-  schemas:
-    lightMeasuredPayload:
-      type: object
-      properties:
-        lumens:
-          type: integer
-          minimum: 0
-          description: Light intensity measured in lumens.
-          x-pi: false
-        sentAt:
-          $ref: "#/components/schemas/sentAt"
-    turnOnOffPayload:
-      type: object
-      properties:
-        command:
-          type: string
-          enum:
-            - on
-            - off
-          description: Whether to turn on or off the light.
-          x-pi: false
-        sentAt:
-          $ref: "#/components/schemas/sentAt"
-    sentAt:
-      type: string
-      format: date-time
-      description: Date and time when the message was sent.
-
-  parameters:
-    streetlightId:
-      description: The ID of the streetlight.
-      schema:
-        type: string
-```
-
-</p>
-</details>
 
 ### From the command-line interface (CLI)
 
@@ -252,7 +74,37 @@ If you don't have the AsyncAPI Generator installed, you can install it like this
 ```
 npm install -g @asyncapi/generator
 ```
-### Run it
+
+## Development
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/asyncapi/java-spring-template
+   cd java-spring-template
+   ```
+1. Make sure template has all the dependencies:
+   ```
+   npm install
+   ```
+1. Install AsyncAPI Generator:
+   ```
+   npm install -g @asyncapi/generator
+   ```
+1. Run generation:
+   ```bash
+   # for MQTT protocol test with below
+   ag tests/mqtt.yml ./ --output output
+   # for Kafka protocol test with below
+   ag tests/kafka.yml ./ --output output
+   ```
+1. Explore generated files in `output` directory
+
+> For local development, you need different variations of this command. First of all, you need to know about three important CLI flags:
+- `--debug` enables the debug mode. 
+- `--watch-template` enables a watcher of changes that you make in the template. It regenerates your template whenever it detects a change.
+- `--install` enforces reinstallation of the template.
+
+## Run it
 
 Go to the root folder of the generated code and run this command (you need the JDK1.8):
 ```bash
