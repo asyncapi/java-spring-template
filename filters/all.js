@@ -1,5 +1,6 @@
 const filter = module.exports;
 const _ = require('lodash');
+const decycle = require('json-decycle').decycle
 
 function defineType(prop, propName) {
     if (prop.type() === 'object') {
@@ -98,7 +99,7 @@ function isDefined(obj) {
 filter.isDefined = isDefined;
 
 function isProtocol(api, protocol){
-  return JSON.stringify(api.json()).includes('"protocol":"' + protocol + '"');
+  return JSON.stringify(api.json(), decycle()).includes('"protocol":"' + protocol + '"');
 };
 filter.isProtocol = isProtocol;
 
