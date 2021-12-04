@@ -8,7 +8,9 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 {% for channelName, channel in asyncapi.channels() %}
         {%- if channel.hasSubscribe() %}
-import {{params['userJavaPackage']}}.model.{{channel.subscribe().message().payload().uid() | camelCase | upperFirst}};
+            {%- for message in channel.subscribe().messages() %}
+import {{params['userJavaPackage']}}.model.{{message.payload().uid() | camelCase | upperFirst}};
+        {% endfor -%}
     {% endif -%}
 {% endfor %}
 
@@ -18,7 +20,12 @@ public class PublisherService {
     @Autowired
     private KafkaTemplate<Integer, Object> kafkaTemplate;
 {% for channelName, channel in asyncapi.channels() %}
-    {%- if channel.hasSubscribe() %} {% set varName = channel.subscribe().message().payload().uid() | camelCase %}
+    {%- if channel.hasSubscribe() %}
+        {%- if channel.subscribe().hasMultipleMessages() %}
+            {%- set varName = "object" %}
+        {%- else %}
+            {%- set varName = channel.subscribe().message().payload().uid() | camelCase %}
+        {%- endif %}
     {% if channel.description() or channel.subscribe().description() %}/**{% for line in channel.description() | splitByLines %}
      * {{line | safe}}{% endfor %}{% for line in channel.subscribe().description() | splitByLines %}
      * {{line | safe}}{% endfor %}
