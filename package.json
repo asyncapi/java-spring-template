@@ -128,7 +128,7 @@
         "required": false
       }
     },
-    "generator": ">=0.50.0 <2.0.0",
+    "generator": ">=1.8.27 <2.0.0",
     "filters": [
       "@asyncapi/generator-filters"
     ],
