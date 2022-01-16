@@ -16,6 +16,7 @@ import java.util.Objects;
  */{% endif %}
 public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
+        {%- set isRequired = propName | isRequired(schema.required()) %}
         {%- if prop.type() === 'object' %}
     private @Valid {{prop.uid() | camelCase | upperFirst}} {{propName | camelCase}};
         {%- elif prop.type() === 'array' %}
@@ -110,9 +111,9 @@ public class {{schemaName | camelCase | upperFirst}} {
     private @Valid {{allName}} {{propName | camelCase}};
         {%- else %}
             {%- if prop.format() %}
-    private @Valid {{prop.format() | toJavaType}} {{propName | camelCase}};
+    private @Valid {{prop.format() | toJavaType(isRequired)}} {{propName | camelCase}};
             {%- else %}
-    private @Valid {{prop.type() | toJavaType}} {{propName | camelCase}};
+    private @Valid {{prop.type() | toJavaType(isRequired)}} {{propName | camelCase}};
             {%- endif %}
         {%- endif %}
     {% endfor %}
