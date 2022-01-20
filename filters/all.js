@@ -101,7 +101,7 @@ function isDefined(obj) {
 filter.isDefined = isDefined;
 
 function isProtocol(api, protocol){
-  return JSON.stringify(api.json()).includes('"protocol":"' + protocol + '"');
+  return api.constructor.stringify(api).includes('"protocol":"' + protocol + '"');
 };
 filter.isProtocol = isProtocol;
 
