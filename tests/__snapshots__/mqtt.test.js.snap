@@ -1,0 +1,1363 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 1`] = `
+"package com.asyncapi.infrastructure;
+
+import com.asyncapi.service.MessageHandlerService;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.dsl.IntegrationFlow;
+import org.springframework.integration.dsl.IntegrationFlows;
+import org.springframework.integration.endpoint.MessageProducerSupport;
+import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
+import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
+import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
+import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
+import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.util.StringUtils;
+
+@Configuration
+public class Config {
+
+    @Value(\\"\${mqtt.broker.address}\\")
+    private String address;
+
+    @Value(\\"\${mqtt.broker.timeout.connection}\\")
+    private int connectionTimeout;
+
+    @Value(\\"\${mqtt.broker.timeout.disconnection}\\")
+    private long disconnectionTimeout;
+
+    @Value(\\"\${mqtt.broker.timeout.completion}\\")
+    private long completionTimeout;
+
+    @Value(\\"\${mqtt.broker.clientId}\\")
+    private String clientId;
+
+    @Value(\\"\${mqtt.broker.username}\\")
+    private String username;
+
+    @Value(\\"\${mqtt.broker.password}\\")
+    private String password;
+
+    
+
+    
+    @Value(\\"\${mqtt.topic.receiveLightMeasurement}\\")
+    private String receiveLightMeasurementTopic;
+    
+    @Value(\\"\${mqtt.topic.turnOn}\\")
+    private String turnOnTopic;
+    
+    @Value(\\"\${mqtt.topic.turnOff}\\")
+    private String turnOffTopic;
+    
+    @Value(\\"\${mqtt.topic.dimLight}\\")
+    private String dimLightTopic;
+    
+
+    @Bean
+    public MqttPahoClientFactory mqttClientFactory() {
+        DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
+        MqttConnectOptions options = new MqttConnectOptions();
+        
+        
+        
+        
+        options.setServerURIs(new String[] { address });
+        if (!StringUtils.isEmpty(username)) {
+            options.setUserName(username);
+        }
+        if (!StringUtils.isEmpty(password)) {
+            options.setPassword(password.toCharArray());
+        }
+        options.setConnectionTimeout(connectionTimeout);
+        factory.setConnectionOptions(options);
+        return factory;
+    }
+
+    @Autowired
+    MessageHandlerService messageHandlerService;
+
+    
+    @Bean
+    public IntegrationFlow receiveLightMeasurementFlow() {
+        return IntegrationFlows.from(receiveLightMeasurementInbound())
+                .handle(messageHandlerService::handleReceiveLightMeasurement)
+                .get();
+    }
+
+    @Bean
+    public MessageProducerSupport receiveLightMeasurementInbound() {
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(clientId,
+                mqttClientFactory(), receiveLightMeasurementTopic);
+        adapter.setCompletionTimeout(connectionTimeout);
+        adapter.setDisconnectCompletionTimeout(disconnectionTimeout);
+        adapter.setConverter(new DefaultPahoMessageConverter());
+        return adapter;
+    }
+    
+
+    
+    @Bean
+    public MessageChannel turnOnOutboundChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    @ServiceActivator(inputChannel = \\"turnOnOutboundChannel\\")
+    public MessageHandler turnOnOutbound() {
+        MqttPahoMessageHandler pahoMessageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
+        pahoMessageHandler.setAsync(true);
+        pahoMessageHandler.setCompletionTimeout(completionTimeout);
+        pahoMessageHandler.setDisconnectCompletionTimeout(disconnectionTimeout);
+        pahoMessageHandler.setDefaultTopic(turnOnTopic);
+        
+        pahoMessageHandler.setDefaultQos(1);
+        return pahoMessageHandler;
+    }
+    
+    @Bean
+    public MessageChannel turnOffOutboundChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    @ServiceActivator(inputChannel = \\"turnOffOutboundChannel\\")
+    public MessageHandler turnOffOutbound() {
+        MqttPahoMessageHandler pahoMessageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
+        pahoMessageHandler.setAsync(true);
+        pahoMessageHandler.setCompletionTimeout(completionTimeout);
+        pahoMessageHandler.setDisconnectCompletionTimeout(disconnectionTimeout);
+        pahoMessageHandler.setDefaultTopic(turnOffTopic);
+        
+        pahoMessageHandler.setDefaultQos(1);
+        return pahoMessageHandler;
+    }
+    
+    @Bean
+    public MessageChannel dimLightOutboundChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    @ServiceActivator(inputChannel = \\"dimLightOutboundChannel\\")
+    public MessageHandler dimLightOutbound() {
+        MqttPahoMessageHandler pahoMessageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
+        pahoMessageHandler.setAsync(true);
+        pahoMessageHandler.setCompletionTimeout(completionTimeout);
+        pahoMessageHandler.setDisconnectCompletionTimeout(disconnectionTimeout);
+        pahoMessageHandler.setDefaultTopic(dimLightTopic);
+        
+        pahoMessageHandler.setDefaultQos(1);
+        return pahoMessageHandler;
+    }
+    
+
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 2`] = `
+"package com.asyncapi.service;
+
+import org.springframework.integration.annotation.Gateway;
+import org.springframework.integration.annotation.MessagingGateway;
+
+@MessagingGateway
+public interface PublisherService {
+
+    
+        
+    
+        
+    
+    @Gateway(requestChannel = \\"turnOnOutboundChannel\\")
+    void turnOn(String data);
+        
+    
+        
+    
+    @Gateway(requestChannel = \\"turnOffOutboundChannel\\")
+    void turnOff(String data);
+        
+    
+        
+    
+    @Gateway(requestChannel = \\"dimLightOutboundChannel\\")
+    void dimLight(String data);
+        
+    
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 3`] = `
+"package com.asyncapi.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.messaging.Message;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MessageHandlerService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandlerService.class);
+
+    
+      
+    /**
+     * The topic on which measured values may be produced and consumed.
+     */
+    public void handleReceiveLightMeasurement(Message<?> message) {
+        LOGGER.info(\\"handler smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured\\");
+        LOGGER.info(String.valueOf(message.getPayload().toString()));
+    }
+      
+    
+      
+    
+      
+    
+      
+    
+
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 4`] = `
+"package com.asyncapi.model;
+
+import javax.validation.constraints.*;
+import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.List;
+import java.util.Objects;
+
+
+public class DimLightPayload {
+    
+    private @Valid Integer percentage;
+    
+    private @Valid java.time.OffsetDateTime sentAt;
+    
+
+    
+
+    /**
+     * Percentage to which the light should be dimmed to.
+     */
+    @JsonProperty(\\"percentage\\")@Max(100)
+    public Integer getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Integer percentage) {
+        this.percentage = percentage;
+    }
+    
+
+    /**
+     * Date and time when the message was sent.
+     */
+    @JsonProperty(\\"sentAt\\")
+    public java.time.OffsetDateTime getSentAt() {
+        return sentAt;
+    }
+
+    public void setSentAt(java.time.OffsetDateTime sentAt) {
+        this.sentAt = sentAt;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DimLightPayload dimLightPayload = (DimLightPayload) o;
+        return 
+            Objects.equals(this.percentage, dimLightPayload.percentage) &&
+            Objects.equals(this.sentAt, dimLightPayload.sentAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(percentage, sentAt);
+    }
+
+    @Override
+    public String toString() {
+        return \\"class DimLightPayload {\\\\n\\" +
+        
+                \\"    percentage: \\" + toIndentedString(percentage) + \\"\\\\n\\" +
+                \\"    sentAt: \\" + toIndentedString(sentAt) + \\"\\\\n\\" +
+                \\"}\\";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return \\"null\\";
+        }
+        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+    }
+}"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 5`] = `
+"package com.asyncapi.model;
+
+import javax.validation.constraints.*;
+import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.List;
+import java.util.Objects;
+
+
+public class LightMeasuredPayload {
+    
+    private @Valid Integer lumens;
+    
+    private @Valid java.time.OffsetDateTime sentAt;
+    
+
+    
+
+    /**
+     * Light intensity measured in lumens.
+     */
+    @JsonProperty(\\"lumens\\")
+    public Integer getLumens() {
+        return lumens;
+    }
+
+    public void setLumens(Integer lumens) {
+        this.lumens = lumens;
+    }
+    
+
+    /**
+     * Date and time when the message was sent.
+     */
+    @JsonProperty(\\"sentAt\\")
+    public java.time.OffsetDateTime getSentAt() {
+        return sentAt;
+    }
+
+    public void setSentAt(java.time.OffsetDateTime sentAt) {
+        this.sentAt = sentAt;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LightMeasuredPayload lightMeasuredPayload = (LightMeasuredPayload) o;
+        return 
+            Objects.equals(this.lumens, lightMeasuredPayload.lumens) &&
+            Objects.equals(this.sentAt, lightMeasuredPayload.sentAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(lumens, sentAt);
+    }
+
+    @Override
+    public String toString() {
+        return \\"class LightMeasuredPayload {\\\\n\\" +
+        
+                \\"    lumens: \\" + toIndentedString(lumens) + \\"\\\\n\\" +
+                \\"    sentAt: \\" + toIndentedString(sentAt) + \\"\\\\n\\" +
+                \\"}\\";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return \\"null\\";
+        }
+        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+    }
+}"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 6`] = `
+"package com.asyncapi.model;
+
+import javax.validation.constraints.*;
+import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.List;
+import java.util.Objects;
+
+
+public class TurnOnOffPayload {
+    
+    public enum CommandEnum {
+            
+        ON(String.valueOf(\\"on\\")),
+            
+        OFF(String.valueOf(\\"off\\"));
+            
+        private String value;
+
+        CommandEnum (String v) {
+            value = v;
+        }
+
+        public String value() {
+            return value;
+        }
+
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+        @JsonCreator
+        public static CommandEnum fromValue(String value) {
+            for ( CommandEnum b :  CommandEnum.values()) {
+                if (Objects.equals(b.value, value)) {
+                    return b;
+                }
+            }
+            throw new IllegalArgumentException(\\"Unexpected value '\\" + value + \\"'\\");
+        }
+    }
+
+    private @Valid CommandEnum command;
+    
+    private @Valid java.time.OffsetDateTime sentAt;
+    
+
+    
+
+    /**
+     * Whether to turn on or off the light.
+     */
+    @JsonProperty(\\"command\\")
+    public CommandEnum getCommand() {
+        return command;
+    }
+
+    public void setCommand(CommandEnum command) {
+        this.command = command;
+    }
+    
+
+    /**
+     * Date and time when the message was sent.
+     */
+    @JsonProperty(\\"sentAt\\")
+    public java.time.OffsetDateTime getSentAt() {
+        return sentAt;
+    }
+
+    public void setSentAt(java.time.OffsetDateTime sentAt) {
+        this.sentAt = sentAt;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TurnOnOffPayload turnOnOffPayload = (TurnOnOffPayload) o;
+        return 
+            Objects.equals(this.command, turnOnOffPayload.command) &&
+            Objects.equals(this.sentAt, turnOnOffPayload.sentAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(command, sentAt);
+    }
+
+    @Override
+    public String toString() {
+        return \\"class TurnOnOffPayload {\\\\n\\" +
+        
+                \\"    command: \\" + toIndentedString(command) + \\"\\\\n\\" +
+                \\"    sentAt: \\" + toIndentedString(sentAt) + \\"\\\\n\\" +
+                \\"}\\";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return \\"null\\";
+        }
+        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+    }
+}"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 7`] = `
+"package com.asyncapi.model;
+
+import javax.validation.Valid;
+
+import java.util.Objects;
+import java.util.List;
+
+
+public class DimLight {
+    private @Valid DimLightPayload payload;
+
+    public DimLightPayload getPayload() {
+        return payload;
+    }
+
+    public void setPayload(DimLightPayload payload) {
+        this.payload = payload;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DimLight event = (DimLight) o;
+        return Objects.equals(this.payload, event.payload);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(payload);
+    }
+
+    @Override
+    public String toString() {
+        return \\"class DimLight {\\\\n\\" +
+                \\"    payload: \\" + toIndentedString(payload) + \\"\\\\n\\" +
+                \\"}\\";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return \\"null\\";
+        }
+        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+    }
+}"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 8`] = `
+"package com.asyncapi.model;
+
+import javax.validation.Valid;
+
+import java.util.Objects;
+import java.util.List;
+
+
+public class LightMeasured {
+    private @Valid LightMeasuredPayload payload;
+
+    public LightMeasuredPayload getPayload() {
+        return payload;
+    }
+
+    public void setPayload(LightMeasuredPayload payload) {
+        this.payload = payload;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LightMeasured event = (LightMeasured) o;
+        return Objects.equals(this.payload, event.payload);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(payload);
+    }
+
+    @Override
+    public String toString() {
+        return \\"class LightMeasured {\\\\n\\" +
+                \\"    payload: \\" + toIndentedString(payload) + \\"\\\\n\\" +
+                \\"}\\";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return \\"null\\";
+        }
+        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+    }
+}"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 9`] = `
+"package com.asyncapi.model;
+
+import javax.validation.Valid;
+
+import java.util.Objects;
+import java.util.List;
+
+
+public class TurnOnOff {
+    private @Valid TurnOnOffPayload payload;
+
+    public TurnOnOffPayload getPayload() {
+        return payload;
+    }
+
+    public void setPayload(TurnOnOffPayload payload) {
+        this.payload = payload;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TurnOnOff event = (TurnOnOff) o;
+        return Objects.equals(this.payload, event.payload);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(payload);
+    }
+
+    @Override
+    public String toString() {
+        return \\"class TurnOnOff {\\\\n\\" +
+                \\"    payload: \\" + toIndentedString(payload) + \\"\\\\n\\" +
+                \\"}\\";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return \\"null\\";
+        }
+        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+    }
+}"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 10`] = `
+"package com.asyncapi;
+
+   
+import com.asyncapi.model.TurnOnOffPayload;
+  
+import com.asyncapi.model.TurnOnOffPayload;
+  
+import com.asyncapi.model.DimLightPayload;
+ 
+ 
+import com.asyncapi.model.LightMeasuredPayload;
+       
+import com.asyncapi.service.PublisherService;
+import org.eclipse.paho.client.mqttv3.*;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.testcontainers.containers.GenericContainer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+
+/**
+ * Example of tests for mqtt based on testcontainers library
+ */
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class TestcontainerMqttTest {
+
+    
+    @Value(\\"\${mqtt.topic.receiveLightMeasurement}\\")
+    private String receiveLightMeasurementTopic;
+    
+    @Value(\\"\${mqtt.topic.turnOn}\\")
+    private String turnOnTopic;
+    
+    @Value(\\"\${mqtt.topic.turnOff}\\")
+    private String turnOffTopic;
+    
+    @Value(\\"\${mqtt.topic.dimLight}\\")
+    private String dimLightTopic;
+    
+
+    @ClassRule
+    public static GenericContainer mosquitto = new GenericContainer(\\"eclipse-mosquitto\\").withExposedPorts(1883);
+    
+    @Autowired
+    private PublisherService publisherService;
+    
+    private IMqttClient publisher;
+
+    @DynamicPropertySource
+    public static void mqttProperties(DynamicPropertyRegistry registry) {
+        String address = \\"tcp://\\" + mosquitto.getContainerIpAddress() + mosquitto.getMappedPort(1883);
+        registry.add(\\"mqtt.broker.address\\", () -> address);
+    }
+
+    @BeforeEach
+    public void before() throws MqttException {
+        String address = \\"tcp://\\" + mosquitto.getContainerIpAddress() + mosquitto.getMappedPort(1883);
+        publisher = new MqttClient(address, UUID.randomUUID().toString());
+        publisher.connect();
+    }
+
+    @AfterEach
+    public void after() throws MqttException {
+        publisher.disconnect();
+    }
+
+      
+    @Test
+    public void receiveLightMeasurementConsumerTestcontainers() throws Exception {
+        LightMeasuredPayload payload = new LightMeasuredPayload();
+
+        sendMessage(receiveLightMeasurementTopic, payload.toString().getBytes());
+
+        Thread.sleep(1_000);
+    }
+    
+     
+    @Test
+    public void turnOnProducerTestcontainers() throws MqttException {
+        TurnOnOffPayload payload = new TurnOnOffPayload();
+
+        List<MqttMessage> receivedMessages = new ArrayList<>();
+        publisher.subscribe(turnOnTopic, (topic, message) -> {
+            receivedMessages.add(message);
+        });
+
+        publisherService.turnOn(payload.toString());
+
+        MqttMessage message = receivedMessages.get(receivedMessages.size() - 1);
+
+        assertEquals(\\"Message is wrong\\", payload.toString().getBytes(), message.getPayload());
+    }
+     
+     
+    @Test
+    public void turnOffProducerTestcontainers() throws MqttException {
+        TurnOnOffPayload payload = new TurnOnOffPayload();
+
+        List<MqttMessage> receivedMessages = new ArrayList<>();
+        publisher.subscribe(turnOffTopic, (topic, message) -> {
+            receivedMessages.add(message);
+        });
+
+        publisherService.turnOff(payload.toString());
+
+        MqttMessage message = receivedMessages.get(receivedMessages.size() - 1);
+
+        assertEquals(\\"Message is wrong\\", payload.toString().getBytes(), message.getPayload());
+    }
+     
+     
+    @Test
+    public void dimLightProducerTestcontainers() throws MqttException {
+        DimLightPayload payload = new DimLightPayload();
+
+        List<MqttMessage> receivedMessages = new ArrayList<>();
+        publisher.subscribe(dimLightTopic, (topic, message) -> {
+            receivedMessages.add(message);
+        });
+
+        publisherService.dimLight(payload.toString());
+
+        MqttMessage message = receivedMessages.get(receivedMessages.size() - 1);
+
+        assertEquals(\\"Message is wrong\\", payload.toString().getBytes(), message.getPayload());
+    }
+     
+    
+    
+    protected void sendMessage(String topic, byte[] message) throws Exception {
+        publisher.publish(topic, new MqttMessage(message));
+    }
+    
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 11`] = `
+"plugins {
+	id 'org.springframework.boot' version \\"$springBootVersion\\"
+	id 'io.spring.dependency-management' version \\"$springDependencyManager\\"
+	id 'java'
+}
+
+group = \\"com.asyncapi\\"
+version = \\"0.0.1-SNAPSHOT\\"
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation('org.springframework.integration:spring-integration-mqtt')
+	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
+	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+    implementation('javax.validation:validation-api')
+	implementation('org.springframework.boot:spring-boot-starter-integration')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.testcontainers:testcontainers:1.14.1')
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 12`] = `
+"springBootVersion=2.2.6.RELEASE
+springDependencyManager=1.0.9.RELEASE"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 1`] = `
+"package com.asyncapi.infrastructure;
+
+import com.asyncapi.service.MessageHandlerService;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.dsl.IntegrationFlow;
+import org.springframework.integration.dsl.IntegrationFlows;
+import org.springframework.integration.endpoint.MessageProducerSupport;
+import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
+import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
+import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
+import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
+import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.util.StringUtils;
+
+@Configuration
+public class Config {
+
+    @Value(\\"\${mqtt.broker.address}\\")
+    private String address;
+
+    @Value(\\"\${mqtt.broker.timeout.connection}\\")
+    private int connectionTimeout;
+
+    @Value(\\"\${mqtt.broker.timeout.disconnection}\\")
+    private long disconnectionTimeout;
+
+    @Value(\\"\${mqtt.broker.timeout.completion}\\")
+    private long completionTimeout;
+
+    @Value(\\"\${mqtt.broker.clientId}\\")
+    private String clientId;
+
+    @Value(\\"\${mqtt.broker.username}\\")
+    private String username;
+
+    @Value(\\"\${mqtt.broker.password}\\")
+    private String password;
+
+    
+    
+    @Value(\\"\${mqtt.broker.cleanSession}\\")
+    private boolean cleanSession;
+    
+    @Value(\\"\${mqtt.broker.timeout.keepAlive}\\")
+    private int keepAliveInterval;
+    
+    @Value(\\"\${mqtt.broker.lastWill.topic}\\")
+    private String lastWillTopic;
+
+    @Value(\\"\${mqtt.broker.lastWill.message}\\")
+    private String lastWillMessage;
+
+    @Value(\\"\${mqtt.broker.lastWill.qos}\\")
+    private int lastWillQos;
+
+    @Value(\\"\${mqtt.broker.lastWill.retain}\\")
+    private boolean lastWillRetain;
+    
+
+    
+    @Value(\\"\${mqtt.topic.receiveLightMeasurement}\\")
+    private String receiveLightMeasurementTopic;
+    
+    @Value(\\"\${mqtt.topic.turnOn}\\")
+    private String turnOnTopic;
+    
+
+    @Bean
+    public MqttPahoClientFactory mqttClientFactory() {
+        DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
+        MqttConnectOptions options = new MqttConnectOptions();
+        
+        options.setWill(lastWillTopic, lastWillMessage.getBytes(), lastWillQos, lastWillRetain);
+        options.setCleanSession(cleanSession);
+        options.setKeepAliveInterval(keepAliveInterval);
+        options.setServerURIs(new String[] { address });
+        if (!StringUtils.isEmpty(username)) {
+            options.setUserName(username);
+        }
+        if (!StringUtils.isEmpty(password)) {
+            options.setPassword(password.toCharArray());
+        }
+        options.setConnectionTimeout(connectionTimeout);
+        factory.setConnectionOptions(options);
+        return factory;
+    }
+
+    @Autowired
+    MessageHandlerService messageHandlerService;
+
+    
+    @Bean
+    public IntegrationFlow receiveLightMeasurementFlow() {
+        return IntegrationFlows.from(receiveLightMeasurementInbound())
+                .handle(messageHandlerService::handleReceiveLightMeasurement)
+                .get();
+    }
+
+    @Bean
+    public MessageProducerSupport receiveLightMeasurementInbound() {
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(clientId,
+                mqttClientFactory(), receiveLightMeasurementTopic);
+        adapter.setCompletionTimeout(connectionTimeout);
+        adapter.setDisconnectCompletionTimeout(disconnectionTimeout);
+        adapter.setConverter(new DefaultPahoMessageConverter());
+        return adapter;
+    }
+    
+
+    
+    @Bean
+    public MessageChannel turnOnOutboundChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    @ServiceActivator(inputChannel = \\"turnOnOutboundChannel\\")
+    public MessageHandler turnOnOutbound() {
+        MqttPahoMessageHandler pahoMessageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
+        pahoMessageHandler.setAsync(true);
+        pahoMessageHandler.setCompletionTimeout(completionTimeout);
+        pahoMessageHandler.setDisconnectCompletionTimeout(disconnectionTimeout);
+        pahoMessageHandler.setDefaultTopic(turnOnTopic);
+        pahoMessageHandler.setDefaultRetained(false);
+        pahoMessageHandler.setDefaultQos(0);
+        return pahoMessageHandler;
+    }
+    
+
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 2`] = `
+"package com.asyncapi.service;
+
+import org.springframework.integration.annotation.Gateway;
+import org.springframework.integration.annotation.MessagingGateway;
+
+@MessagingGateway
+public interface PublisherService {
+
+    
+        
+    
+        
+    
+    @Gateway(requestChannel = \\"turnOnOutboundChannel\\")
+    void turnOn(String data);
+        
+    
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 3`] = `
+"package com.asyncapi.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.messaging.Message;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MessageHandlerService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandlerService.class);
+
+    
+      
+    /**
+     * The topic on which measured values may be produced and consumed.
+     */
+    public void handleReceiveLightMeasurement(Message<?> message) {
+        LOGGER.info(\\"handler smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured\\");
+        LOGGER.info(String.valueOf(message.getPayload().toString()));
+    }
+      
+    
+      
+    
+
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 4`] = `
+"package com.asyncapi.model;
+
+import javax.validation.constraints.*;
+import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.List;
+import java.util.Objects;
+
+
+public class LightMeasuredPayload {
+    
+    private @Valid Integer lumens;
+    
+    private @Valid java.time.OffsetDateTime sentAt;
+    
+
+    
+
+    /**
+     * Light intensity measured in lumens.
+     */
+    @JsonProperty(\\"lumens\\")
+    public Integer getLumens() {
+        return lumens;
+    }
+
+    public void setLumens(Integer lumens) {
+        this.lumens = lumens;
+    }
+    
+
+    /**
+     * Date and time when the message was sent.
+     */
+    @JsonProperty(\\"sentAt\\")
+    public java.time.OffsetDateTime getSentAt() {
+        return sentAt;
+    }
+
+    public void setSentAt(java.time.OffsetDateTime sentAt) {
+        this.sentAt = sentAt;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LightMeasuredPayload lightMeasuredPayload = (LightMeasuredPayload) o;
+        return 
+            Objects.equals(this.lumens, lightMeasuredPayload.lumens) &&
+            Objects.equals(this.sentAt, lightMeasuredPayload.sentAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(lumens, sentAt);
+    }
+
+    @Override
+    public String toString() {
+        return \\"class LightMeasuredPayload {\\\\n\\" +
+        
+                \\"    lumens: \\" + toIndentedString(lumens) + \\"\\\\n\\" +
+                \\"    sentAt: \\" + toIndentedString(sentAt) + \\"\\\\n\\" +
+                \\"}\\";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return \\"null\\";
+        }
+        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+    }
+}"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 5`] = `
+"package com.asyncapi.model;
+
+import javax.validation.Valid;
+
+import java.util.Objects;
+import java.util.List;
+
+
+public class LightMeasured {
+    private @Valid LightMeasuredPayload payload;
+
+    public LightMeasuredPayload getPayload() {
+        return payload;
+    }
+
+    public void setPayload(LightMeasuredPayload payload) {
+        this.payload = payload;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LightMeasured event = (LightMeasured) o;
+        return Objects.equals(this.payload, event.payload);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(payload);
+    }
+
+    @Override
+    public String toString() {
+        return \\"class LightMeasured {\\\\n\\" +
+                \\"    payload: \\" + toIndentedString(payload) + \\"\\\\n\\" +
+                \\"}\\";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return \\"null\\";
+        }
+        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+    }
+}"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 6`] = `
+"package com.asyncapi;
+
+   
+import com.asyncapi.model.TurnOnOffPayload;
+ 
+ 
+import com.asyncapi.model.LightMeasuredPayload;
+   
+import com.asyncapi.service.PublisherService;
+import org.eclipse.paho.client.mqttv3.*;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.testcontainers.containers.GenericContainer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+
+/**
+ * Example of tests for mqtt based on testcontainers library
+ */
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class TestcontainerMqttTest {
+
+    
+    @Value(\\"\${mqtt.topic.receiveLightMeasurement}\\")
+    private String receiveLightMeasurementTopic;
+    
+    @Value(\\"\${mqtt.topic.turnOn}\\")
+    private String turnOnTopic;
+    
+
+    @ClassRule
+    public static GenericContainer mosquitto = new GenericContainer(\\"eclipse-mosquitto\\").withExposedPorts(1883);
+    
+    @Autowired
+    private PublisherService publisherService;
+    
+    private IMqttClient publisher;
+
+    @DynamicPropertySource
+    public static void mqttProperties(DynamicPropertyRegistry registry) {
+        String address = \\"tcp://\\" + mosquitto.getContainerIpAddress() + mosquitto.getMappedPort(1883);
+        registry.add(\\"mqtt.broker.address\\", () -> address);
+    }
+
+    @BeforeEach
+    public void before() throws MqttException {
+        String address = \\"tcp://\\" + mosquitto.getContainerIpAddress() + mosquitto.getMappedPort(1883);
+        publisher = new MqttClient(address, UUID.randomUUID().toString());
+        publisher.connect();
+    }
+
+    @AfterEach
+    public void after() throws MqttException {
+        publisher.disconnect();
+    }
+
+      
+    @Test
+    public void receiveLightMeasurementConsumerTestcontainers() throws Exception {
+        LightMeasuredPayload payload = new LightMeasuredPayload();
+
+        sendMessage(receiveLightMeasurementTopic, payload.toString().getBytes());
+
+        Thread.sleep(1_000);
+    }
+    
+     
+    @Test
+    public void turnOnProducerTestcontainers() throws MqttException {
+        TurnOnOffPayload payload = new TurnOnOffPayload();
+
+        List<MqttMessage> receivedMessages = new ArrayList<>();
+        publisher.subscribe(turnOnTopic, (topic, message) -> {
+            receivedMessages.add(message);
+        });
+
+        publisherService.turnOn(payload.toString());
+
+        MqttMessage message = receivedMessages.get(receivedMessages.size() - 1);
+
+        assertEquals(\\"Message is wrong\\", payload.toString().getBytes(), message.getPayload());
+    }
+     
+    
+    
+    protected void sendMessage(String topic, byte[] message) throws Exception {
+        publisher.publish(topic, new MqttMessage(message));
+    }
+    
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 7`] = `
+"plugins {
+	id 'org.springframework.boot' version \\"$springBootVersion\\"
+	id 'io.spring.dependency-management' version \\"$springDependencyManager\\"
+	id 'java'
+}
+
+group = \\"com.asyncapi\\"
+version = \\"0.0.1-SNAPSHOT\\"
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation('org.springframework.integration:spring-integration-mqtt')
+	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
+	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+    implementation('javax.validation:validation-api')
+	implementation('org.springframework.boot:spring-boot-starter-integration')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.testcontainers:testcontainers:1.14.1')
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 8`] = `
+"springBootVersion=2.2.6.RELEASE
+springDependencyManager=1.0.9.RELEASE"
+`;
