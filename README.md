@@ -13,7 +13,7 @@ To have correctly generated code, your AsyncAPI file MUST define `operationId` f
 In order for the generator to know what names to use for some parameters it's necessary to make use of [AsyncAPI specification bindings](https://www.asyncapi.com/docs/specifications/2.0.0/#operationBindingsObject). 
 
 
-- Complete example for Kafka is [here](tests/kafka.yml). Notice information about binding.
+- Complete example for Kafka is [here](tests/mocks/kafka.yml). Notice information about binding.
   ```yml
   channels:
     event.lighting.measured:
@@ -27,7 +27,7 @@ In order for the generator to know what names to use for some parameters it's ne
         message:
           $ref: '#/components/messages/lightMeasured'
   ```  
-- Complete example for MQTT is [here](tests/mqtt.yml).
+- Complete example for MQTT is [here](tests/mocks/mqtt.yml).
 
 
 ### From the command-line interface (CLI)
