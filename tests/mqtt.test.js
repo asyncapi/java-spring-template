@@ -17,7 +17,7 @@ describe('template integration tests for generated files using the generator and
     it('should generate proper config, services and DTOs files for basic example', async() => {
         const outputDir = generateFolderName();
         const params = {};
-        const basicExampleUrl = 'https://raw.githubusercontent.com/asyncapi/spec/v2.2.0/examples/streetlights-mqtt.yml';
+        const basicExampleUrl = 'https://raw.githubusercontent.com/asyncapi/spec/v2.3.0/examples/streetlights-mqtt.yml';
         const asyncapiFile = await fetch(basicExampleUrl);
 
         const generator = new Generator(path.normalize('./'), outputDir, { forceWrite: true, templateParams: params });

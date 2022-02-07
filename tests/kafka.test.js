@@ -1,7 +1,6 @@
 const path = require('path');
 const Generator = require('@asyncapi/generator');
 const { readFile } = require('fs').promises;
-const fetch = require('node-fetch');
 
 const MAIN_TEST_RESULT_PATH = path.join('tests', 'temp', 'integrationTestResult');
 
