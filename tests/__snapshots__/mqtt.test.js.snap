@@ -873,7 +873,7 @@ dependencies {
     implementation('javax.validation:validation-api')
 	implementation('org.springframework.boot:spring-boot-starter-integration')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.testcontainers:testcontainers:1.14.1')
+	testCompile('org.testcontainers:testcontainers:1.16.3')
 }
 "
 `;
@@ -1352,7 +1352,7 @@ dependencies {
     implementation('javax.validation:validation-api')
 	implementation('org.springframework.boot:spring-boot-starter-integration')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.testcontainers:testcontainers:1.14.1')
+	testCompile('org.testcontainers:testcontainers:1.16.3')
 }
 "
 `;

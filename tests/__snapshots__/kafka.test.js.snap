@@ -480,13 +480,13 @@ dependencies {
 	implementation('org.springframework.kafka:spring-kafka')
 	testImplementation('org.springframework.kafka:spring-kafka-test')
 	testImplementation('junit:junit:4.12')
-	testCompile('org.testcontainers:kafka:1.14.1')
+	testCompile('org.testcontainers:kafka:1.16.3')
 	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
 	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
     implementation('javax.validation:validation-api')
 	implementation('org.springframework.boot:spring-boot-starter-integration')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.testcontainers:testcontainers:1.14.1')
+	testCompile('org.testcontainers:testcontainers:1.16.3')
 }
 "
 `;
