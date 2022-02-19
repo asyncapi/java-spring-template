@@ -23,9 +23,9 @@ import org.springframework.messaging.handler.annotation.Payload;
         {%- if channel.hasPublish() %}
             {%- for message in channel.publish().messages() %}
 import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}};
-            {% endfor -%}
-        {% endif -%}
-    {% endfor -%}
+            {%- endfor %}
+        {%- endif %}
+    {%- endfor %}
 {% endif %}
 @Service
 public class MessageHandlerService {

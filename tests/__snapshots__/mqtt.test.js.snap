@@ -742,16 +742,16 @@ public class TestcontainerMqttTest {
 
     
     @Value(\\"\${mqtt.topic.receiveLightMeasurement}\\")
-    private String receiveLightMeasurementTopic;
+    private String receiveLightMeasurementPublishTopic;
     
     @Value(\\"\${mqtt.topic.turnOn}\\")
-    private String turnOnTopic;
+    private String turnOnSubscribeTopic;
     
     @Value(\\"\${mqtt.topic.turnOff}\\")
-    private String turnOffTopic;
+    private String turnOffSubscribeTopic;
     
     @Value(\\"\${mqtt.topic.dimLight}\\")
-    private String dimLightTopic;
+    private String dimLightSubscribeTopic;
     
 
     @ClassRule
@@ -785,7 +785,7 @@ public class TestcontainerMqttTest {
     public void receiveLightMeasurementConsumerTestcontainers() throws Exception {
         LightMeasuredPayload payload = new LightMeasuredPayload();
 
-        sendMessage(receiveLightMeasurementTopic, payload.toString().getBytes());
+        sendMessage(receiveLightMeasurementPublishTopic, payload.toString().getBytes());
 
         Thread.sleep(1_000);
     }
@@ -796,7 +796,7 @@ public class TestcontainerMqttTest {
         TurnOnOffPayload payload = new TurnOnOffPayload();
 
         List<MqttMessage> receivedMessages = new ArrayList<>();
-        publisher.subscribe(turnOnTopic, (topic, message) -> {
+        publisher.subscribe(turnOnSubscribeTopic, (topic, message) -> {
             receivedMessages.add(message);
         });
 
@@ -813,7 +813,7 @@ public class TestcontainerMqttTest {
         TurnOnOffPayload payload = new TurnOnOffPayload();
 
         List<MqttMessage> receivedMessages = new ArrayList<>();
-        publisher.subscribe(turnOffTopic, (topic, message) -> {
+        publisher.subscribe(turnOffSubscribeTopic, (topic, message) -> {
             receivedMessages.add(message);
         });
 
@@ -830,7 +830,7 @@ public class TestcontainerMqttTest {
         DimLightPayload payload = new DimLightPayload();
 
         List<MqttMessage> receivedMessages = new ArrayList<>();
-        publisher.subscribe(dimLightTopic, (topic, message) -> {
+        publisher.subscribe(dimLightSubscribeTopic, (topic, message) -> {
             receivedMessages.add(message);
         });
 
@@ -1261,10 +1261,10 @@ public class TestcontainerMqttTest {
 
     
     @Value(\\"\${mqtt.topic.receiveLightMeasurement}\\")
-    private String receiveLightMeasurementTopic;
+    private String receiveLightMeasurementPublishTopic;
     
     @Value(\\"\${mqtt.topic.turnOn}\\")
-    private String turnOnTopic;
+    private String turnOnSubscribeTopic;
     
 
     @ClassRule
@@ -1298,7 +1298,7 @@ public class TestcontainerMqttTest {
     public void receiveLightMeasurementConsumerTestcontainers() throws Exception {
         LightMeasuredPayload payload = new LightMeasuredPayload();
 
-        sendMessage(receiveLightMeasurementTopic, payload.toString().getBytes());
+        sendMessage(receiveLightMeasurementPublishTopic, payload.toString().getBytes());
 
         Thread.sleep(1_000);
     }
@@ -1309,7 +1309,7 @@ public class TestcontainerMqttTest {
         TurnOnOffPayload payload = new TurnOnOffPayload();
 
         List<MqttMessage> receivedMessages = new ArrayList<>();
-        publisher.subscribe(turnOnTopic, (topic, message) -> {
+        publisher.subscribe(turnOnSubscribeTopic, (topic, message) -> {
             receivedMessages.add(message);
         });
 

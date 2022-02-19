@@ -10,12 +10,12 @@
 {%- endfor -%}
 package {{ params['userJavaPackage'] }};
 
-{% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-import {{ params['userJavaPackage'] }}.model.{{channel.subscribe().message().payload().uid() | camelCase | upperFirst}};
-{% endif %} {% endfor %}
-{% for channelName, channel in asyncapi.channels() %} {% if channel.hasPublish() %}
-import {{ params['userJavaPackage'] }}.model.{{channel.publish().message().payload().uid() | camelCase | upperFirst}};
-{% endif %} {% endfor %}
+{% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}{% for message in channel.subscribe().messages() %}
+import {{params['userJavaPackage']}}.model.{{message.payload().uid() | camelCase | upperFirst}};
+{% endfor %}{% endif %} {% endfor %}
+{% for channelName, channel in asyncapi.channels() %} {% if channel.hasPublish() %}{% for message in channel.publish().messages() %}
+import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}};
+{% endfor %}{% endif %} {% endfor %}
 {% if hasSubscribe %}import {{ params['userJavaPackage'] }}.service.PublisherService;{% endif %}
 import org.eclipse.paho.client.mqttv3.*;
 import org.junit.ClassRule;
@@ -46,10 +46,10 @@ public class TestcontainerMqttTest {
 
     {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
     @Value("${mqtt.topic.{{-channel.publish().id() | camelCase-}}}")
-    private String {{channel.publish().id() | camelCase-}}Topic;
+    private String {{channel.publish().id() | camelCase-}}PublishTopic;
     {% elif channel.hasSubscribe() %}
     @Value("${mqtt.topic.{{-channel.subscribe().id() | camelCase-}}}")
-    private String {{channel.subscribe().id() | camelCase-}}Topic;
+    private String {{channel.subscribe().id() | camelCase-}}SubscribeTopic;
     {% endif %}{% endfor %}
 
     @ClassRule
@@ -79,12 +79,13 @@ public class TestcontainerMqttTest {
     }
 
     {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
+    {% if channel.subscribe().hasMultipleMessages() %}{% set typeName = "Object" %}{% else %}{% set typeName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %}{% endif -%}
     @Test
     public void {{channel.subscribe().id() | camelCase}}ProducerTestcontainers() throws MqttException {
-        {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}();
+        {{typeName}} payload = new {{typeName}}();
 
         List<MqttMessage> receivedMessages = new ArrayList<>();
-        publisher.subscribe({{channel.subscribe().id() | camelCase-}}Topic, (topic, message) -> {
+        publisher.subscribe({{channel.subscribe().id() | camelCase-}}SubscribeTopic, (topic, message) -> {
             receivedMessages.add(message);
         });
 
@@ -97,9 +98,10 @@ public class TestcontainerMqttTest {
     {% endif %} {% if channel.hasPublish() %}
     @Test
     public void {{channel.publish().id() | camelCase}}ConsumerTestcontainers() throws Exception {
-        {{channel.publish().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.publish().message().payload().uid() | camelCase | upperFirst}}();
+        {% if channel.publish().hasMultipleMessages() %}{% set typeName = "Object" %}{% else %}{% set typeName = channel.publish().message().payload().uid() | camelCase | upperFirst %}{% endif -%}
+        {{typeName}} payload = new {{typeName}}();
 
-        sendMessage({{channel.publish().id() | camelCase-}}Topic, payload.toString().getBytes());
+        sendMessage({{channel.publish().id() | camelCase-}}PublishTopic, payload.toString().getBytes());
 
         Thread.sleep(1_000);
     }

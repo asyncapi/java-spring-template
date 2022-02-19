@@ -1,0 +1,503 @@
+asyncapi: 2.0.0
+info:
+  title: OTA API
+  version: '1.0.0'
+  description: OTA API
+
+defaultContentType: application/json
+
+channels:
+  'ic.ix.ota.request.env':
+    description: The topic on which Metro Connect OTA events may be produced and consumed
+    parameters:
+      env:
+        $ref: '#/components/parameters/env'
+    publish:
+      operationId: installInternetExchangePort
+      message:
+        $ref: '#/components/messages/ixOtaInstallRequest'
+  'ic.ix.ota.response.env':
+    description: The topic on which Internet Exchange OTA events may be produced and consumed
+    parameters:
+      env:
+        $ref: '#/components/parameters/env'
+    subscribe:
+      operationId: receiveInternetExchangePortsStatus
+      message:
+        oneOf:
+          - $ref: '#/components/messages/ixOtaResponse'
+
+components:
+  messages:
+    ixOtaInstallRequest:
+      name: ixOtaInstallRequest
+      title: Internet Exchange OTA Request
+      contentType: application/json
+      traits:
+        - $ref: '#/components/messageTraits/otaHeaders'
+      payload:
+        $ref: "#/components/schemas/ixOtaRequestPayload"
+    ixOtaResponse:
+      name: ixOtaResponse
+      title: Internet Exchange OTA Response
+      summary: Check Internet Exchange port status
+      contentType: application/json
+      traits:
+        - $ref: '#/components/messageTraits/otaHeaders'
+      payload:
+        $ref: "#/components/schemas/ixOtaResponsePayload"
+
+  schemas:
+    uuid:
+      type: string
+      format: uuid
+    timestamp:
+      type: string
+      format: date-time
+      example: 2020-12-14T09:01:24.669Z
+    actionType:
+      type: string
+      enum:
+        - INSTALL
+      description: Type of the action
+    eventType:
+      type: string
+      enum:
+        - STARTED
+        - VALIDATED
+        - IPV4_IPV6_ALLOCATED
+        - RDNS_RECORDS_RESERVED
+        - SVC_CREATED
+        - MLPE_CONFIGURED
+        - COMPLETED
+        - FAILED
+      description: Type of the event
+      example: COMPLETED
+    ixOtaRequestPayload:
+      type: object
+      required:
+        - timestamp
+        - actionType
+        - uuid
+        - data
+      properties:
+        uuid:
+          $ref: '#/components/schemas/uuid'
+          description: ID of the event
+        timestamp:
+          $ref: '#/components/schemas/timestamp'
+          description: Timestamp of the event
+        actionType:
+          $ref: '#/components/schemas/actionType'
+        data:
+          $ref: '#/components/schemas/ixOtaInstallRequestData'
+    ixOtaResponsePayload:
+      type: object
+      required:
+        - timestamp
+        - eventType
+        - uuid
+        - data
+      properties:
+        uuid:
+          $ref: '#/components/schemas/uuid'
+          description: ID of the event
+        timestamp:
+          $ref: '#/components/schemas/timestamp'
+          description: Timestamp of the event
+        eventType:
+          $ref: '#/components/schemas/eventType'
+        data:
+          $ref: '#/components/schemas/ixOtaResponseData'
+    ixOtaInstallRequestData:
+      type: object
+      description: Internet Exchange OTA Install data
+      required:
+        - gtId
+        - activity
+      properties:
+        gtId:
+          type: string
+          example: TIBCO_TRANSACTION_ID
+          description: ID of the Tibco transaction
+        activity:
+          $ref: '#/components/schemas/activity'
+    ixOtaResponseData:
+      type: object
+      required:
+        - gtId
+        - activity
+        - retryable
+      properties:
+        gtId:
+          type: string
+          example: TIBCO_TRANSACTION_ID
+          description: ID of the Tibco transaction
+        activity:
+          required:
+            - id
+          properties:
+            id:
+              $ref: '#/components/schemas/activityId'
+            retryable:
+              type: boolean
+              description: Determines whether can be retied
+            order:
+              $ref: '#/components/schemas/order'
+            ipV4Address:
+              type: string
+              example: 208.115.136.169
+              description: Allocated IPv4
+            ipV6Address:
+              type: string
+              example: 2001:504:0:3:0:1:9008:1
+              description: Allocated IPv6
+            reverseDnsV4:
+              type: string
+              example: 19008-CH1-ix.equinix.com
+              description: rDNS used - generared or provided in the request
+            reverseDnsV6:
+              type: string
+              example: 19008-CH1-ix.equinix.com
+              description: rDNS used - generared or provided in the request
+            ipV4Subnet:
+              type: string
+              example: 208:115:136:0/23
+              description: Subnet determined basing on IBX
+            ipV6Subnet:
+              type: string
+              example: 2001:504:0:4::/64
+              description: Subnet determined basing on IBX
+            isSvcCreated:
+              type: boolean
+              description: Whether a new SVC has been created
+            svcId:
+              type: string
+              example: 61242
+              description: ID of the SVC that was either chosen or created
+            svcName:
+              type: string
+              example: 606992-CH1-IX-01-208.115.136.169
+              description: Name of the SVC that was either chosen or created
+        discrepanciesIpV4:
+          type: array
+          items:
+            $ref: '#/components/schemas/discrepancyIpV4'
+          description: IPv4 addresses in use to be investigated. Only available for COMPLETED and FAILED eventTypes
+        discrepanciesIpV6:
+          type: array
+          items:
+            $ref: '#/components/schemas/discrepancyIpV6'
+          description: IPv6 addresses in use to be investigated. Only available for COMPLETED and FAILED eventTypes
+        errors:
+          $ref: '#/components/schemas/errors'
+    errors:
+      type: array
+      minItems: 1
+      items:
+        $ref: '#/components/schemas/error'
+    discrepancyIpV4:
+      type: object
+      required:
+        - address
+        - failedValidations
+      properties:
+        addressIpV4:
+          type: string
+          example: 89.187.101.240
+          description: IPv4 addres that was found to be in use.
+        reverseDnsV4:
+          type: string
+          example: 8237-WA1-ix.equinix.com
+          description: Reverse DNS the address has been labeled with by OL.
+        failedValidations:
+          type: array
+          items:
+            $ref: '#/components/schemas/failedValidation'
+    discrepancyIpV6:
+      type: object
+      required:
+        - address
+        - failedValidations
+      properties:
+        addressIpV6:
+          type: string
+          example: 2001:7f8:c3::123:3
+          description: IPv6 addres that was found to be in use.
+        reverseDnsV6:
+          type: string
+          example: 3.0.0.0.3.2.1.0.0.0.0.0.0.0.0.0.0.0.0.0
+          description: Reverse DNS the address has been labeled with by OL.
+        failedValidations:
+          type: array
+          items:
+            $ref: '#/components/schemas/failedValidation'
+    failedValidation:
+      type: object
+      required:
+        - validation
+      properties:
+        validation:
+          type: string
+          descrition: Identifies which validation failed while checking address availability
+          enum:
+            - PTR_RECORD
+            - CLIENT_PEER_TABLE_NOCC
+            - PORT_TABLE_NOCC
+            - ROUTE_SERVER
+            - IP_MAN_SEARCH
+            - ALLOCATION_FAILED
+        message:
+          type: string
+          description: Detailed reason why address is considered to be in use.
+    activity:
+      type: object
+      required:
+        - id
+        - order
+        - account
+        - config
+        - asn
+        - reverseDnsV4
+        - reverseDnsV6
+        - location
+        - physicalPorts
+      properties:
+        id:
+          $ref: '#/components/schemas/activityId'
+        type:
+          $ref: '#/components/schemas/activityType'
+        order:
+          $ref: '#/components/schemas/order'
+        account:
+          $ref: '#/components/schemas/account'
+        asn:
+          $ref: '#/components/schemas/asn'
+        reverseDnsV4:
+          $ref: '#/components/schemas/dns'
+        reverseDnsV6:
+          $ref: '#/components/schemas/dns'
+        location:
+          $ref: '#/components/schemas/location'
+        lag:
+          $ref: '#/components/schemas/lag'
+        encapsulation:
+          $ref: '#/components/schemas/encapsulation'
+        peering:
+          $ref: '#/components/schemas/peering'
+        physicalPorts:
+          type: array
+          items:
+            $ref: '#/components/schemas/physicalPort'
+        macs:
+          type: array
+          items:
+            $ref: '#/components/schemas/mac'
+    encapsulation:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/encapsulationType'
+    peering:
+      type: object
+      required:
+        - type
+        - state
+      properties:
+        type:
+          $ref: '#/components/schemas/peeringType'
+        state:
+          $ref: '#/components/schemas/peeringState'
+    lag:
+      type: object
+      required:
+        - groupId
+        - type
+      properties:
+        code:
+          $ref: '#/components/schemas/lagGroupId'
+        type:
+          $ref: '#/components/schemas/lagType'
+    location:
+      type: object
+      required:
+        - code
+        - type
+      properties:
+        code:
+          $ref: '#/components/schemas/locationCode'
+        type:
+          $ref: '#/components/schemas/locationType'
+    physicalPort:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/portId'
+        crossConnectId:
+          $ref: '#/components/schemas/crossConnectId'
+    crossConnectId:
+      type: string
+      example: 21440243-A
+      description: Serial Cable ID
+    account:
+      type: object
+      required:
+        - number
+      properties:
+        number:
+          $ref: '#/components/schemas/accountNumber'
+    port:
+      type: object
+      required:
+        - id
+        - crossConnectId
+      properties:
+        id:
+          $ref: '#/components/schemas/portId'
+        crossConnectId:
+          $ref: '#/components/schemas/crossConnectId'
+    encapsulationType:
+      type: string
+      enum:
+        - UNTAGGED
+        - QINQ
+        - DOT1Q
+      example: UNTAGGED
+      description: Encapsulation Type
+    asn:
+      type: integer
+      description: >
+        Autonomous System Number
+    dns:
+      type: string
+      example: www.google.com
+      description: Reverse DNS
+    peeringType:
+      type: string
+      enum:
+        - PRIVATE
+        - PUBLIC
+      example: PRIVATE
+      description: Peering Type
+    peeringState:
+      type: string
+      enum:
+        - PRE-TURN-UP
+        - TURN-UP
+        - ACTIVE
+      example: PRE-TURN-UP
+      description: Peering Type
+    lagGroupId:
+      type: integer
+      example: 123
+      description: Ling Aggregation Group Identifier
+    lagType:
+      type: string
+      enum:
+        - LACP
+        - OTHER
+      example: LACP
+      description: LAG Type
+    locationCode:
+      type: string
+      example: WA1
+      description: Code of the location dependent on its type
+    locationType:
+      type: string
+      enum:
+        - IBX
+      example: IBX
+      description: Location type
+    accountNumber:
+      type: string
+      example: 201271
+      description: Customer account number
+    portId:
+      type: integer
+      example: 80751
+      description: NOCC port ID
+    activityId:
+      type: string
+      pattern: '^3-[1-9][0-9]*$'
+      example: 3-198716093143
+      description: ID of the order activity
+    mac:
+      type: string
+      pattern: '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
+      example: 3D-F2-C9-A6-B3-4F
+      description: Media Access Control Address
+    activityType:
+      type: string
+      enum:
+        - INSTALL
+      default: INSTALL
+      description: Type of the order activity
+    order:
+      type: object
+      required:
+        - number
+      properties:
+        number:
+          $ref: '#/components/schemas/orderNumber'
+    orderNumber:
+      type: string
+      pattern: '^1-[1-9][0-9]*$'
+      example: 1-198656015405
+      description: ID of the order
+
+    error:
+      type: object
+      description: Error entity
+      required:
+        - code
+        - message
+        - details
+      properties:
+        code:
+          type: string
+          example: EQ-1
+          description: Error Code
+        message:
+          type: string
+          description: Error Message
+        details:
+          type: string
+          description: Error Details
+
+  parameters:
+    env:
+      description: Environment
+      schema:
+        type: string
+        enum:
+          - prod
+          - dr
+          - uat
+          - uat2
+          - qa1
+          - qa2
+
+  messageTraits:
+    otaHeaders:
+      headers:
+        type: object
+        required:
+          - messageKey
+          - CorrelationId
+        properties:
+          messageKey:
+            $ref: '#/components/schemas/uuid'
+            description: Message Key
+          CorrelationId:
+            $ref: '#/components/schemas/uuid'
+            description: Correlation UUID
+          Version:
+            type: string
+            enum:
+              - v1
+              - v2
+            description: Version

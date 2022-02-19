@@ -7,10 +7,10 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 {% for channelName, channel in asyncapi.channels() %}
-        {%- if channel.hasSubscribe() %}
-            {%- for message in channel.subscribe().messages() %}
+    {%- if channel.hasSubscribe() %}
+        {%- for message in channel.subscribe().messages() %}
 import {{params['userJavaPackage']}}.model.{{message.payload().uid() | camelCase | upperFirst}};
-        {% endfor -%}
+        {%- endfor -%}
     {% endif -%}
 {% endfor %}
 
