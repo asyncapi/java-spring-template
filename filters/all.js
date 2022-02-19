@@ -59,36 +59,39 @@ function toClass(couldBePrimitive) {
 }
 filter.toClass = toClass;
 
-function toJavaType(str){
+function toJavaType(str, isRequired) {
+  let resultType;
   switch(str) {
     case 'integer':
     case 'int32':
-      return 'int';
+      resultType = 'int'; break;
     case 'long':
     case 'int64':
-      return 'long';
+      resultType = 'long'; break;
     case 'boolean':
-      return 'boolean';
+      resultType = 'boolean'; break;
     case 'date':
-      return 'java.time.LocalDate';
+      resultType = 'java.time.LocalDate'; break;
     case 'time':
-      return 'java.time.OffsetTime';
+      resultType = 'java.time.OffsetTime'; break;
     case 'dateTime':
     case 'date-time':
-      return 'java.time.OffsetDateTime';
+      resultType = 'java.time.OffsetDateTime'; break;
     case 'string':
     case 'password':
     case 'byte':
-      return 'String';
+      resultType = 'String'; break;
     case 'float':
-      return 'float';
+      resultType = 'float'; break;
+    case 'number':
     case 'double':
-      return 'double';
+      resultType = 'double'; break;
     case 'binary':
-      return 'byte[]';
+      resultType = 'byte[]'; break;
     default:
-      return 'Object';
+      resultType = 'Object'; break;
   }
+  return isRequired ? resultType : toClass(resultType);
 }
 filter.toJavaType = toJavaType;
 
@@ -98,7 +101,7 @@ function isDefined(obj) {
 filter.isDefined = isDefined;
 
 function isProtocol(api, protocol){
-  return JSON.stringify(api.json()).includes('"protocol":"' + protocol + '"');
+  return api.constructor.stringify(api).includes('"protocol":"' + protocol + '"');
 };
 filter.isProtocol = isProtocol;
 

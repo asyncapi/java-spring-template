@@ -1,6 +1,6 @@
 {
   "name": "@asyncapi/java-spring-template",
-  "version": "0.24.0",
+  "version": "0.25.1",
   "description": "Java Spring template for AsyncAPI generator.",
   "keywords": [
     "asyncapi",
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/asyncapi/java-spring-template#readme",
   "scripts": {
-    "test": "echo \"No test specified yet\"",
+    "test": "rimraf test/temp && jest --modulePathIgnorePatterns='./template'",
     "lint": "echo \"No linter specified yet\"",
     "release": "semantic-release",
     "generate:assets": "echo 'No additional assets need to be generated at the moment'",
@@ -33,16 +33,20 @@
     "@asyncapi/generator-filters": "^2.1.0",
     "@asyncapi/generator-hooks": "^0.1.0",
     "fs-extra": "^9.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "replace-in-file": "^6.1.0",
     "tmp": "^0.2.1"
   },
   "devDependencies": {
+    "@asyncapi/generator": "^1.8.27",
     "@semantic-release/commit-analyzer": "^8.0.1",
     "@semantic-release/github": "^7.0.4",
     "@semantic-release/npm": "^7.0.3",
     "@semantic-release/release-notes-generator": "^9.0.1",
     "conventional-changelog-conventionalcommits": "^4.2.3",
+    "jest": "^27.3.1",
+    "node-fetch": "^2.6.1",
+    "rimraf": "^2.2.8",
     "semantic-release": "^17.0.4"
   },
   "release": {
@@ -127,7 +131,7 @@
         "required": false
       }
     },
-    "generator": ">=0.50.0 <2.0.0",
+    "generator": ">=1.8.27 <2.0.0",
     "filters": [
       "@asyncapi/generator-filters"
     ],
