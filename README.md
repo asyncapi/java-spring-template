@@ -93,9 +93,9 @@ npm install -g @asyncapi/generator
 1. Run generation:
    ```bash
    # for MQTT protocol test with below
-   ag tests/mqtt.yml ./ --output output
+   ag tests/mocks/mqtt.yml ./ --output output
    # for Kafka protocol test with below
-   ag tests/kafka.yml ./ --output output
+   ag tests/mocks/kafka.yml ./ --output output
    ```
 1. Explore generated files in `output` directory
 
