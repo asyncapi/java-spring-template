@@ -91,6 +91,7 @@ npm install -g @asyncapi/generator
    npm install -g @asyncapi/generator
    ```
 1. Run generation:
+
    ```bash
    # for MQTT protocol test with below
    ag tests/mocks/mqtt.yml ./ --output output
