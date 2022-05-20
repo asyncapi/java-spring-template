@@ -3,14 +3,17 @@ const fs = require('fs');
 function checkForAnonymousSchemaObjects(generator) {
     const modelPath = generator.targetDir + '/src/main/java/com/asyncapi/model';
     var anonymousPresent = false;
+    var anonymousFileNames = [];
     fs.readdirSync(modelPath).forEach(file => {
         if (file.startsWith('AnonymousSchema')) {
             anonymousPresent = true;
+            anonymousFileNames.push(generator.templateParams['userJavaPackage'].replace(/\./g, '/') + '/model/' + file);
         }
     });
     if (anonymousPresent) {
-        console.log('The AnonymousSchemaN classes were generated in DTO classes.');
-        console.log('This may be a result of explicit schema object definition e.g.');
+        console.log('Following AnonymousSchemaN classes were generated in DTO classes:');
+        anonymousFileNames.forEach(name => console.log(name));
+        console.log('This may be a result of explicit (composition, inheritance, array items) Schema Object definition e.g.');
         console.log('  schemas:\n' +
             '    NamedObject:\n' +
             '      type: object\n' +
@@ -29,7 +32,7 @@ function checkForAnonymousSchemaObjects(generator) {
             '        type: object #Anonymous object\n' +
             '        properties:\n');
         console.log('Please move such elements to child of "schemas:" to define proper names. ' +
-            'If changing of data model is not possible, you may use "$id" or "x-parser-schema-id" to set name e.g.');
+            'If changing of data model is not possible, you may use "$id" to set name e.g.');
         console.log(
             '        properties:\n' +
             '          field:\n' +
