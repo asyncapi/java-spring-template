@@ -1,0 +1,49 @@
+asyncapi: '2.2.0'
+info:
+  title: Record Label Service
+  version: 1.0.0
+  description: This service is in charge of processing music
+servers:
+  production:
+    url: 'my-kafka-hostname:9092'
+    protocol: kafka
+    description: Production Instance 1
+channels:
+  song.released:
+    publish:
+      operationId: release
+      message:
+        oneOf:
+          - $ref: '#/components/messages/song'
+          - $ref: '#/components/messages/deleteSong'
+    subscribe:
+      message:
+        $ref: '#/components/messages/song'
+components:
+  messages:
+    deleteSong:
+      payload:
+        type: object
+        properties:
+          title:
+            type: string
+            description: Song title
+    song:
+      payload:
+        type: object
+        properties:
+          title:
+            type: string
+            description: Song title
+          artist:
+            type: string
+            description: Song artist
+          album:
+            type: string
+            description: Song album
+          genre:
+            type: string
+            description: Primary song genre
+          length:
+            type: integer
+            description: Track length in seconds

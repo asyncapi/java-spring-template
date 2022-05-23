@@ -21,9 +21,11 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
     {% for channelName, channel in asyncapi.channels() %}
         {%- if channel.hasPublish() %}
-import {{ params['userJavaPackage'] }}.model.{{channel.publish().message().payload().uid() | camelCase | upperFirst}};
-        {% endif -%}
-    {% endfor -%}
+            {%- for message in channel.publish().messages() %}
+import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}};
+            {%- endfor %}
+        {%- endif %}
+    {%- endfor %}
 {% endif %}
 @Service
 public class MessageHandlerService {
@@ -32,13 +34,17 @@ public class MessageHandlerService {
 {% if asyncapi | isProtocol('kafka') %}
     {% for channelName, channel in asyncapi.channels() %}
         {%- if channel.hasPublish() %}
-
+            {%- if channel.publish().hasMultipleMessages() %}
+                {%- set typeName = "Object" %}
+            {%- else %}
+                {%- set typeName = channel.publish().message().payload().uid() | camelCase | upperFirst %}
+            {%- endif %}
     {% if channel.description() or channel.publish().description() %}/**{% for line in channel.description() | splitByLines %}
      * {{line | safe}}{% endfor %}{% for line in channel.publish().description() | splitByLines %}
      * {{line | safe}}{% endfor %}
      */{% endif %}
     @KafkaListener(topics = "{{channelName}}"{% if channel.publish().binding('kafka') %}, groupId = "{{channel.publish().binding('kafka').groupId}}"{% endif %})
-    public void {{channel.publish().id() | camelCase}}(@Payload {{channel.publish().message().payload().uid() | camelCase | upperFirst}} payload,
+    public void {{channel.publish().id() | camelCase}}(@Payload {{typeName}} payload,
                        @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Integer key,
                        @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
                        @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {

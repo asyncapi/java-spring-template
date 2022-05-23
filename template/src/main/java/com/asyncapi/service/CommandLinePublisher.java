@@ -18,7 +18,9 @@ public class CommandLinePublisher implements CommandLineRunner {
 
         {%- for channelName, channel in asyncapi.channels() %}
             {%- if channel.hasSubscribe() %}
-        publisherService.{{channel.subscribe().id() | camelCase}}({% if asyncapi | isProtocol('kafka') %}(new Random()).nextInt(), new {{ params['userJavaPackage'] }}.model.{{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}(){% else %}"Hello World from {{channelName}}"{% endif %});
+                {%- for message in channel.subscribe().messages() %}
+        publisherService.{{channel.subscribe().id() | camelCase}}({% if asyncapi | isProtocol('kafka') %}(new Random()).nextInt(), new {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}}(){% else %}"Hello World from {{channelName}}"{% endif %});
+                {% endfor -%}
             {% endif -%}
         {%- endfor %}
         System.out.println("Message sent");

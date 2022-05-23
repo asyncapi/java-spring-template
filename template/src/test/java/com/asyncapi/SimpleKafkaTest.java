@@ -10,12 +10,12 @@
 {%- endfor -%}
 package {{ params['userJavaPackage'] }};
 
-{% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-import {{ params['userJavaPackage'] }}.model.{{channel.subscribe().message().payload().uid() | camelCase | upperFirst}};
-{% endif %} {% endfor %}
-{% for channelName, channel in asyncapi.channels() %} {% if channel.hasPublish() %}
-import {{ params['userJavaPackage'] }}.model.{{channel.publish().message().payload().uid() | camelCase | upperFirst}};
-{% endif %} {% endfor %}
+{% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %} {% for message in channel.subscribe().messages() %}
+import {{params['userJavaPackage']}}.model.{{message.payload().uid() | camelCase | upperFirst}};
+{% endfor %} {% endif %} {% endfor %}
+{% for channelName, channel in asyncapi.channels() %} {% if channel.hasPublish() %} {% for message in channel.publish().messages() %}
+import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}};
+{% endfor %} {% endif %} {% endfor %}
 {% if hasSubscribe %}import {{ params['userJavaPackage'] }}.service.PublisherService;{% endif %}
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -55,12 +55,12 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 @SpringBootTest
 public class SimpleKafkaTest {
     {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-    private static final String {{channel.subscribe().id() | upper-}}_TOPIC = "{{channelName}}";
+    private static final String {{channel.subscribe().id() | upper-}}_SUBSCRIBE_TOPIC = "{{channelName}}";
     {% endif %} {% if channel.hasPublish() %}
-    private static final String {{channel.publish().id() | upper-}}_TOPIC = "{{channelName}}";
+    private static final String {{channel.publish().id() | upper-}}_PUBLISH_TOPIC = "{{channelName}}";
     {% endif %} {% endfor %}
     @ClassRule
-    public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, false, 1{% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}, {{channel.subscribe().id() | upper-}}_TOPIC{% endif %}{% endfor %});
+    public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, false, 1{% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}, {{channel.subscribe().id() | upper-}}_SUBSCRIBE_TOPIC{% endif %}{% endfor %});
 
     private static EmbeddedKafkaBroker embeddedKafkaBroker = embeddedKafka.getEmbeddedKafka();
 
@@ -73,7 +73,8 @@ public class SimpleKafkaTest {
     @Autowired
     private PublisherService publisherService;
     {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-    Consumer<Integer, {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}> consumer{{ channelName | camelCase | upperFirst}};
+    {%- if channel.subscribe().hasMultipleMessages() %} {% set typeName = "Object" %} {% else %} {% set typeName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %} {% endif %}
+    Consumer<Integer, {{typeName}}> consumer{{ channelName | camelCase | upperFirst}};
     {% endif %} {% endfor %} {% endif %} {% if hasPublish %}
     Producer<Integer, Object> producer;
     {% endif %}
@@ -83,8 +84,9 @@ public class SimpleKafkaTest {
         Map<String, Object> consumerConfigs = new HashMap<>(KafkaTestUtils.consumerProps("consumer", "true", embeddedKafkaBroker));
         consumerConfigs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-        consumer{{ channelName | camelCase | upperFirst}} = new DefaultKafkaConsumerFactory<>(consumerConfigs, new IntegerDeserializer(), new JsonDeserializer<>({{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}.class)).createConsumer();
-        consumer{{ channelName | camelCase | upperFirst}}.subscribe(Collections.singleton({{channel.subscribe().id() | upper-}}_TOPIC));
+        {%- if channel.subscribe().hasMultipleMessages() %} {% set typeName = "Object" %} {% else %} {% set typeName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %} {% endif %}
+        consumer{{ channelName | camelCase | upperFirst}} = new DefaultKafkaConsumerFactory<>(consumerConfigs, new IntegerDeserializer(), new JsonDeserializer<>({{typeName}}.class)).createConsumer();
+        consumer{{ channelName | camelCase | upperFirst}}.subscribe(Collections.singleton({{channel.subscribe().id() | upper-}}_SUBSCRIBE_TOPIC));
         consumer{{ channelName | camelCase | upperFirst}}.poll(Duration.ZERO);
         {% endif %} {% endfor %} {% endif %} {% if hasPublish %}
         Map<String, Object> producerConfigs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafkaBroker));
@@ -94,14 +96,15 @@ public class SimpleKafkaTest {
     {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
     @Test
     public void {{channel.subscribe().id() | camelCase}}ProducerTest() {
-        {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}();
+        {%- if channel.subscribe().hasMultipleMessages() %} {% set typeName = "Object" %} {% else %} {% set typeName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %} {% endif %}
+        {{typeName}} payload = new {{typeName}}();
         Integer key = 1;
 
         KafkaTestUtils.getRecords(consumer{{ channelName | camelCase | upperFirst}});
 
         publisherService.{{channel.subscribe().id() | camelCase}}(key, payload);
 
-        ConsumerRecord<Integer, {{channel.subscribe().message().payload().uid() | camelCase | upperFirst}}> singleRecord = KafkaTestUtils.getSingleRecord(consumer{{ channelName | camelCase | upperFirst}}, {{channel.subscribe().id() | upper-}}_TOPIC);
+        ConsumerRecord<Integer, {{typeName}}> singleRecord = KafkaTestUtils.getSingleRecord(consumer{{ channelName | camelCase | upperFirst}}, {{channel.subscribe().id() | upper-}}_SUBSCRIBE_TOPIC);
 
         assertEquals("Key is wrong", key, singleRecord.key());
     }
@@ -109,9 +112,10 @@ public class SimpleKafkaTest {
     @Test
     public void {{channel.publish().id() | camelCase}}ConsumerTest() throws InterruptedException {
         Integer key = 1;
-        {{channel.publish().message().payload().uid() | camelCase | upperFirst}} payload = new {{channel.publish().message().payload().uid() | camelCase | upperFirst}}();
+        {%- if channel.publish().hasMultipleMessages() %} {% set typeName = "Object" %} {% else %} {% set typeName = channel.publish().message().payload().uid() | camelCase | upperFirst %} {% endif %}
+        {{typeName}} payload = new {{typeName}}();
 
-        ProducerRecord<Integer, Object> producerRecord = new ProducerRecord<>({{channel.publish().id() | upper-}}_TOPIC, key, payload);
+        ProducerRecord<Integer, Object> producerRecord = new ProducerRecord<>({{channel.publish().id() | upper-}}_PUBLISH_TOPIC, key, payload);
         producer.send(producerRecord);
         producer.flush();
         Thread.sleep(1_000);
