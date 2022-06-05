@@ -14,35 +14,40 @@ function checkForAnonymousSchemaObjects(generator) {
         console.log('Following AnonymousSchemaN classes were generated in DTO classes:');
         anonymousFileNames.forEach(name => console.log(name));
         console.log('This may be a result of explicit (composition, inheritance, array items) Schema Object definition e.g.');
-        console.log('  schemas:\n' +
-            '    NamedObject:\n' +
-            '      type: object\n' +
-            '        properties:\n' +
-            '          field:\n' +
-            '            type: array\n' +
-            '            items:\n' +
-            '              type: object #Anonymous object\n' +
-            '              properties:\n' +
-            '                field:\n' +
-            '                  type: string');
+        const schemaWithAnonymous =
+`  schemas:
+    NamedObject:
+      type: object
+        properties:
+          field:
+            type: array
+            items:
+              type: object #Anonymous object
+              properties:
+                field:
+                  type: string`;
+        const messageWithAnonymous =
+`  messages:
+    Message:
+      payload:
+        type: object #Anonymous object
+        properties:`;
+        console.log(schemaWithAnonymous);
         console.log('OR');
-        console.log('  messages:\n' +
-            '    Message:\n' +
-            '      payload:\n' +
-            '        type: object #Anonymous object\n' +
-            '        properties:\n');
+        console.log(messageWithAnonymous);
         console.log('Please move such elements to child of "schemas:" to define proper names. ' +
             'If changing of data model is not possible, you may use "$id" to set name e.g.');
-        console.log(
-            '        properties:\n' +
-            '          field:\n' +
-            '            type: array\n' +
-            '            items:\n' +
-            '              $id: ArrayElement #Name of object\n' +
-            '              type: object\n' +
-            '              properties:\n' +
-            '                field:\n' +
-            '                  type: string');
+        const objectWithId =
+`        properties:
+          field:
+            type: array
+            items:
+              $id: ArrayElement #Name of object
+              type: object
+              properties:
+                field:
+                  type: string`;
+        console.log(objectWithId);
     }
 }
 
