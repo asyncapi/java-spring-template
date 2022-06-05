@@ -103,14 +103,13 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 import com.asyncapi.model.LightMeasuredPayload;
-    
 
 @Service
 public class PublisherService {
 
     @Autowired
     private KafkaTemplate<Integer, Object> kafkaTemplate;
- 
+
     
     public void updateLightMeasurement(Integer key, LightMeasuredPayload lightMeasuredPayload) {
         Message<LightMeasuredPayload> message = MessageBuilder.withPayload(lightMeasuredPayload)
@@ -137,14 +136,13 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
     
 import com.asyncapi.model.LightMeasuredPayload;
-        
+
 @Service
 public class MessageHandlerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandlerService.class);
 
     
-
     
     @KafkaListener(topics = \\"event.lighting.measured\\", groupId = \\"my-group\\")
     public void readLightMeasurement(@Payload LightMeasuredPayload payload,
@@ -352,9 +350,9 @@ import static org.junit.Assert.assertNotEquals;
 public class TestcontainerKafkaTest {
 
      
-    private static final String UPDATELIGHTMEASUREMENT_TOPIC = \\"event.lighting.measured\\";
+    private static final String UPDATELIGHTMEASUREMENT_SUBSCRIBE_TOPIC = \\"event.lighting.measured\\";
      
-    private static final String READLIGHTMEASUREMENT_TOPIC = \\"event.lighting.measured\\";
+    private static final String READLIGHTMEASUREMENT_PUBLISH_TOPIC = \\"event.lighting.measured\\";
      
     @ClassRule
     public static KafkaContainer kafka = new KafkaContainer();
@@ -373,11 +371,11 @@ public class TestcontainerKafkaTest {
         Integer key = 1;
         Integer wrongKey = key + 1;
 
-        consumeMessages(UPDATELIGHTMEASUREMENT_TOPIC);
+        consumeMessages(UPDATELIGHTMEASUREMENT_SUBSCRIBE_TOPIC);
 
         publisherService.updateLightMeasurement(key, payload);
 
-        ConsumerRecord<Integer, Object> consumedMessage = consumeMessage(UPDATELIGHTMEASUREMENT_TOPIC);
+        ConsumerRecord<Integer, Object> consumedMessage = consumeMessage(UPDATELIGHTMEASUREMENT_SUBSCRIBE_TOPIC);
 
         assertEquals(\\"Key is wrong\\", key, consumedMessage.key());
         assertNotEquals(\\"Key is wrong\\", wrongKey, consumedMessage.key());
@@ -388,7 +386,7 @@ public class TestcontainerKafkaTest {
         Integer key = 1;
         LightMeasuredPayload payload = new LightMeasuredPayload();
 
-        ProducerRecord<Integer, Object> producerRecord = new ProducerRecord<>(READLIGHTMEASUREMENT_TOPIC, key, payload);
+        ProducerRecord<Integer, Object> producerRecord = new ProducerRecord<>(READLIGHTMEASUREMENT_PUBLISH_TOPIC, key, payload);
 
         sendMessage(producerRecord);
 
@@ -480,13 +478,13 @@ dependencies {
 	implementation('org.springframework.kafka:spring-kafka')
 	testImplementation('org.springframework.kafka:spring-kafka-test')
 	testImplementation('junit:junit:4.12')
-	testCompile('org.testcontainers:kafka:1.14.1')
+	testCompile('org.testcontainers:kafka:1.16.3')
 	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
 	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
     implementation('javax.validation:validation-api')
 	implementation('org.springframework.boot:spring-boot-starter-integration')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.testcontainers:testcontainers:1.14.1')
+	testCompile('org.testcontainers:testcontainers:1.16.3')
 }
 "
 `;

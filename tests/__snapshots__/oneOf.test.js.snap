@@ -1,22 +1,53 @@
-{%- set hasSubscribe = false -%}
-{%- set hasPublish = false -%}
-{%- for channelName, channel in asyncapi.channels() -%}
-    {%- if channel.hasPublish() -%}
-        {%- set hasPublish = true -%}
-    {%- endif -%}
-    {%- if channel.hasSubscribe() -%}
-        {%- set hasSubscribe = true -%}
-    {%- endif -%}
-{%- endfor -%}
-package {{ params['userJavaPackage'] }};
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
-{% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}{% for message in channel.subscribe().messages() %}
-import {{params['userJavaPackage']}}.model.{{message.payload().uid() | camelCase | upperFirst}};
-{% endfor %}{% endif %} {% endfor %}
-{% for channelName, channel in asyncapi.channels() %} {% if channel.hasPublish() %}{% for message in channel.publish().messages() %}
-import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}};
-{% endfor %}{% endif %} {% endfor %}
-{% if hasSubscribe %}import {{ params['userJavaPackage'] }}.service.PublisherService;{% endif %}
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided kafka 1`] = `
+"package com.asyncapi.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.messaging.Message;
+import org.springframework.stereotype.Service;
+
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
+    
+import com.asyncapi.model.AnonymousSchema1;
+import com.asyncapi.model.AnonymousSchema7;
+
+@Service
+public class MessageHandlerService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandlerService.class);
+
+    
+    
+    @KafkaListener(topics = \\"song.released\\")
+    public void release(@Payload Object payload,
+                       @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Integer key,
+                       @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
+                       @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {
+        LOGGER.info(\\"Key: \\" + key + \\", Payload: \\" + payload.toString() + \\", Timestamp: \\" + timestamp + \\", Partition: \\" + partition);
+    }
+    
+
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided kafka 2`] = `
+"package com.asyncapi;
+
+ 
+import com.asyncapi.model.AnonymousSchema1;
+ 
+ 
+import com.asyncapi.model.AnonymousSchema1;
+
+import com.asyncapi.model.AnonymousSchema7;
+ 
+import com.asyncapi.service.PublisherService;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -55,54 +86,52 @@ import static org.junit.Assert.assertNotEquals;
 @SpringBootTest
 public class TestcontainerKafkaTest {
 
-    {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-    private static final String {{channel.subscribe().id() | upper-}}_SUBSCRIBE_TOPIC = "{{channelName}}";
-    {% endif %} {% if channel.hasPublish() %}
-    private static final String {{channel.publish().id() | upper-}}_PUBLISH_TOPIC = "{{channelName}}";
-    {% endif %} {% endfor %}
+     
+    private static final String _SUBSCRIBE_TOPIC = \\"song.released\\";
+     
+    private static final String RELEASE_PUBLISH_TOPIC = \\"song.released\\";
+     
     @ClassRule
     public static KafkaContainer kafka = new KafkaContainer();
-    {% if hasSubscribe %}
+    
     @Autowired
     private PublisherService publisherService;
-    {% endif %}
+    
     @DynamicPropertySource
     public static void kafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+        registry.add(\\"spring.kafka.bootstrap-servers\\", kafka::getBootstrapServers);
     }
-    {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
-    {%- if channel.subscribe().hasMultipleMessages() %}{% set typeName = "Object" %}{% else %}{% set typeName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %}{% endif %}
+     
     @Test
-    public void {{channel.subscribe().id() | camelCase}}ProducerTestcontainers() {
-        {{typeName}} payload = new {{typeName}}();
+    public void ProducerTestcontainers() {
+        AnonymousSchema1 payload = new AnonymousSchema1();
         Integer key = 1;
         Integer wrongKey = key + 1;
 
-        consumeMessages({{channel.subscribe().id() | upper-}}_SUBSCRIBE_TOPIC);
+        consumeMessages(_SUBSCRIBE_TOPIC);
 
-        publisherService.{{channel.subscribe().id() | camelCase}}(key, payload);
+        publisherService.(key, payload);
 
-        ConsumerRecord<Integer, Object> consumedMessage = consumeMessage({{channel.subscribe().id() |  upper-}}_SUBSCRIBE_TOPIC);
+        ConsumerRecord<Integer, Object> consumedMessage = consumeMessage(_SUBSCRIBE_TOPIC);
 
-        assertEquals("Key is wrong", key, consumedMessage.key());
-        assertNotEquals("Key is wrong", wrongKey, consumedMessage.key());
+        assertEquals(\\"Key is wrong\\", key, consumedMessage.key());
+        assertNotEquals(\\"Key is wrong\\", wrongKey, consumedMessage.key());
     }
-    {% endif %} {% if channel.hasPublish() %}
+     
     @Test
-    public void {{channel.publish().id() | camelCase}}ConsumerTestcontainers() throws Exception {
+    public void releaseConsumerTestcontainers() throws Exception {
         Integer key = 1;
-        {%- if channel.publish().hasMultipleMessages() %}{% set typeName = "Object" %}{% else %}{% set typeName = channel.publish().message().payload().uid() | camelCase | upperFirst %}{% endif %}
-        {{typeName}} payload = new {{typeName}}();
+        Object payload = new Object();
 
-        ProducerRecord<Integer, Object> producerRecord = new ProducerRecord<>({{channel.publish().id() |  upper-}}_PUBLISH_TOPIC, key, payload);
+        ProducerRecord<Integer, Object> producerRecord = new ProducerRecord<>(RELEASE_PUBLISH_TOPIC, key, payload);
 
         sendMessage(producerRecord);
 
         Thread.sleep(1_000);
     }
-    {% endif %}
-    {% endfor %}
-    {% if hasPublish %}
+    
+    
+    
     protected void sendMessage(ProducerRecord message) throws Exception {
         try (KafkaProducer<Integer, Object> kafkaProducer = createProducer()) {
             kafkaProducer.send(message).get();
@@ -126,12 +155,12 @@ public class TestcontainerKafkaTest {
         configs.put(VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class.getName());
         return configs;
     }
-    {% endif %}{% if hasSubscribe %}
+    
     protected ConsumerRecord<Integer, Object> consumeMessage(String topic) {
         return consumeMessages(topic)
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("no message received"));
+                .orElseThrow(() -> new IllegalStateException(\\"no message received\\"));
     }
 
     protected List<ConsumerRecord<Integer, Object>> consumeMessages(String topic) {
@@ -156,11 +185,13 @@ public class TestcontainerKafkaTest {
     protected Map<String, Object> getKafkaConsumerConfiguration() {
         Map<String, Object> configs = new HashMap<>();
         configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
-        configs.put(GROUP_ID_CONFIG, "testGroup");
-        configs.put(AUTO_OFFSET_RESET_CONFIG, "earliest");
+        configs.put(GROUP_ID_CONFIG, \\"testGroup\\");
+        configs.put(AUTO_OFFSET_RESET_CONFIG, \\"earliest\\");
         configs.put(KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class.getName());
         configs.put(VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class.getName());
         return configs;
     }
-    {% endif %}
+    
 }
+"
+`;
