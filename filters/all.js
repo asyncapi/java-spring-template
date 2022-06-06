@@ -79,8 +79,15 @@ function toJavaType(str, isRequired) {
       resultType = 'java.time.OffsetDateTime'; break;
     case 'string':
     case 'password':
+    case 'email':
+    case 'uri':
+    case 'hostname':
+    case 'ipv4':
+    case 'ipv6':
     case 'byte':
       resultType = 'String'; break;
+    case 'uuid':
+      resultType = 'java.util.UUID'; break;
     case 'float':
       resultType = 'float'; break;
     case 'number':
@@ -108,7 +115,7 @@ filter.isProtocol = isProtocol;
 function isObjectType(schemas){
   var res = [];
   for (let obj of schemas) {
-    if (obj._json['type'] === 'object' && !obj._json['x-parser-schema-id'].startsWith('<')) {
+    if (obj._json['type'] === 'object' && obj._json['x-parser-schema-id'] && !obj._json['x-parser-schema-id'].startsWith('<')) {
       res.push(obj);
     }
   }
