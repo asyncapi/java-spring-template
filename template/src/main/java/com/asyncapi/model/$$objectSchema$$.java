@@ -105,6 +105,11 @@ public class {{schemaName | camelCase | upperFirst}} {
         public void set{{className}}({{propType}} {{varName}}) {
             this.{{varName}} = {{varName}};
         }
+
+        public {{allName}} {{varName}}({{propType}} {{varName}}) {
+            this.{{varName}} = {{varName}};
+            return this;
+        }
             {%- endfor %}
     }
 
@@ -133,7 +138,7 @@ public class {{schemaName | camelCase | upperFirst}} {
      */{% endif %}
     @JsonProperty("{{propName}}")
     {%- if propName | isRequired(schema.required()) %}@NotNull{% endif %}
-    {%- if prop.minLength() or prop.maxLength() or prop.maxItems() or prop.minItems() %}@Size({% if prop.minLength() or prop.minItems() %}min = {{prop.minLength()}}{{prop.minItems()}}{% endif %}{% if prop.maxLength() or prop.maxItems() %}{% if prop.minLength() or prop.minItems() %},{% endif %}max = {{prop.maxLength()}}{{prop.maxItems()}}{% endif %}){% endif %}    
+    {%- if prop.minLength() or prop.maxLength() or prop.maxItems() or prop.minItems() %}@Size({% if prop.minLength() or prop.minItems() %}min = {{prop.minLength()}}{{prop.minItems()}}{% endif %}{% if prop.maxLength() or prop.maxItems() %}{% if prop.minLength() or prop.minItems() %},{% endif %}max = {{prop.maxLength()}}{{prop.maxItems()}}{% endif %}){% endif %}
     {%- if prop.pattern() %}@Pattern(regexp="{{prop.pattern() | addBackSlashToPattern}}"){% endif %}
     {%- if prop.minimum() %}@Min({{prop.minimum()}}){% endif %}{% if prop.exclusiveMinimum() %}@Min({{prop.exclusiveMinimum() + 1}}){% endif %}
     {%- if prop.maximum() %}@Max({{prop.maximum()}}){% endif %}{% if prop.exclusiveMaximum() %}@Max({{prop.exclusiveMaximum() + 1}}){% endif %}
@@ -143,6 +148,11 @@ public class {{schemaName | camelCase | upperFirst}} {
 
     public void set{{className}}({{propType}} {{varName}}) {
         this.{{varName}} = {{varName}};
+    }
+
+    public {{schemaName | camelCase | upperFirst}} {{varName}}({{propType}} {{varName}}) {
+         this.{{varName}} = {{varName}};
+         return this;
     }
     {% endfor %}
     {% if params.disableEqualsHashCode === 'false' %}@Override
