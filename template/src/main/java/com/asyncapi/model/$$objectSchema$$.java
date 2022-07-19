@@ -18,7 +18,7 @@ public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- set isRequired = propName | isRequired(schema.required()) %}
         {%- if prop.type() === 'object' %}
-    private @Valid {{prop.uid() | camelCase | upperFirst}} {{propName | camelCase}};
+    private @Valid {{prop.uid() | camelCase | upperFirst}} {{propName | camelCase | javaSafe}};
         {%- elif prop.type() === 'array' %}
             {%- if prop.items().type() === 'object' %}
     private @Valid List<{{prop.items().uid() | camelCase | upperFirst}}> {{propName | camelCase}}List;
@@ -63,7 +63,7 @@ public class {{schemaName | camelCase | upperFirst}} {
         }
     }
 
-    private @Valid {{propName | camelCase | upperFirst}}Enum {{propName | camelCase}};
+    private @Valid {{propName | camelCase | upperFirst}}Enum {{propName | camelCase | javaSafe}};
         {%- elif prop.anyOf() or prop.oneOf() %}
             {%- set propType = 'OneOf' %}{%- set hasPrimitive = false %}
             {%- for obj in prop.anyOf() %}
@@ -81,7 +81,7 @@ public class {{schemaName | camelCase | upperFirst}} {
 
     }
             {%- endif %}
-    private @Valid {{propType}} {{propName | camelCase}};
+    private @Valid {{propType}} {{propName | camelCase | javaSafe}};
         {%- elif prop.allOf() %}
             {%- set allName = 'AllOf' %}
             {%- for obj in prop.allOf() %}
@@ -113,18 +113,18 @@ public class {{schemaName | camelCase | upperFirst}} {
             {%- endfor %}
     }
 
-    private @Valid {{allName}} {{propName | camelCase}};
+    private @Valid {{allName}} {{propName | camelCase | javaSafe}};
         {%- else %}
             {%- if prop.format() %}
-    private @Valid {{prop.format() | toJavaType(isRequired)}} {{propName | camelCase}};
+    private @Valid {{prop.format() | toJavaType(isRequired)}} {{propName | camelCase | javaSafe}};
             {%- else %}
-    private @Valid {{prop.type() | toJavaType(isRequired)}} {{propName | camelCase}};
+    private @Valid {{prop.type() | toJavaType(isRequired)}} {{propName | camelCase | javaSafe}};
             {%- endif %}
         {%- endif %}
     {% endfor %}
 
     {% for propName, prop in schema.properties() %}
-        {%- set varName = propName | camelCase %}
+        {%- set varName = propName | camelCase | javaSafe %}
         {%- set className = propName | camelCase | upperFirst %}
         {%- set propType = prop | defineType(propName) | safe %}
 

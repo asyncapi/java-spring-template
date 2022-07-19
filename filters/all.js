@@ -172,8 +172,72 @@ function createEnum(val){
 };
 filter.createEnum = createEnum;
 
-function addBackSlashToPattern(val) {  
+function addBackSlashToPattern(val) {
   let result = val.replace(/\\/g, "\\\\");
   return result;
 }
 filter.addBackSlashToPattern = addBackSlashToPattern;
+
+const javaUnsafe = [
+  'abstract',
+  'assert',
+  'boolean',
+  'break',
+  'byte',
+  'case',
+  'catch',
+  'char',
+  'class',
+  'const',
+  'continue',
+  'default',
+  'double',
+  'do',
+  'else',
+  'enum',
+  'extends',
+  'false',
+  'final',
+  'finally',
+  'float',
+  'for',
+  'goto',
+  'if',
+  'implements',
+  'import',
+  'instanceof',
+  'int',
+  'interface',
+  'long',
+  'native',
+  'new',
+  'null',
+  'package',
+  'private',
+  'protected',
+  'public',
+  'return',
+  'short',
+  'static',
+  'strictfp',
+  'super',
+  'switch',
+  'synchronized',
+  'this',
+  'throw',
+  'throws',
+  'transient',
+  'true',
+  'try',
+  'void',
+  'volatile',
+  'while'
+]
+
+function javaSafe(val) {
+  if(javaUnsafe.includes(val)) {
+    return val + "_";
+  }
+  return val;
+}
+filter.javaSafe = javaSafe;
