@@ -1,23 +1,23 @@
 asyncapi: 2.0.0
 info:
-  title: OTA API
+  title: 156 API
   version: '1.0.0'
-  description: OTA API
+  description: issue 156 anonymized API
 
 defaultContentType: application/json
 
 channels:
-  'ic.ix.ota.request.env':
-    description: The topic on which Metro Connect OTA events may be produced and consumed
+  'request.env':
+    description: The topic on which some events may be produced and consumed
     parameters:
       env:
         $ref: '#/components/parameters/env'
     publish:
       operationId: installInternetExchangePort
       message:
-        $ref: '#/components/messages/ixOtaInstallRequest'
-  'ic.ix.ota.response.env':
-    description: The topic on which Internet Exchange OTA events may be produced and consumed
+        $ref: '#/components/messages/InstallRequest'
+  'response.env':
+    description: The topic on which some events may be produced and consumed
     parameters:
       env:
         $ref: '#/components/parameters/env'
@@ -25,27 +25,27 @@ channels:
       operationId: receiveInternetExchangePortsStatus
       message:
         oneOf:
-          - $ref: '#/components/messages/ixOtaResponse'
+          - $ref: '#/components/messages/Response'
 
 components:
   messages:
-    ixOtaInstallRequest:
-      name: ixOtaInstallRequest
-      title: Internet Exchange OTA Request
+    InstallRequest:
+      name: InstallRequest
+      title: Request
       contentType: application/json
       traits:
-        - $ref: '#/components/messageTraits/otaHeaders'
+        - $ref: '#/components/messageTraits/Headers'
       payload:
-        $ref: "#/components/schemas/ixOtaRequestPayload"
-    ixOtaResponse:
-      name: ixOtaResponse
-      title: Internet Exchange OTA Response
-      summary: Check Internet Exchange port status
+        $ref: "#/components/schemas/RequestPayload"
+    Response:
+      name: Response
+      title:  Response
+      summary: Check port status
       contentType: application/json
       traits:
-        - $ref: '#/components/messageTraits/otaHeaders'
+        - $ref: '#/components/messageTraits/Headers'
       payload:
-        $ref: "#/components/schemas/ixOtaResponsePayload"
+        $ref: "#/components/schemas/ResponsePayload"
 
   schemas:
     uuid:
@@ -54,7 +54,7 @@ components:
     timestamp:
       type: string
       format: date-time
-      example: 2020-12-14T09:01:24.669Z
+      example: 2022-08-14T12:03:33.000Z
     actionType:
       type: string
       enum:
@@ -65,15 +65,11 @@ components:
       enum:
         - STARTED
         - VALIDATED
-        - IPV4_IPV6_ALLOCATED
-        - RDNS_RECORDS_RESERVED
-        - SVC_CREATED
-        - MLPE_CONFIGURED
         - COMPLETED
         - FAILED
       description: Type of the event
       example: COMPLETED
-    ixOtaRequestPayload:
+    RequestPayload:
       type: object
       required:
         - timestamp
@@ -90,8 +86,8 @@ components:
         actionType:
           $ref: '#/components/schemas/actionType'
         data:
-          $ref: '#/components/schemas/ixOtaInstallRequestData'
-    ixOtaResponsePayload:
+          $ref: '#/components/schemas/InstallRequestData'
+    ResponsePayload:
       type: object
       required:
         - timestamp
@@ -108,21 +104,21 @@ components:
         eventType:
           $ref: '#/components/schemas/eventType'
         data:
-          $ref: '#/components/schemas/ixOtaResponseData'
-    ixOtaInstallRequestData:
+          $ref: '#/components/schemas/ResponseData'
+    InstallRequestData:
       type: object
-      description: Internet Exchange OTA Install data
+      description:  Install data
       required:
         - gtId
         - activity
       properties:
         gtId:
           type: string
-          example: TIBCO_TRANSACTION_ID
-          description: ID of the Tibco transaction
+          example: ID-1234567
+          description: ID of the transaction
         activity:
           $ref: '#/components/schemas/activity'
-    ixOtaResponseData:
+    ResponseData:
       type: object
       required:
         - gtId
@@ -131,8 +127,8 @@ components:
       properties:
         gtId:
           type: string
-          example: TIBCO_TRANSACTION_ID
-          description: ID of the Tibco transaction
+          example: ID-1232456
+          description: ID of the transaction
         activity:
           required:
             - id
@@ -146,39 +142,12 @@ components:
               $ref: '#/components/schemas/order'
             ipV4Address:
               type: string
-              example: 208.115.136.169
+              example: 127.0.22.1
               description: Allocated IPv4
             ipV6Address:
               type: string
-              example: 2001:504:0:3:0:1:9008:1
+              example: 4422:3311:0:2:0:2:acba:1
               description: Allocated IPv6
-            reverseDnsV4:
-              type: string
-              example: 19008-CH1-ix.equinix.com
-              description: rDNS used - generared or provided in the request
-            reverseDnsV6:
-              type: string
-              example: 19008-CH1-ix.equinix.com
-              description: rDNS used - generared or provided in the request
-            ipV4Subnet:
-              type: string
-              example: 208:115:136:0/23
-              description: Subnet determined basing on IBX
-            ipV6Subnet:
-              type: string
-              example: 2001:504:0:4::/64
-              description: Subnet determined basing on IBX
-            isSvcCreated:
-              type: boolean
-              description: Whether a new SVC has been created
-            svcId:
-              type: string
-              example: 61242
-              description: ID of the SVC that was either chosen or created
-            svcName:
-              type: string
-              example: 606992-CH1-IX-01-208.115.136.169
-              description: Name of the SVC that was either chosen or created
         discrepanciesIpV4:
           type: array
           items:
@@ -204,12 +173,12 @@ components:
       properties:
         addressIpV4:
           type: string
-          example: 89.187.101.240
-          description: IPv4 addres that was found to be in use.
+          example: 8.8.8.8
+          description: IPv4 address that was found to be in use.
         reverseDnsV4:
           type: string
-          example: 8237-WA1-ix.equinix.com
-          description: Reverse DNS the address has been labeled with by OL.
+          example: www.google.com
+          description: Reverse DNS address
         failedValidations:
           type: array
           items:
@@ -222,12 +191,12 @@ components:
       properties:
         addressIpV6:
           type: string
-          example: 2001:7f8:c3::123:3
+          example: 1111:6b8:2233:3c:123:3
           description: IPv6 addres that was found to be in use.
         reverseDnsV6:
           type: string
-          example: 3.0.0.0.3.2.1.0.0.0.0.0.0.0.0.0.0.0.0.0
-          description: Reverse DNS the address has been labeled with by OL.
+          example: 3.3.3.3.3.2.2.2.2.2.1.1.1.1.0.0.0.0.0.0
+          description: Reverse DNS address.
         failedValidations:
           type: array
           items:
@@ -241,11 +210,10 @@ components:
           type: string
           descrition: Identifies which validation failed while checking address availability
           enum:
-            - PTR_RECORD
-            - CLIENT_PEER_TABLE_NOCC
-            - PORT_TABLE_NOCC
+            - CLIENT
+            - PORT
             - ROUTE_SERVER
-            - IP_MAN_SEARCH
+            - IP
             - ALLOCATION_FAILED
         message:
           type: string
@@ -341,7 +309,7 @@ components:
           $ref: '#/components/schemas/crossConnectId'
     crossConnectId:
       type: string
-      example: 21440243-A
+      example: 2345678-B
       description: Serial Cable ID
     account:
       type: object
@@ -364,14 +332,12 @@ components:
       type: string
       enum:
         - UNTAGGED
-        - QINQ
-        - DOT1Q
+        - DOT
       example: UNTAGGED
       description: Encapsulation Type
     asn:
       type: integer
-      description: >
-        Autonomous System Number
+      description: Autonomous System Number
     dns:
       type: string
       example: www.google.com
@@ -391,44 +357,33 @@ components:
         - ACTIVE
       example: PRE-TURN-UP
       description: Peering Type
-    lagGroupId:
-      type: integer
-      example: 123
-      description: Ling Aggregation Group Identifier
-    lagType:
-      type: string
-      enum:
-        - LACP
-        - OTHER
-      example: LACP
-      description: LAG Type
     locationCode:
       type: string
-      example: WA1
+      example: ES
       description: Code of the location dependent on its type
     locationType:
       type: string
       enum:
-        - IBX
-      example: IBX
+        - EU
+      example: EU
       description: Location type
     accountNumber:
       type: string
-      example: 201271
+      example: 20999
       description: Customer account number
     portId:
       type: integer
-      example: 80751
-      description: NOCC port ID
+      example: 8080
+      description: port ID
     activityId:
       type: string
-      pattern: '^3-[1-9][0-9]*$'
-      example: 3-198716093143
+      pattern: '^[0-9]*$'
+      example: 716093143
       description: ID of the order activity
     mac:
       type: string
       pattern: '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
-      example: 3D-F2-C9-A6-B3-4F
+      example: 3F-F1-29-16-B3-42
       description: Media Access Control Address
     activityType:
       type: string
@@ -445,8 +400,8 @@ components:
           $ref: '#/components/schemas/orderNumber'
     orderNumber:
       type: string
-      pattern: '^1-[1-9][0-9]*$'
-      example: 1-198656015405
+      pattern: '^[0-9]*$'
+      example: 656015405
       description: ID of the order
 
     error:
@@ -459,7 +414,7 @@ components:
       properties:
         code:
           type: string
-          example: EQ-1
+          example: Err-1
           description: Error Code
         message:
           type: string
@@ -475,14 +430,12 @@ components:
         type: string
         enum:
           - prod
-          - dr
+          - dev
           - uat
-          - uat2
-          - qa1
-          - qa2
+          - qa
 
   messageTraits:
-    otaHeaders:
+    Headers:
       headers:
         type: object
         required:
