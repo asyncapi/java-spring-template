@@ -1,0 +1,45 @@
+asyncapi: 2.0.0
+info:
+  title: Record Label Service
+  version: 1.0.0
+  description: This service is in charge of processing music
+servers:
+  production:
+    url: 'my-kafka-hostname:9092'
+    protocol: kafka
+    description: Production Instance 1
+channels:
+  song.metadata:
+    publish:
+      message:
+        $ref: '#/components/messages/metadata'
+    subscribe:
+      message:
+        $ref: '#/components/messages/metadata'
+components:
+  messages:
+    metadata:
+      payload:
+        $id: SongMetaData
+        type: object
+        properties:
+          tags:
+            description: Tags
+            additionalProperties:
+              type: string
+          stats:
+            description: Stats
+            additionalProperties:
+              type: integer
+              format: int64
+          interprets:
+            description: Interprets
+            additionalProperties:
+              $ref: '#/components/schemas/Interpret'
+  schemas:
+    Interpret:
+      type: object
+      properties:
+        name:
+          description: Interpret name
+          type: string

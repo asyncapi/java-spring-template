@@ -2,7 +2,15 @@ const filter = module.exports;
 const _ = require('lodash');
 
 function defineType(prop, propName) {
-    if (prop.type() === 'object') {
+    if (prop.additionalProperties() && prop.additionalProperties().type() === 'object') {
+        if (prop.additionalProperties().type() === 'object') {
+            return 'Map<String, ' + _.upperFirst(_.camelCase(prop.additionalProperties().uid())) + '>';
+        } else if (prop.additionalProperties().format()) {
+            return 'Map<String, ' + toClass(toJavaType(prop.additionalProperties().format())) + '>';
+        } else {
+            return 'Map<String, ' + toClass(toJavaType(prop.additionalProperties().type())) + '>';
+        }
+    } else if (prop.type() === 'object') {
         return _.upperFirst(_.camelCase(prop.uid()));
     } else if (prop.type() === 'array') {
         if (prop.items().type() === 'object') {
