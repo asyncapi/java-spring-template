@@ -32,11 +32,24 @@ components:
             additionalProperties:
               type: integer
               format: int64
+          album:
+            $ref: '#/components/schemas/Album'
           interprets:
             description: Interprets
             additionalProperties:
               $ref: '#/components/schemas/Interpret'
   schemas:
+    Album:
+      description: Album
+      type: object
+      properties:
+        name:
+          description: Name of the album
+          type: string
+        year:
+          description: Publishing year
+          type: integer
+      additionalProperties: false # do not allow for additional properties
     Interpret:
       type: object
       properties:

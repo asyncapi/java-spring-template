@@ -21,6 +21,8 @@ public class SongMetaData {
     
     private @Valid Map<String, Long> stats;
     
+    private @Valid Album album;
+    
     private @Valid Map<String, Interpret> interprets;
     
 
@@ -30,11 +32,11 @@ public class SongMetaData {
      * Tags
      */
     @JsonProperty(\\"tags\\")
-    public Object getTags() {
+    public Map<String, String> getTags() {
         return tags;
     }
 
-    public void setTags(Object tags) {
+    public void setTags(Map<String, String> tags) {
         this.tags = tags;
     }
     
@@ -43,12 +45,25 @@ public class SongMetaData {
      * Stats
      */
     @JsonProperty(\\"stats\\")
-    public Object getStats() {
+    public Map<String, Long> getStats() {
         return stats;
     }
 
-    public void setStats(Object stats) {
+    public void setStats(Map<String, Long> stats) {
         this.stats = stats;
+    }
+    
+
+    /**
+     * Album
+     */
+    @JsonProperty(\\"album\\")
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
     }
     
 
@@ -76,12 +91,13 @@ public class SongMetaData {
         return 
             Objects.equals(this.tags, songMetaData.tags) &&
             Objects.equals(this.stats, songMetaData.stats) &&
+            Objects.equals(this.album, songMetaData.album) &&
             Objects.equals(this.interprets, songMetaData.interprets);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tags, stats, interprets);
+        return Objects.hash(tags, stats, album, interprets);
     }
 
     @Override
@@ -90,6 +106,7 @@ public class SongMetaData {
         
                 \\"    tags: \\" + toIndentedString(tags) + \\"\\\\n\\" +
                 \\"    stats: \\" + toIndentedString(stats) + \\"\\\\n\\" +
+                \\"    album: \\" + toIndentedString(album) + \\"\\\\n\\" +
                 \\"    interprets: \\" + toIndentedString(interprets) + \\"\\\\n\\" +
                 \\"}\\";
     }

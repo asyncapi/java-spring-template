@@ -2,7 +2,7 @@ const filter = module.exports;
 const _ = require('lodash');
 
 function defineType(prop, propName) {
-    if (prop.additionalProperties() && prop.additionalProperties().type() === 'object') {
+    if (prop.additionalProperties()) {
         if (prop.additionalProperties().type() === 'object') {
             return 'Map<String, ' + _.upperFirst(_.camelCase(prop.additionalProperties().uid())) + '>';
         } else if (prop.additionalProperties().format()) {
