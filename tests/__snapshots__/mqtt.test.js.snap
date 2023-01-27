@@ -245,6 +245,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -333,6 +334,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -421,6 +423,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -536,8 +539,9 @@ exports[`template integration tests for generated files using the generator and 
 
 import javax.validation.Valid;
 
-import java.util.Objects;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 public class DimLight {
@@ -592,8 +596,9 @@ exports[`template integration tests for generated files using the generator and 
 
 import javax.validation.Valid;
 
-import java.util.Objects;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 public class LightMeasured {
@@ -648,8 +653,9 @@ exports[`template integration tests for generated files using the generator and 
 
 import javax.validation.Valid;
 
-import java.util.Objects;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 public class TurnOnOff {
@@ -1089,6 +1095,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -1171,8 +1178,9 @@ exports[`template integration tests for generated files using the generator and 
 
 import javax.validation.Valid;
 
-import java.util.Objects;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 public class LightMeasured {

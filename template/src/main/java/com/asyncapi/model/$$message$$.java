@@ -2,8 +2,9 @@ package {{ params['userJavaPackage'] }}.model;
 
 import javax.validation.Valid;
 
-import java.util.Objects;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 {% if message.description() or message.examples()%}/**{% for line in message.description() | splitByLines %}
  * {{ line | safe}}{% endfor %}{% if message.examples() %}

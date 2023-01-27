@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 {% if schema.description() or schema.examples() %}/**{% for line in schema.description() | splitByLines %}

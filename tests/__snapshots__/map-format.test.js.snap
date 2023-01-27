@@ -1,111 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`template integration tests for additional formats of data types should generate DTO file with proper type classes 1`] = `
-"package com.asyncapi.model;
-
-import javax.validation.constraints.*;
-import javax.validation.Valid;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.util.List;
-import java.util.Objects;
-
-
-public class SongMetaData {
-    
-    private @Valid Map<String, String> tags;
-    
-    private @Valid Map<String, Long> stats;
-    
-    private @Valid Map<String, Interpret> interprets;
-    
-
-    
-    
-
-    /**
-     * Tags
-     */
-    @JsonProperty(\\"tags\\")
-    public Map<String, String> getTags() {
-        return tags;
-    }
-
-    public void setTags(Map<String, String> tags) {
-        this.tags = tags;
-    }
-    
-
-    /**
-     * Stats
-     */
-    @JsonProperty(\\"stats\\")
-    public Map<String, Long> getStats() {
-        return stats;
-    }
-
-    public void setStats(Map<String, Long> stats) {
-        this.stats = stats;
-    }
-    
-
-    /**
-     * Interprets
-     */
-    @JsonProperty(\\"interprets\\")
-    public Map<String, Interpret> getInterprets() {
-        return interprets;
-    }
-
-    public void setInterprets(Map<String, Interpret> interprets) {
-        this.interprets = interprets;
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        SongPayload songPayload = (SongPayload) o;
-        return 
-            Objects.equals(this.tags, songPayload.tags) &&
-            Objects.equals(this.stats, songPayload.stats) &&
-            Objects.equals(this.interprets, songPayload.interprets);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(tags, stats, interprets);
-    }
-
-    @Override
-    public String toString() {
-        return \\"class SongPayload {\\\\n\\" +
-        
-                \\"    tags: \\" + toIndentedString(tags) + \\"\\\\n\\" +
-                \\"    stats: \\" + toIndentedString(stats) + \\"\\\\n\\" +
-                \\"    interprets: \\" + toIndentedString(interprets) + \\"\\\\n\\" +
-                \\"}\\";
-    }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-           return \\"null\\";
-        }
-        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
-    }
-}"
-`;
-
 exports[`template integration tests for map format should generate DTO file with proper map types 1`] = `
 "package com.asyncapi.model;
 
@@ -117,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
