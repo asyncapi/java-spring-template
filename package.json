@@ -129,6 +129,11 @@
         "description": "Only for Kafka. Add type information to the message header",
         "default": "true",
         "required": false
+      },
+      "mqttClientId": {
+        "description": "Only for MQTT. Provides the client identifier for the MQTT server.",
+        "default": "guest",
+        "required": false
       }
     },
     "generator": ">=1.8.27 <2.0.0",
