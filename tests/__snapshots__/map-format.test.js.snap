@@ -21,6 +21,8 @@ public class SongMetaData {
     
     private @Valid Map<String, Long> stats;
     
+    private @Valid Map<String, Boolean> flags;
+    
     private @Valid Album album;
     
     private @Valid Map<String, Interpret> interprets;
@@ -51,6 +53,19 @@ public class SongMetaData {
 
     public void setStats(Map<String, Long> stats) {
         this.stats = stats;
+    }
+    
+
+    /**
+     * Flags
+     */
+    @JsonProperty(\\"flags\\")
+    public Map<String, Boolean> getFlags() {
+        return flags;
+    }
+
+    public void setFlags(Map<String, Boolean> flags) {
+        this.flags = flags;
     }
     
 
@@ -91,13 +106,14 @@ public class SongMetaData {
         return 
             Objects.equals(this.tags, songMetaData.tags) &&
             Objects.equals(this.stats, songMetaData.stats) &&
+            Objects.equals(this.flags, songMetaData.flags) &&
             Objects.equals(this.album, songMetaData.album) &&
             Objects.equals(this.interprets, songMetaData.interprets);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tags, stats, album, interprets);
+        return Objects.hash(tags, stats, flags, album, interprets);
     }
 
     @Override
@@ -106,6 +122,7 @@ public class SongMetaData {
         
                 \\"    tags: \\" + toIndentedString(tags) + \\"\\\\n\\" +
                 \\"    stats: \\" + toIndentedString(stats) + \\"\\\\n\\" +
+                \\"    flags: \\" + toIndentedString(flags) + \\"\\\\n\\" +
                 \\"    album: \\" + toIndentedString(album) + \\"\\\\n\\" +
                 \\"    interprets: \\" + toIndentedString(interprets) + \\"\\\\n\\" +
                 \\"}\\";

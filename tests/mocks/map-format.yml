@@ -32,6 +32,10 @@ components:
             additionalProperties:
               type: integer
               format: int64
+          flags:
+            description: Flags
+            additionalProperties:
+              type: boolean
           album:
             $ref: '#/components/schemas/Album'
           interprets:

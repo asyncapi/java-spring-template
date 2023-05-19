@@ -22,7 +22,7 @@ describe('template integration tests for map format', () => {
         await generator.generateFromFile(path.resolve('tests', mapFormatExamplePath));
 
         const expectedFiles = [
-            '/src/main/java/com/asyncapi/model/SongMetaData.java'
+            '/src/main/java/com/asyncapi/model/SongMetaData.java',
         ];
         for (const index in expectedFiles) {
             const file = await readFile(path.join(outputDir, expectedFiles[index]), 'utf8');
