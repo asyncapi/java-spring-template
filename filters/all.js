@@ -7,7 +7,7 @@ function defineType(prop, propName) {
             return 'Map<String, ' + _.upperFirst(_.camelCase(prop.additionalProperties().uid())) + '>';
         } else if (prop.additionalProperties().format()) {
             return 'Map<String, ' + toClass(toJavaType(prop.additionalProperties().format())) + '>';
-        } else {
+        } else if (prop.additionalProperties().type()) {
             return 'Map<String, ' + toClass(toJavaType(prop.additionalProperties().type())) + '>';
         }
     } else if (prop.type() === 'object') {

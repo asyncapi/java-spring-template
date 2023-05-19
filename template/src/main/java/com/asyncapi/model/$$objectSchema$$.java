@@ -23,7 +23,7 @@ public class {{schemaName | camelCase | upperFirst}} {
     private @Valid Map<String, {{prop.additionalProperties().uid() | camelCase | upperFirst}}> {{propName | camelCase}};
             {%- elif prop.additionalProperties().format() %}
     private @Valid Map<String, {{prop.additionalProperties().format() | toJavaType | toClass}}> {{propName | camelCase}};
-            {%- else %}
+            {%- elif prop.additionalProperties().type() %}
     private @Valid Map<String, {{prop.additionalProperties().type() | toJavaType | toClass}}> {{propName | camelCase}};
             {%- endif %}
         {%- elif prop.type() === 'object' %}
