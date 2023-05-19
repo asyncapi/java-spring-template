@@ -15,9 +15,39 @@ channels:
         $ref: '#/components/messages/metadata'
     subscribe:
       message:
-        $ref: '#/components/messages/metadata'
+        oneOf:
+          - $ref: '#/components/messages/success-response'
+          - $ref: '#/components/messages/failure-response'
 components:
   messages:
+    success-response:
+      payload:
+        $id: SuccessResponse
+        type: object
+        properties:
+          originalEventId:
+            description: Id of the original Event
+            type: string
+          success:
+            description: Shows whether or not the original Event was processed correctly
+            type: boolean
+            example: true
+    failure-response:
+      payload:
+        $id: FailureResponse
+        type: object
+        properties:
+          originalEventId:
+            description: Id of the original Event
+            type: string
+          success:
+            description: Shows whether or not the original Event was processed correctly
+            type: boolean
+            example: false
+          meta:
+            description: Meta-Information
+            additionalProperties:
+              type: string
     metadata:
       payload:
         $id: SongMetaData

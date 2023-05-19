@@ -139,3 +139,198 @@ public class SongMetaData {
     }
 }"
 `;
+
+exports[`template integration tests for map format should generate DTO file with proper map types 2`] = `
+"package com.asyncapi.model;
+
+import javax.validation.constraints.*;
+import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+
+public class SuccessResponse {
+    
+    private @Valid String originalEventId;
+    
+    private @Valid Boolean success;
+    
+
+    
+
+    /**
+     * Id of the original Event
+     */
+    @JsonProperty(\\"originalEventId\\")
+    public String getOriginalEventId() {
+        return originalEventId;
+    }
+
+    public void setOriginalEventId(String originalEventId) {
+        this.originalEventId = originalEventId;
+    }
+    
+
+    /**
+     * Shows whether or not the original Event was processed correctly
+     */
+    @JsonProperty(\\"success\\")
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SuccessResponse successResponse = (SuccessResponse) o;
+        return 
+            Objects.equals(this.originalEventId, successResponse.originalEventId) &&
+            Objects.equals(this.success, successResponse.success);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(originalEventId, success);
+    }
+
+    @Override
+    public String toString() {
+        return \\"class SuccessResponse {\\\\n\\" +
+        
+                \\"    originalEventId: \\" + toIndentedString(originalEventId) + \\"\\\\n\\" +
+                \\"    success: \\" + toIndentedString(success) + \\"\\\\n\\" +
+                \\"}\\";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return \\"null\\";
+        }
+        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+    }
+}"
+`;
+
+exports[`template integration tests for map format should generate DTO file with proper map types 3`] = `
+"package com.asyncapi.model;
+
+import javax.validation.constraints.*;
+import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+
+public class FailureResponse {
+    
+    private @Valid String originalEventId;
+    
+    private @Valid Boolean success;
+    
+    private @Valid Map<String, String> meta;
+    
+
+    
+
+    /**
+     * Id of the original Event
+     */
+    @JsonProperty(\\"originalEventId\\")
+    public String getOriginalEventId() {
+        return originalEventId;
+    }
+
+    public void setOriginalEventId(String originalEventId) {
+        this.originalEventId = originalEventId;
+    }
+    
+
+    /**
+     * Shows whether or not the original Event was processed correctly
+     */
+    @JsonProperty(\\"success\\")
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+    
+
+    /**
+     * Meta-Information
+     */
+    @JsonProperty(\\"meta\\")
+    public Map<String, String> getMeta() {
+        return meta;
+    }
+
+    public void setMeta(Map<String, String> meta) {
+        this.meta = meta;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        FailureResponse failureResponse = (FailureResponse) o;
+        return 
+            Objects.equals(this.originalEventId, failureResponse.originalEventId) &&
+            Objects.equals(this.success, failureResponse.success) &&
+            Objects.equals(this.meta, failureResponse.meta);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(originalEventId, success, meta);
+    }
+
+    @Override
+    public String toString() {
+        return \\"class FailureResponse {\\\\n\\" +
+        
+                \\"    originalEventId: \\" + toIndentedString(originalEventId) + \\"\\\\n\\" +
+                \\"    success: \\" + toIndentedString(success) + \\"\\\\n\\" +
+                \\"    meta: \\" + toIndentedString(meta) + \\"\\\\n\\" +
+                \\"}\\";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return \\"null\\";
+        }
+        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+    }
+}"
+`;

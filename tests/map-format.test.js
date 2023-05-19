@@ -23,6 +23,8 @@ describe('template integration tests for map format', () => {
 
         const expectedFiles = [
             '/src/main/java/com/asyncapi/model/SongMetaData.java',
+            '/src/main/java/com/asyncapi/model/SuccessResponse.java',
+            '/src/main/java/com/asyncapi/model/FailureResponse.java',
         ];
         for (const index in expectedFiles) {
             const file = await readFile(path.join(outputDir, expectedFiles[index]), 'utf8');
