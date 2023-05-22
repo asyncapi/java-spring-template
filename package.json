@@ -22,7 +22,6 @@
   "scripts": {
     "test": "rimraf test/temp && jest --modulePathIgnorePatterns='./template'",
     "lint": "echo \"No linter specified yet\"",
-    "release": "semantic-release",
     "generate:assets": "echo 'No additional assets need to be generated at the moment'",
     "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION"
   },
@@ -39,36 +38,9 @@
   },
   "devDependencies": {
     "@asyncapi/generator": "^1.9.6",
-    "@semantic-release/commit-analyzer": "^9.0.2",
-    "@semantic-release/github": "^8.0.7",
-    "@semantic-release/npm": "^10.0.3",
-    "@semantic-release/release-notes-generator": "^9.0.1",
-    "conventional-changelog-conventionalcommits": "^4.2.3",
     "jest": "^27.3.1",
     "node-fetch": "^2.6.1",
-    "rimraf": "^2.2.8",
-    "semantic-release": "^21.0.1"
-  },
-  "release": {
-    "branches": [
-      "master"
-    ],
-    "plugins": [
-      [
-        "@semantic-release/commit-analyzer",
-        {
-          "preset": "conventionalcommits"
-        }
-      ],
-      [
-        "@semantic-release/release-notes-generator",
-        {
-          "preset": "conventionalcommits"
-        }
-      ],
-      "@semantic-release/npm",
-      "@semantic-release/github"
-    ]
+    "rimraf": "^2.2.8"
   },
   "generator": {
     "supportedProtocols": [
