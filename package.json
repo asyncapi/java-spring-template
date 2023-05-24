@@ -87,6 +87,10 @@
         "default": 30000,
         "required": false
       },
+      "mqttClientId": {
+        "description": "Only for MQTT. Provides the client identifier for the MQTT server. This parameter overrides the value of the clientId if it's set in the AsyncAPI file.",
+        "required": false
+      },
       "asyncapiFileDir": {
         "description": "Parameter of @asyncapi/generator-hooks#createAsyncapiFile, allows to specify where original AsyncAPI file will be stored.",
         "default": "src/main/resources/api/",
