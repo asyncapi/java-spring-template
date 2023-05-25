@@ -37,7 +37,7 @@
     "tmp": "^0.2.1"
   },
   "devDependencies": {
-    "@asyncapi/generator": "^1.9.6",
+    "@asyncapi/generator": "^1.10.1",
     "jest": "^27.3.1",
     "node-fetch": "^2.6.1",
     "rimraf": "^2.2.8"
