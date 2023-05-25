@@ -8,6 +8,7 @@
         {%- set hasSubscribe = true -%}
     {%- endif -%}
 {%- endfor -%}
+
 {%- for serverName, server in asyncapi.servers() %}{% if server.protocol() == 'amqp' %}
 amqp:
   broker: {% for line in server.description() | splitByLines %}
@@ -29,6 +30,7 @@ amqp:
     {% endif %}
   {% endfor %}
 {% endif %}
+
 {% if server.protocol() == 'mqtt' %}
 mqtt:
   broker: {% for line in server.description() | splitByLines %}
@@ -36,7 +38,13 @@ mqtt:
     address: {% if server.variable('port') %}{{server.url() | replace('{port}', server.variable('port').defaultValue())}}{% else %}{{server.url()}}{% endif %}
     username:
     password:
-    {% if server.binding('mqtt') and server.binding('mqtt').clientId %}clientId: {{server.binding('mqtt').clientId}}{% endif %}
+    {% if params.mqttClientId %}
+    clientId : {{ params.mqttClientId }}
+    {% elif server.binding('mqtt') and server.binding('mqtt').clientId %}
+    clientId: {{ server.binding('mqtt').clientId }}
+    {% else %}
+    clientId: default
+    {% endif %}
     {% if server.binding('mqtt') and server.binding('mqtt').cleanSession | isDefined %}cleanSession: {{server.binding('mqtt').cleanSession}}{% endif %}
     {% if server.binding('mqtt') and server.binding('mqtt').lastWill %}lastWill:
       topic: {{server.binding('mqtt').lastWill.topic}}
@@ -56,6 +64,7 @@ mqtt:
     {{channel.subscribe().id() | camelCase}}: {{channelName}}
     {% endif %}{% endfor %}
 {% endif %}{% endfor %}
+
 {%- if asyncapi | isProtocol('kafka') %}
 spring:
   kafka: {% for serverName, server in asyncapi.servers() %}

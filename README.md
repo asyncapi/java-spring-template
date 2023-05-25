@@ -45,18 +45,19 @@ In order for the generator to know what names to use for some parameters it's ne
 
 #### Supported parameters
 
-|Name|Description|Required|Default|
-|---|---|---|---|
-|disableEqualsHashCode|Disable generation of equals and hashCode methods for model classes.|No|`false`|
-|inverseOperations|Generate an application that will publish messages to `publish` operation of channels and read messages from `subscribe` operation of channels. Literally this flag will simply swap `publish` and `subscribe` operations in the channels. <br> This flag will be useful when you want to generate a code of mock for your main application. Be aware, generation could be incomplete and manual changes will be required e.g. if bindings are defined only for case of main application.|No|`false`|
-|javaPackage|The Java package of the generated classes. Alternatively you can set the specification extension `info.x-java-package`. If both extension and parameter are used, parameter has more priority.|No|`com.asyncapi`|
-|listenerPollTimeout|Only for Kafka. Timeout in ms to use when polling the consumer.|No|`3000`|
-|listenerConcurrency|Only for Kafka. Number of threads to run in the listener containers.|No|`3`|
-|addTypeInfoHeader|Only for Kafka. Add type information to message header.|No|`true`|
-|connectionTimeout|Only for MQTT. This value, measured in seconds, defines the maximum time interval the client will wait for the network connection to the MQTT server to be established. The default timeout is 30 seconds. A value of 0 disables timeout processing meaning the client will wait until the network connection is made successfully or fails.|No|`30`|
-|disconnectionTimeout|Only for MQTT. The completion timeout in milliseconds when disconnecting. The default disconnect completion timeout is 5000 milliseconds.|No|`5000`|
-|completionTimeout|Only for MQTT. The completion timeout in milliseconds for operations. The default completion timeout is 30000 milliseconds.|No|`30000`|
-|asyncapiFileDir| Path where original AsyncAPI file will be stored.|No|`src/main/resources/api/`|
+|Name|Description|Required| Default              |
+|---|---|---|----------------------|
+|disableEqualsHashCode|Disable generation of equals and hashCode methods for model classes.|No| `false`              |
+|inverseOperations|Generate an application that will publish messages to `publish` operation of channels and read messages from `subscribe` operation of channels. Literally this flag will simply swap `publish` and `subscribe` operations in the channels. <br> This flag will be useful when you want to generate a code of mock for your main application. Be aware, generation could be incomplete and manual changes will be required e.g. if bindings are defined only for case of main application.|No| `false`              |
+|javaPackage|The Java package of the generated classes. Alternatively you can set the specification extension `info.x-java-package`. If both extension and parameter are used, parameter has more priority.|No| `com.asyncapi`       |
+|listenerPollTimeout|Only for Kafka. Timeout in ms to use when polling the consumer.|No| `3000`               |
+|listenerConcurrency|Only for Kafka. Number of threads to run in the listener containers.|No| `3`                  |
+|addTypeInfoHeader|Only for Kafka. Add type information to message header.|No| `true`               |
+|connectionTimeout|Only for MQTT. This value, measured in seconds, defines the maximum time interval the client will wait for the network connection to the MQTT server to be established. The default timeout is 30 seconds. A value of 0 disables timeout processing meaning the client will wait until the network connection is made successfully or fails.|No| `30`                 |
+|disconnectionTimeout|Only for MQTT. The completion timeout in milliseconds when disconnecting. The default disconnect completion timeout is 5000 milliseconds.|No| `5000`               |
+|completionTimeout|Only for MQTT. The completion timeout in milliseconds for operations. The default completion timeout is 30000 milliseconds.|No| `30000`              |
+|mqttClientId| Only for MQTT. Provides the client identifier for the MQTT server. This parameter overrides the value of the clientId if it's set in the AsyncAPI file.If both aren't provided, a default value is set.|No|                      |
+|asyncapiFileDir| Path where original AsyncAPI file will be stored.|No| `src/main/resources/api/` |
 #### Examples
 
 The shortest possible syntax:

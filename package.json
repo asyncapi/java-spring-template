@@ -1,6 +1,6 @@
 {
   "name": "@asyncapi/java-spring-template",
-  "version": "0.28.0",
+  "version": "0.29.0",
   "description": "Java Spring template for AsyncAPI generator.",
   "keywords": [
     "asyncapi",
@@ -22,7 +22,6 @@
   "scripts": {
     "test": "rimraf test/temp && jest --modulePathIgnorePatterns='./template'",
     "lint": "echo \"No linter specified yet\"",
-    "release": "semantic-release",
     "generate:assets": "echo 'No additional assets need to be generated at the moment'",
     "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION"
   },
@@ -39,36 +38,9 @@
   },
   "devDependencies": {
     "@asyncapi/generator": "^1.9.6",
-    "@semantic-release/commit-analyzer": "^8.0.1",
-    "@semantic-release/github": "^7.0.4",
-    "@semantic-release/npm": "^7.0.3",
-    "@semantic-release/release-notes-generator": "^9.0.1",
-    "conventional-changelog-conventionalcommits": "^4.2.3",
     "jest": "^27.3.1",
     "node-fetch": "^2.6.1",
-    "rimraf": "^2.2.8",
-    "semantic-release": "^19.0.3"
-  },
-  "release": {
-    "branches": [
-      "master"
-    ],
-    "plugins": [
-      [
-        "@semantic-release/commit-analyzer",
-        {
-          "preset": "conventionalcommits"
-        }
-      ],
-      [
-        "@semantic-release/release-notes-generator",
-        {
-          "preset": "conventionalcommits"
-        }
-      ],
-      "@semantic-release/npm",
-      "@semantic-release/github"
-    ]
+    "rimraf": "^2.2.8"
   },
   "generator": {
     "supportedProtocols": [
@@ -113,6 +85,10 @@
       "completionTimeout": {
         "description": "Only for MQTT. The completion timeout in milliseconds for operations. The default completion timeout is 30000 milliseconds.",
         "default": 30000,
+        "required": false
+      },
+      "mqttClientId": {
+        "description": "Only for MQTT. Provides the client identifier for the MQTT server. This parameter overrides the value of the clientId if it's set in the AsyncAPI file.",
         "required": false
       },
       "asyncapiFileDir": {
