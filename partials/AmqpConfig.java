@@ -6,17 +6,11 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.amqp.dsl.Amqp;
-import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint;
-import org.springframework.integration.annotation.ServiceActivator;
-import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.messaging.MessageChannel;
 
 @Configuration
 public class Config {
@@ -33,16 +27,17 @@ public class Config {
     @Value("${amqp.broker.password}")
     private String password;
 
-    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
-    @Value("${amqp.exchange.{{- channelName -}}}")
+
+    {% for channelName, channel in asyncapi.channels() %}
+    @Value("${amqp.{{- channelName -}}.exchange}")
     private String {{channelName}}Exchange;
 
-    {% endif %}{% endfor %}
-    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
-    @Value("${amqp.queue.{{- channelName -}}}")
+    @Value("${amqp.{{- channelName -}}.queue}")
     private String {{channelName}}Queue;
 
-    {% endif %}{% endfor %}
+    @Value("${amqp.{{- channelName -}}.routingKey}")
+    private String {{channelName}}RoutingKey;
+    {% endfor %}
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -54,64 +49,53 @@ public class Config {
     }
 
     @Bean
+    public Declarables declarables() {
+        {% for channelName, channel in asyncapi.channels() %}
+        Queue {{channelName}}Queue = new Queue({{channelName}}Queue);
+        {% endfor %}
+
+        {% for channelName, channel in asyncapi.channels() %}
+        TopicExchange {{channelName}}Exchange = new TopicExchange({{channelName}}Exchange);
+        {% endfor %}
+
+        {% for channelName, channel in asyncapi.channels() %}
+        Binding {{channelName}}Binding = BindingBuilder.bind({{channelName}}Queue)
+                .to({{channelName}}Exchange).with({{channelName}}RoutingKey);
+        {% endfor %}
+
+        return new Declarables(
+                {% set i = 0 %}
+                {% for channelName, channel in asyncapi.channels() %}
+                {% if i == asyncapi.channels().size %}
+                    {{channelName}}Queue,
+                    {{channelName}}Exchange,
+                    {{channelName}}Binding,
+                {% else %}
+                    {{channelName}}Queue,
+                    {{channelName}}Exchange,
+                    {{channelName}}Binding
+                {% set i = i+1 %}
+                {% endif %}
+            {% endfor %}
+        );
+    }
+
+
+    @Bean
+    public MessageConverter converter() {
+        return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
     public AmqpAdmin amqpAdmin() {
         return new RabbitAdmin(connectionFactory());
     }
 
     @Bean
-    public Declarables exchanges() {
-        return new Declarables(
-                {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
-                new TopicExchange({{channelName}}Exchange, true, false){% if not loop.last %},{% endif %}
-                {% endif %}{% endfor %}
-                );
+    public AmqpTemplate template() {
+        final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
+        rabbitTemplate.setMessageConverter(converter());
+        return rabbitTemplate;
     }
-
-    @Bean
-    public Declarables queues() {
-        return new Declarables(
-                {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
-                new Queue({{channelName}}Queue, true, false, false){% if not loop.last %},{% endif %}
-                {% endif %}{% endfor %}
-                );
-    }
-
-    // consumer
-
-    @Autowired
-    MessageHandlerService messageHandlerService;
-    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
-
-    @Bean
-    public IntegrationFlow {{channelName | camelCase}}Flow() {
-        return IntegrationFlows.from(Amqp.inboundGateway(connectionFactory(), {{channelName}}Queue))
-                .handle(messageHandlerService::handle{{channelName | upperFirst}})
-                .get();
-    }
-    {% endif %}{% endfor %}
-
-    // publisher
-
-    @Bean
-    public RabbitTemplate rabbitTemplate() {
-        RabbitTemplate template = new RabbitTemplate(connectionFactory());
-        return template;
-    }
-    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
-
-    @Bean
-    public MessageChannel {{channel.subscribe().id() | camelCase}}OutboundChannel() {
-        return new DirectChannel();
-    }
-
-    @Bean
-    @ServiceActivator(inputChannel = "{{channel.subscribe().id() | camelCase}}OutboundChannel")
-    public AmqpOutboundEndpoint {{channelName | camelCase}}Outbound(AmqpTemplate amqpTemplate) {
-        AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
-        outbound.setExchangeName({{channelName}}Exchange);
-        outbound.setRoutingKey("#");
-        return outbound;
-    }
-    {% endif %}{% endfor %}
 }
 {% endmacro %}

@@ -9,27 +9,21 @@
     {%- endif -%}
 {%- endfor -%}
 
-{%- for serverName, server in asyncapi.servers() %}{% if server.protocol() == 'amqp' %}
+  {%- for serverName, server in asyncapi.servers() %}{% if server.protocol() == 'amqp' %}
 amqp:
   broker: {% for line in server.description() | splitByLines %}
     # {{line | safe}}{% endfor %}
-    host: {{server.url() | replace(':{port}', '') }}
+    host: {% if server.variable('port') %}{{server.url() | replace('{port}', server.variable('port').defaultValue())}}{% else %}{{server.url()}}{% endif %}
     port: {% if server.variable('port') %}{{server.variable('port').defaultValue()}}{% endif %}
-    username:
+    username: {% if server.variable('username') %}{{server.variable('username').defaultValue()}}{% endif %}
     password:
-  exchange:
   {% for channelName, channel in asyncapi.channels() %}
-    {% if channel.hasSubscribe() and channel.subscribe().binding('amqp') %}
-    {{channelName}}: {{channel.subscribe().binding('amqp').exchange.name}}
-    {% endif %}
+  {{channelName}}:
+    exchange: {{channel.publish().binding('amqp').exchange}}
+    queue: {{channel.publish().binding('amqp').queue}}
+    routingKey: {{channel.publish().binding('amqp').routingKey}}
   {% endfor %}
-  queue:
-  {% for channelName, channel in asyncapi.channels() %}
-    {% if channel.hasPublish() and channel.publish().binding('amqp') %}
-    {{channelName}}: {{channel.publish().binding('amqp').queue.name}}
-    {% endif %}
-  {% endfor %}
-{% endif %}
+  {% endif %}
 
 {% if server.protocol() == 'mqtt' %}
 mqtt:
