@@ -20,8 +20,8 @@ amqp:
   {% for channelName, channel in asyncapi.channels() %}
   {{channelName}}:
     exchange: {{channel.publish().binding('amqp').exchange}}
-    queue: {{channel.publish().binding('amqp').queue}}
-    routingKey: {{channel.publish().binding('amqp').routingKey}}
+    queue: {{channel.subscribe().binding('amqp').queue}}
+    routingKey: {{channel.subscribe().binding('amqp').routingKey}}
   {% endfor %}
   {% endif %}
 

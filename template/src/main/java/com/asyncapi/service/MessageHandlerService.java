@@ -27,6 +27,16 @@ import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCa
         {%- endif %}
     {%- endfor %}
 {% endif %}
+{% if asyncapi | isProtocol('amqp') and hasPublish %}
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+    {% for channelName, channel in asyncapi.channels() %}
+            {%- if channel.hasPublish() %}
+            {%- for message in channel.publish().messages() %}
+import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}};
+        {%- endfor %}
+        {%- endif %}
+        {%- endfor %}
+        {% endif %}
 @Service
 public class MessageHandlerService {
 
@@ -52,6 +62,16 @@ public class MessageHandlerService {
     }
         {%- endif %}
     {% endfor %}
+
+    {% elif asyncapi | isProtocol('amqp')  %}
+    {% for channelName, channel in asyncapi.channels() %}
+    {%- set schemaName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %}
+    @RabbitListener(queues = "${amqp.{{- channelName -}}.queue}")
+    public void {{channel.publish().id() | camelCase}}({{schemaName}} {{channelName}}Payload ){
+        LOGGER.info("Message received from {{- schemaName -}} : " + {{channelName}}Payload);
+    }
+    {% endfor %}
+
 {% else %}
     {% for channelName, channel in asyncapi.channels() %}
       {% if channel.hasPublish() %}

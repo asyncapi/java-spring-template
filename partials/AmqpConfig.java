@@ -51,32 +51,28 @@ public class Config {
     @Bean
     public Declarables declarables() {
         {% for channelName, channel in asyncapi.channels() %}
-        Queue {{channelName}}Queue = new Queue({{channelName}}Queue);
+        Queue {{channelName}}_Queue = new Queue({{channelName}}Queue);
         {% endfor %}
 
         {% for channelName, channel in asyncapi.channels() %}
-        TopicExchange {{channelName}}Exchange = new TopicExchange({{channelName}}Exchange);
+        TopicExchange {{channelName}}_Exchange = new TopicExchange({{channelName}}Exchange);
         {% endfor %}
 
         {% for channelName, channel in asyncapi.channels() %}
-        Binding {{channelName}}Binding = BindingBuilder.bind({{channelName}}Queue)
-                .to({{channelName}}Exchange).with({{channelName}}RoutingKey);
+        Binding {{channelName}}_Binding = BindingBuilder.bind({{channelName}}_Queue)
+                .to({{channelName}}_Exchange).with({{channelName}}RoutingKey);
         {% endfor %}
 
         return new Declarables(
-                {% set i = 0 %}
-                {% for channelName, channel in asyncapi.channels() %}
-                {% if i == asyncapi.channels().size %}
-                    {{channelName}}Queue,
-                    {{channelName}}Exchange,
-                    {{channelName}}Binding,
+                {% set i = 1 %}{% for channelName, channel in asyncapi.channels() %}{% if i == asyncapi.channels() | size %}
+                    {{channelName}}_Queue,
+                    {{channelName}}_Exchange,
+                    {{channelName}}_Binding,
                 {% else %}
-                    {{channelName}}Queue,
-                    {{channelName}}Exchange,
-                    {{channelName}}Binding
-                {% set i = i+1 %}
-                {% endif %}
-            {% endfor %}
+                    {{channelName}}_Queue,
+                    {{channelName}}_Exchange,
+                    {{channelName}}_Binding
+                {% set i = i+1 %} {% endif %} {% endfor %}
         );
     }
 

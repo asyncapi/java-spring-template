@@ -28,7 +28,7 @@ public class PublisherService {
 
     {% for channelName, channel in asyncapi.channels() %}
     {%- set schemaName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %}
-    public void update{{schemaName}}(){
+    public void {{channel.subscribe().id() | camelCase}}(){
         {{schemaName}} {{channelName}}Payload = new {{schemaName}}();
         template.convertAndSend({{channelName}}Exchange, {{channelName}}RoutingKey,  {{channelName}}Payload);
     }

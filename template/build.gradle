@@ -15,6 +15,7 @@ repositories {
 dependencies {
 	{%- if asyncapi | isProtocol('amqp') %}
 	implementation('org.springframework.integration:spring-integration-amqp')
+	implementation('org.springframework.integration:spring-integration-amqp')
 	{% endif -%}
 	{%- if asyncapi | isProtocol('mqtt') %}
 	implementation('org.springframework.integration:spring-integration-mqtt')
