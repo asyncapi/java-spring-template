@@ -1,0 +1,60 @@
+asyncapi: 2.5.0
+info:
+  title: Streetlights API Simplified
+  version: 1.0.0
+  description: |
+    The Smartylighting Streetlights API allows you to remotely manage the city lights.
+    This is a simplified version of the Streetlights API from other examples. This version is used in AsyncAPI documentation.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+  production:
+    url: localhost
+    protocol: amqp
+    description: RabbitMQ
+    variables:
+      port:
+        default: '5672'
+      username:
+        default: guest
+
+channels:
+  lightMeasured:
+    publish:
+      summary: Inform about environmental lighting conditions for a particular streetlight.
+      operationId: readLightMeasurement
+      bindings:
+        amqp:
+          exchange: lightMeasuredExchange	
+      message:
+        $ref: '#/components/messages/lightMeasured'
+    subscribe:
+      operationId: updateLightMeasurement
+      message:
+        $ref: '#/components/messages/lightMeasured'
+      bindings:
+        amqp:
+          queue: lightMeasuredQueue
+          routingKey: lightMeasuredRoutingKey	
+
+
+components:
+  messages:
+    lightMeasured:
+      summary: Inform about environmental lighting conditions for a particular streetlight.
+      payload:
+        $ref: "#/components/schemas/lightMeasuredPayload"
+  schemas:
+    lightMeasuredPayload:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 0
+          description: Id of the streetlight.        
+        lumens:
+          type: integer
+          minimum: 0
+          description: Light intensity measured in lumens.
+

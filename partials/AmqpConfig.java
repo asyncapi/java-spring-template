@@ -67,11 +67,11 @@ public class Config {
                 {% set i = 1 %}{% for channelName, channel in asyncapi.channels() %}{% if i == asyncapi.channels() | size %}
                     {{channelName}}_Queue,
                     {{channelName}}_Exchange,
-                    {{channelName}}_Binding,
+                    {{channelName}}_Binding
                 {% else %}
                     {{channelName}}_Queue,
                     {{channelName}}_Exchange,
-                    {{channelName}}_Binding
+                    {{channelName}}_Binding,
                 {% set i = i+1 %} {% endif %} {% endfor %}
         );
     }
