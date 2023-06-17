@@ -20,15 +20,26 @@ dependencies {
 	implementation('org.springframework.integration:spring-integration-mqtt')
 	{% endif -%}
 	{%- if asyncapi | isProtocol('kafka') %}
+	{%- if params.springBoot2 %}
+	implementation('org.springframework.kafka:spring-kafka:2.9.9')
+	testImplementation('org.springframework.kafka:spring-kafka-test:2.9.9')
+	{% else %}
 	implementation('org.springframework.kafka:spring-kafka')
 	testImplementation('org.springframework.kafka:spring-kafka-test')
+	{% endif -%}
 	testImplementation('junit:junit:4.12')
 	testCompile('org.testcontainers:kafka:1.16.3')
 	{% endif -%}
     implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
 	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
-    implementation('javax.validation:validation-api')
+	{%- if params.springBoot2 %}
+	implementation('javax.validation:validation-api')
+	implementation('org.springframework.boot:spring-boot-starter-integration:2.7.12')
+	testImplementation('org.springframework.boot:spring-boot-starter-test:2.7.12')
+	{% else %}
+	implementation('jakarta.validation:jakarta.validation-api')
 	implementation('org.springframework.boot:spring-boot-starter-integration')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	{% endif -%}
 	testCompile('org.testcontainers:testcontainers:1.16.3')
 }

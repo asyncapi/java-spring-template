@@ -237,8 +237,9 @@ public class MessageHandlerService {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 4`] = `
 "package com.asyncapi.model;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -325,8 +326,9 @@ public class DimLightPayload {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 5`] = `
 "package com.asyncapi.model;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -413,8 +415,9 @@ public class LightMeasuredPayload {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 6`] = `
 "package com.asyncapi.model;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -534,8 +537,8 @@ public class TurnOnOffPayload {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 7`] = `
 "package com.asyncapi.model;
 
-import javax.validation.Valid;
 
+import jakarta.validation.Valid;
 import java.util.Objects;
 import java.util.List;
 
@@ -590,8 +593,8 @@ public class DimLight {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 8`] = `
 "package com.asyncapi.model;
 
-import javax.validation.Valid;
 
+import jakarta.validation.Valid;
 import java.util.Objects;
 import java.util.List;
 
@@ -646,8 +649,8 @@ public class LightMeasured {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 9`] = `
 "package com.asyncapi.model;
 
-import javax.validation.Valid;
 
+import jakarta.validation.Valid;
 import java.util.Objects;
 import java.util.List;
 
@@ -870,7 +873,7 @@ dependencies {
 	implementation('org.springframework.integration:spring-integration-mqtt')
 	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
 	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
-    implementation('javax.validation:validation-api')
+	implementation('jakarta.validation:jakarta.validation-api')
 	implementation('org.springframework.boot:spring-boot-starter-integration')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.testcontainers:testcontainers:1.16.3')
@@ -1081,8 +1084,9 @@ public class MessageHandlerService {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 4`] = `
 "package com.asyncapi.model;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -1169,8 +1173,8 @@ public class LightMeasuredPayload {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 5`] = `
 "package com.asyncapi.model;
 
-import javax.validation.Valid;
 
+import jakarta.validation.Valid;
 import java.util.Objects;
 import java.util.List;
 
@@ -1349,7 +1353,7 @@ dependencies {
 	implementation('org.springframework.integration:spring-integration-mqtt')
 	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
 	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
-    implementation('javax.validation:validation-api')
+	implementation('jakarta.validation:jakarta.validation-api')
 	implementation('org.springframework.boot:spring-boot-starter-integration')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.testcontainers:testcontainers:1.16.3')

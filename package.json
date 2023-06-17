@@ -105,6 +105,11 @@
         "description": "Only for Kafka. Add type information to the message header",
         "default": "true",
         "required": false
+      },
+      "springBoot2": {
+        "description": "Generate template files for the Spring Boot version 2. For kafka protocol it will also force to use spring-kafka 2.9.9",
+        "default": false,
+        "required": false
       }
     },
     "generator": ">=1.8.27 <2.0.0",
