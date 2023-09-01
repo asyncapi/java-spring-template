@@ -31,7 +31,7 @@ public class SongPayload {
     /**
      * ID
      */
-    @JsonProperty(\\"id\\")
+    @JsonProperty("id")
     public java.util.UUID getId() {
         return id;
     }
@@ -44,7 +44,7 @@ public class SongPayload {
     /**
      * Title of a song
      */
-    @JsonProperty(\\"title\\")
+    @JsonProperty("title")
     public String getTitle() {
         return title;
     }
@@ -57,7 +57,7 @@ public class SongPayload {
     /**
      * URI of a song
      */
-    @JsonProperty(\\"uri\\")
+    @JsonProperty("uri")
     public String getUri() {
         return uri;
     }
@@ -70,7 +70,7 @@ public class SongPayload {
     /**
      * Author email
      */
-    @JsonProperty(\\"email\\")
+    @JsonProperty("email")
     public String getEmail() {
         return email;
     }
@@ -102,13 +102,13 @@ public class SongPayload {
 
     @Override
     public String toString() {
-        return \\"class SongPayload {\\\\n\\" +
+        return "class SongPayload {\\n" +
         
-                \\"    id: \\" + toIndentedString(id) + \\"\\\\n\\" +
-                \\"    title: \\" + toIndentedString(title) + \\"\\\\n\\" +
-                \\"    uri: \\" + toIndentedString(uri) + \\"\\\\n\\" +
-                \\"    email: \\" + toIndentedString(email) + \\"\\\\n\\" +
-                \\"}\\";
+                "    id: " + toIndentedString(id) + "\\n" +
+                "    title: " + toIndentedString(title) + "\\n" +
+                "    uri: " + toIndentedString(uri) + "\\n" +
+                "    email: " + toIndentedString(email) + "\\n" +
+                "}";
     }
 
     /**
@@ -116,9 +116,9 @@ public class SongPayload {
      */
     private String toIndentedString(Object o) {
         if (o == null) {
-           return \\"null\\";
+           return "null";
         }
-        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+        return o.toString().replace("\\n", "\\n    ");
     }
 }"
 `;

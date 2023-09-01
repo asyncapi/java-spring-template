@@ -1,0 +1,216 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`integration tests for generated files under different template parameters should generate spring 2 code with parameter 1`] = `
+"package com.asyncapi.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.messaging.Message;
+import org.springframework.stereotype.Service;
+
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
+    
+import com.asyncapi.model.LightMeasuredPayload;
+
+@Service
+public class MessageHandlerService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandlerService.class);
+
+    
+    
+    @KafkaListener(topics = "event.lighting.measured", groupId = "my-group")
+    public void readLightMeasurement(@Payload LightMeasuredPayload payload,
+                       @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Integer key,
+                       @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
+                       @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {
+        LOGGER.info("Key: " + key + ", Payload: " + payload.toString() + ", Timestamp: " + timestamp + ", Partition: " + partition);
+    }
+    
+
+}
+"
+`;
+
+exports[`integration tests for generated files under different template parameters should generate spring 2 code with parameter 2`] = `
+"package com.asyncapi.model;
+
+import javax.validation.constraints.*;
+import javax.validation.Valid;
+
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.List;
+import java.util.Objects;
+
+
+public class LightMeasuredPayload {
+    
+    private @Valid Integer lumens;
+    
+    private @Valid java.time.OffsetDateTime sentAt;
+    
+
+    
+
+    /**
+     * Light intensity measured in lumens.
+     */
+    @JsonProperty("lumens")
+    public Integer getLumens() {
+        return lumens;
+    }
+
+    public void setLumens(Integer lumens) {
+        this.lumens = lumens;
+    }
+    
+
+    /**
+     * Date and time when the message was sent.
+     */
+    @JsonProperty("sentAt")
+    public java.time.OffsetDateTime getSentAt() {
+        return sentAt;
+    }
+
+    public void setSentAt(java.time.OffsetDateTime sentAt) {
+        this.sentAt = sentAt;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LightMeasuredPayload lightMeasuredPayload = (LightMeasuredPayload) o;
+        return 
+            Objects.equals(this.lumens, lightMeasuredPayload.lumens) &&
+            Objects.equals(this.sentAt, lightMeasuredPayload.sentAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(lumens, sentAt);
+    }
+
+    @Override
+    public String toString() {
+        return "class LightMeasuredPayload {\\n" +
+        
+                "    lumens: " + toIndentedString(lumens) + "\\n" +
+                "    sentAt: " + toIndentedString(sentAt) + "\\n" +
+                "}";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return "null";
+        }
+        return o.toString().replace("\\n", "\\n    ");
+    }
+}"
+`;
+
+exports[`integration tests for generated files under different template parameters should generate spring 2 code with parameter 3`] = `
+"package com.asyncapi.model;
+
+import javax.validation.Valid;
+
+import java.util.Objects;
+import java.util.List;
+
+
+public class LightMeasured {
+    private @Valid LightMeasuredPayload payload;
+
+    public LightMeasuredPayload getPayload() {
+        return payload;
+    }
+
+    public void setPayload(LightMeasuredPayload payload) {
+        this.payload = payload;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LightMeasured event = (LightMeasured) o;
+        return Objects.equals(this.payload, event.payload);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(payload);
+    }
+
+    @Override
+    public String toString() {
+        return "class LightMeasured {\\n" +
+                "    payload: " + toIndentedString(payload) + "\\n" +
+                "}";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\\n", "\\n    ");
+    }
+}"
+`;
+
+exports[`integration tests for generated files under different template parameters should generate spring 2 code with parameter 4`] = `
+"plugins {
+	id 'org.springframework.boot' version "$springBootVersion"
+	id 'io.spring.dependency-management' version "$springDependencyManager"
+	id 'java'
+}
+
+group = "com.asyncapi"
+version = "0.0.1-SNAPSHOT"
+sourceCompatibility = JavaVersion.VERSION_17
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation('org.springframework.kafka:spring-kafka:2.9.12')
+	testImplementation('org.springframework.kafka:spring-kafka-test:2.9.12')
+	testImplementation('junit:junit:4.13.1')
+	testImplementation('org.testcontainers:kafka:1.16.3')
+	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
+	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+	implementation('javax.validation:validation-api')
+	implementation('org.springframework.boot:spring-boot-starter-integration:2.7.15')
+	testImplementation('org.springframework.boot:spring-boot-starter-test:2.7.15')
+	testImplementation('org.testcontainers:testcontainers:1.16.3')
+}
+"
+`;
+
+exports[`integration tests for generated files under different template parameters should generate spring 2 code with parameter 5`] = `
+"springBootVersion=2.7.15
+springDependencyManager=1.1.3"
+`;

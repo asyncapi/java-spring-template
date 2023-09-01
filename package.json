@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@asyncapi/generator": "^1.10.14",
-    "jest": "^27.3.1",
+    "jest": "^29.6.4",
     "node-fetch": "^2.6.1",
     "rimraf": "^2.2.8"
   },
