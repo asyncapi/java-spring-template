@@ -16,6 +16,9 @@ import org.springframework.messaging.handler.annotation.Payload;
 import com.asyncapi.model.AnonymousSchema1;
 import com.asyncapi.model.AnonymousSchema7;
 
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.170Z")
 @Service
 public class MessageHandlerService {
 
@@ -23,12 +26,12 @@ public class MessageHandlerService {
 
     
     
-    @KafkaListener(topics = \\"song.released\\")
+    @KafkaListener(topics = "song.released")
     public void release(@Payload Object payload,
                        @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Integer key,
                        @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
                        @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {
-        LOGGER.info(\\"Key: \\" + key + \\", Payload: \\" + payload.toString() + \\", Timestamp: \\" + timestamp + \\", Partition: \\" + partition);
+        LOGGER.info("Key: " + key + ", Payload: " + payload.toString() + ", Timestamp: " + timestamp + ", Partition: " + partition);
     }
     
 
@@ -70,6 +73,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.shaded.com.google.common.collect.Lists;
 
+import javax.annotation.processing.Generated;
 import java.time.Duration;
 import java.util.*;
 
@@ -82,14 +86,15 @@ import static org.junit.Assert.assertNotEquals;
 /**
  * Example of tests for kafka based on testcontainers library
  */
+@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:38.983Z")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestcontainerKafkaTest {
 
      
-    private static final String _SUBSCRIBE_TOPIC = \\"song.released\\";
+    private static final String _SUBSCRIBE_TOPIC = "song.released";
      
-    private static final String RELEASE_PUBLISH_TOPIC = \\"song.released\\";
+    private static final String RELEASE_PUBLISH_TOPIC = "song.released";
      
     @ClassRule
     public static KafkaContainer kafka = new KafkaContainer();
@@ -99,7 +104,7 @@ public class TestcontainerKafkaTest {
     
     @DynamicPropertySource
     public static void kafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add(\\"spring.kafka.bootstrap-servers\\", kafka::getBootstrapServers);
+        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
     }
      
     @Test
@@ -114,8 +119,8 @@ public class TestcontainerKafkaTest {
 
         ConsumerRecord<Integer, Object> consumedMessage = consumeMessage(_SUBSCRIBE_TOPIC);
 
-        assertEquals(\\"Key is wrong\\", key, consumedMessage.key());
-        assertNotEquals(\\"Key is wrong\\", wrongKey, consumedMessage.key());
+        assertEquals("Key is wrong", key, consumedMessage.key());
+        assertNotEquals("Key is wrong", wrongKey, consumedMessage.key());
     }
      
     @Test
@@ -160,7 +165,7 @@ public class TestcontainerKafkaTest {
         return consumeMessages(topic)
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException(\\"no message received\\"));
+                .orElseThrow(() -> new IllegalStateException("no message received"));
     }
 
     protected List<ConsumerRecord<Integer, Object>> consumeMessages(String topic) {
@@ -185,8 +190,8 @@ public class TestcontainerKafkaTest {
     protected Map<String, Object> getKafkaConsumerConfiguration() {
         Map<String, Object> configs = new HashMap<>();
         configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
-        configs.put(GROUP_ID_CONFIG, \\"testGroup\\");
-        configs.put(AUTO_OFFSET_RESET_CONFIG, \\"earliest\\");
+        configs.put(GROUP_ID_CONFIG, "testGroup");
+        configs.put(AUTO_OFFSET_RESET_CONFIG, "earliest");
         configs.put(KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class.getName());
         configs.put(VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class.getName());
         return configs;
