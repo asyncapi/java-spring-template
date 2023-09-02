@@ -75,9 +75,11 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
+import javax.annotation.processing.Generated;
 import java.util.HashMap;
 import java.util.Map;
 
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Configuration
 {% if hasPublish %}@EnableKafka{% endif %}
 public class Config {

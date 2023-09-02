@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +15,7 @@ import java.util.Objects;
  * {{ line | safe}}{% endfor %}{% if schema.examples() %}
  * Examples: {{schema.examples() | examplesToString | safe}}{% endif %}
  */{% endif %}
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- set isRequired = propName | isRequired(schema.required()) %}

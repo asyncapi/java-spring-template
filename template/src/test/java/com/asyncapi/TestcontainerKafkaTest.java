@@ -39,6 +39,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.shaded.com.google.common.collect.Lists;
 
+import javax.annotation.processing.Generated;
 import java.time.Duration;
 import java.util.*;
 
@@ -51,6 +52,7 @@ import static org.junit.Assert.assertNotEquals;
 /**
  * Example of tests for kafka based on testcontainers library
  */
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestcontainerKafkaTest {

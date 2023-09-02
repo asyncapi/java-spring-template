@@ -177,3 +177,5 @@ function addBackSlashToPattern(val) {
   return result;
 }
 filter.addBackSlashToPattern = addBackSlashToPattern;
+
+filter.currentTime = () => (new Date(Date.now())).toISOString();
