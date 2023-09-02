@@ -24,7 +24,7 @@ import javax.annotation.processing.Generated;
 import java.util.HashMap;
 import java.util.Map;
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.201Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Configuration
 @EnableKafka
 public class Config {
@@ -107,7 +107,7 @@ import org.springframework.stereotype.Service;
 import com.asyncapi.model.LightMeasuredPayload;
 import javax.annotation.processing.Generated;
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.062Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
 public class PublisherService {
 
@@ -143,7 +143,7 @@ import com.asyncapi.model.LightMeasuredPayload;
 
 import javax.annotation.processing.Generated;
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.047Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
 public class MessageHandlerService {
 
@@ -179,7 +179,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.142Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasuredPayload {
     
     private @Valid Integer lumens;
@@ -264,7 +264,7 @@ import java.util.Objects;
 import java.util.List;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.092Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasured {
     private @Valid LightMeasuredPayload payload;
 
@@ -357,7 +357,7 @@ import static org.junit.Assert.assertNotEquals;
 /**
  * Example of tests for kafka based on testcontainers library
  */
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:38.874Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestcontainerKafkaTest {

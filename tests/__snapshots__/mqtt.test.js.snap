@@ -25,7 +25,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.processing.Generated;
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.657Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Configuration
 public class Config {
 
@@ -176,7 +176,7 @@ import org.springframework.integration.annotation.MessagingGateway;
 
 import javax.annotation.processing.Generated;
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.472Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @MessagingGateway
 public interface PublisherService {
 
@@ -215,7 +215,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.processing.Generated;
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.460Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
 public class MessageHandlerService {
 
@@ -258,7 +258,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.598Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class DimLightPayload {
     
     private @Valid Integer percentage;
@@ -348,7 +348,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.531Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasuredPayload {
     
     private @Valid Integer lumens;
@@ -438,7 +438,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.576Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class TurnOnOffPayload {
     
     public enum CommandEnum {
@@ -556,7 +556,7 @@ import java.util.Objects;
 import java.util.List;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.495Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class DimLight {
     private @Valid DimLightPayload payload;
 
@@ -614,7 +614,7 @@ import java.util.Objects;
 import java.util.List;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.485Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasured {
     private @Valid LightMeasuredPayload payload;
 
@@ -672,7 +672,7 @@ import java.util.Objects;
 import java.util.List;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.490Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class TurnOnOff {
     private @Valid TurnOnOffPayload payload;
 
@@ -758,7 +758,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Example of tests for mqtt based on testcontainers library
  */
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.304Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestcontainerMqttTest {
@@ -931,7 +931,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.processing.Generated;
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:40.379Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Configuration
 public class Config {
 
@@ -1059,7 +1059,7 @@ import org.springframework.integration.annotation.MessagingGateway;
 
 import javax.annotation.processing.Generated;
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:40.301Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @MessagingGateway
 public interface PublisherService {
 
@@ -1086,7 +1086,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.processing.Generated;
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:40.292Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
 public class MessageHandlerService {
 
@@ -1125,7 +1125,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:40.338Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasuredPayload {
     
     private @Valid Integer lumens;
@@ -1210,7 +1210,7 @@ import java.util.Objects;
 import java.util.List;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:40.317Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasured {
     private @Valid LightMeasuredPayload payload;
 
@@ -1292,7 +1292,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Example of tests for mqtt based on testcontainers library
  */
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:40.155Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestcontainerMqttTest {

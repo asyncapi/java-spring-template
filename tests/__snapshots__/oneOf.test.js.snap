@@ -18,7 +18,7 @@ import com.asyncapi.model.AnonymousSchema7;
 
 import javax.annotation.processing.Generated;
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:39.170Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
 public class MessageHandlerService {
 
@@ -86,7 +86,7 @@ import static org.junit.Assert.assertNotEquals;
 /**
  * Example of tests for kafka based on testcontainers library
  */
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-02T21:03:38.983Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestcontainerKafkaTest {
