@@ -83,6 +83,15 @@ public class SimpleKafkaTest {
         {% if hasSubscribe %}
         Map<String, Object> consumerConfigs = new HashMap<>(KafkaTestUtils.consumerProps("consumer", "true", embeddedKafkaBroker));
         consumerConfigs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        consumerConfigs.put(JsonDeserializer.TYPE_MAPPINGS,
+                    {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
+        {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}
+        "{{schema.uid()}}:{{params['userJavaPackage']}}.model.{{schema.uid() | camelCase | upperFirst}}{% if not loop.last %}," +{% else %}"{% endif %}
+        {% endif -%}
+        {% endfor -%}
+        );
+        consumerConfigs.put(JsonDeserializer.TRUSTED_PACKAGES, "{{params['userJavaPackage']}}.model");
+
         {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
         {%- if channel.subscribe().hasMultipleMessages() %} {% set typeName = "Object" %} {% else %} {% set typeName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %} {% endif %}
         consumer{{ channelName | camelCase | upperFirst}} = new DefaultKafkaConsumerFactory<>(consumerConfigs, new IntegerDeserializer(), new JsonDeserializer<>({{typeName}}.class)).createConsumer();
