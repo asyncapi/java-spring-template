@@ -1,6 +1,6 @@
 {
   "name": "@asyncapi/java-spring-template",
-  "version": "0.29.0",
+  "version": "1.0.0",
   "description": "Java Spring template for AsyncAPI generator.",
   "keywords": [
     "asyncapi",
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@asyncapi/generator": "^1.10.14",
-    "jest": "^27.3.1",
+    "jest": "^29.6.4",
     "node-fetch": "^2.6.1",
     "rimraf": "^2.2.8"
   },
@@ -104,6 +104,11 @@
       "addTypeInfoHeader": {
         "description": "Only for Kafka. Add type information to the message header",
         "default": "true",
+        "required": false
+      },
+      "springBoot2": {
+        "description": "Generate template files for the Spring Boot version 2. For kafka protocol it will also force to use spring-kafka 2.9.9",
+        "default": false,
         "required": false
       }
     },
