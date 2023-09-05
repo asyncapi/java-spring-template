@@ -54,17 +54,21 @@ public class Config {
     }
 
     @Bean
-    public Declarables declarables() {
+    public Declarables exchanges() {
         return new Declarables(
-        {% for channelName, channel in asyncapi.channels() %}
-        {% if channel.hasSubscribe() %} new TopicExchange({{channelName}}Exchange, true, false)
-        {% if not loop.last %},{% endif %}{% endif %}{% endfor %}
-
-        {% for channelName, channel in asyncapi.channels() %}
-        {% if channel.hasPublish() %}{% if loop.first %},{% endif %} new Queue({{channelName}}Queue, true, false, false)
-        {% if not loop.last %},{% endif %}{% endif %} {% endfor %}
-        );
+                {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
+        new TopicExchange({{channelName}}Exchange, true, false){% if not loop.last %},{% endif %}
+        {% endif %}{% endfor %}
+                );
     }
+
+    @Bean
+    public Declarables queues() {
+        return new Declarables(
+                {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
+        new Queue({{channelName}}Queue, true, false, false){% if not loop.last %},{% endif %}
+        {% endif %}{% endfor %}
+                );
 
 
     @Bean
