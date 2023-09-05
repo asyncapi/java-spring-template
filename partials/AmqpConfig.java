@@ -29,14 +29,19 @@ public class Config {
 
 
     {% for channelName, channel in asyncapi.channels() %}
+    {% if channel.hasSubscribe() %}
     @Value("${amqp.{{- channelName -}}.exchange}")
     private String {{channelName}}Exchange;
 
-    @Value("${amqp.{{- channelName -}}.queue}")
-    private String {{channelName}}Queue;
-
     @Value("${amqp.{{- channelName -}}.routingKey}")
     private String {{channelName}}RoutingKey;
+    {% endif %}
+
+    {% if channel.hasPublish() %}
+    @Value("${amqp.{{- channelName -}}.queue}")
+    private String {{channelName}}Queue;
+    {% endif %}
+
     {% endfor %}
 
     @Bean
@@ -50,29 +55,14 @@ public class Config {
 
     @Bean
     public Declarables declarables() {
-        {% for channelName, channel in asyncapi.channels() %}
-        Queue {{channelName}}_Queue = new Queue({{channelName}}Queue);
-        {% endfor %}
-
-        {% for channelName, channel in asyncapi.channels() %}
-        TopicExchange {{channelName}}_Exchange = new TopicExchange({{channelName}}Exchange);
-        {% endfor %}
-
-        {% for channelName, channel in asyncapi.channels() %}
-        Binding {{channelName}}_Binding = BindingBuilder.bind({{channelName}}_Queue)
-                .to({{channelName}}_Exchange).with({{channelName}}RoutingKey);
-        {% endfor %}
-
         return new Declarables(
-                {% set i = 1 %}{% for channelName, channel in asyncapi.channels() %}{% if i == asyncapi.channels() | size %}
-                    {{channelName}}_Queue,
-                    {{channelName}}_Exchange,
-                    {{channelName}}_Binding
-                {% else %}
-                    {{channelName}}_Queue,
-                    {{channelName}}_Exchange,
-                    {{channelName}}_Binding,
-                {% set i = i+1 %} {% endif %} {% endfor %}
+        {% for channelName, channel in asyncapi.channels() %}
+        {% if channel.hasSubscribe() %} new TopicExchange({{channelName}}Exchange, true, false)
+        {% if not loop.last %},{% endif %}{% endif %}{% endfor %}
+
+        {% for channelName, channel in asyncapi.channels() %}
+        {% if channel.hasPublish() %}{% if loop.first %},{% endif %} new Queue({{channelName}}Queue, true, false, false)
+        {% if not loop.last %},{% endif %}{% endif %} {% endfor %}
         );
     }
 

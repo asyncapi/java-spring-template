@@ -65,16 +65,18 @@ public class MessageHandlerService {
 
     {% elif asyncapi | isProtocol('amqp')  %}
     {% for channelName, channel in asyncapi.channels() %}
-    {%- set schemaName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %}
+    {% if channel.hasPublish() %}
+    {%- set schemaName = channel.publish().message().payload().uid() | camelCase | upperFirst %}
     @RabbitListener(queues = "${amqp.{{- channelName -}}.queue}")
     public void {{channel.publish().id() | camelCase}}({{schemaName}} {{channelName}}Payload ){
-        LOGGER.info("Message received from {{- schemaName -}} : " + {{channelName}}Payload);
+        LOGGER.info("Message received from {{- channelName -}} : " + {{channelName}}Payload);
     }
+    {% endif %}
     {% endfor %}
 
 {% else %}
     {% for channelName, channel in asyncapi.channels() %}
-      {% if channel.hasPublish() %}
+    {% if channel.hasPublish() %}
     {% if channel.description() or channel.publish().description() %}/**{% for line in channel.description() | splitByLines %}
      * {{line | safe}}{% endfor %}{% for line in channel.publish().description() | splitByLines %}
      * {{line | safe}}{% endfor %}

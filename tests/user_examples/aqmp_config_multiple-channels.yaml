@@ -26,7 +26,9 @@ channels:
       operationId: readLightMeasurement_Streetlight1
       bindings:
         amqp:
-          exchange: lightMeasuredExchange
+          is: queue
+          queue:
+            name: lightMeasurementQueue_Streetlight1
       message:
         $ref: '#/components/messages/lightMeasured'
     subscribe:
@@ -35,15 +37,19 @@ channels:
         $ref: '#/components/messages/lightMeasured'
       bindings:
         amqp:
-          queue: lightMeasuredQueue_Streetlight1
-          routingKey: lightMeasuredRoutingKey_Streetlight1
+          is: routingKey
+          exchange:
+            name: lightMeasurementExchange_Streetlight1
+          routingKey: lightMeasurementRoutingKey_Streetlight1
   lightMeasured_Streetlight2:
     publish:
       summary: Inform about environmental lighting conditions for Streetlight 2.
       operationId: readLightMeasurement_Streetlight2
       bindings:
         amqp:
-          exchange: lightMeasuredExchange
+          is: queue
+          queue:
+            name: lightMeasurementQueue_Streetlight2
       message:
         $ref: '#/components/messages/lightMeasured'
     subscribe:
@@ -52,9 +58,10 @@ channels:
         $ref: '#/components/messages/lightMeasured'
       bindings:
         amqp:
-          queue: lightMeasuredQueue_Streetlight2
-          routingKey: lightMeasuredRoutingKey_Streetlight2
-
+          is: routingKey
+          exchange:
+            name: lightMeasurementExchange_Streetlight2
+          routingKey: lightMeasurementRoutingKey_Streetlight2
 components:
   messages:
     lightMeasured:

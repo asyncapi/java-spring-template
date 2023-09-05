@@ -19,9 +19,9 @@ amqp:
     password:
   {% for channelName, channel in asyncapi.channels() %}
   {{channelName}}:
-    exchange: {{channel.publish().binding('amqp').exchange}}
-    queue: {{channel.subscribe().binding('amqp').queue}}
-    routingKey: {{channel.subscribe().binding('amqp').routingKey}}
+    {% if channel.hasSubscribe() %} exchange: {{channel.subscribe().binding('amqp').exchange.name}} {% endif %}
+    {% if channel.hasSubscribe() %} routingKey: {{channel.subscribe().binding('amqp').routingKey}}{% endif %}
+    {% if channel.hasPublish() %} queue: {{channel.publish().binding('amqp').queue.name}}{% endif %}
   {% endfor %}
   {% endif %}
 

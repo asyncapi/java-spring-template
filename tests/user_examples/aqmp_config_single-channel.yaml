@@ -24,20 +24,23 @@ channels:
     publish:
       summary: Inform about environmental lighting conditions for a particular streetlight.
       operationId: readLightMeasurement
-      bindings:
-        amqp:
-          exchange: lightMeasuredExchange	
       message:
         $ref: '#/components/messages/lightMeasured'
+      bindings:
+        amqp:
+          is: queue
+          queue:
+            name: lightMeasurementQueue
     subscribe:
       operationId: updateLightMeasurement
       message:
         $ref: '#/components/messages/lightMeasured'
       bindings:
         amqp:
-          queue: lightMeasuredQueue
-          routingKey: lightMeasuredRoutingKey	
-
+          is: routingKey
+          exchange:
+            name: lightMeasurementExchange
+          routingKey: lightMeasurementRoutingKey
 
 components:
   messages:
@@ -52,7 +55,7 @@ components:
         id:
           type: integer
           minimum: 0
-          description: Id of the streetlight.        
+          description: Id of the streetlight.
         lumens:
           type: integer
           minimum: 0
