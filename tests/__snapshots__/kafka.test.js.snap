@@ -138,6 +138,7 @@ import org.springframework.messaging.handler.annotation.Payload;
     
 import com.asyncapi.model.LightMeasuredPayload;
 
+
 @Service
 public class MessageHandlerService {
 
@@ -154,6 +155,7 @@ public class MessageHandlerService {
     }
     
 
+    
 }
 "
 `;
