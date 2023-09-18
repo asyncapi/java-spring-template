@@ -1,7 +1,10 @@
 package {{ params['userJavaPackage'] }}.model;
 
+{% if params.springBoot2 -%}
 import javax.validation.Valid;
-
+{% else %}
+import jakarta.validation.Valid;
+{%- endif %}
 import java.util.Objects;
 import java.util.List;
 
@@ -38,9 +41,6 @@ public class {{messageName | camelCase | upperFirst}} {
             {%- set className = obj.uid() | camelCase | upperFirst %}
             {%- set propType = obj | defineType(obj.uid()) | safe %}
 
-            {%- if obj.type() === 'array' %}
-                {%- set varName = obj.uid() | camelCase + 'List' %}
-            {%- endif %}
         private @Valid {{propType}} {{varName}};
 
         public {{propType}} get{{className}}() {

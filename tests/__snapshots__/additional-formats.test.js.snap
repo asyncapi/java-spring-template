@@ -3,8 +3,9 @@
 exports[`template integration tests for additional formats of data types should generate DTO file with proper type classes 1`] = `
 "package com.asyncapi.model;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,7 +26,7 @@ public class SongPayload {
     private @Valid String email;
     
     private @Valid java.math.BigDecimal rating;
-    
+
 
     
 
@@ -92,7 +93,7 @@ public class SongPayload {
     public void setRating(java.math.BigDecimal rating) {
         this.rating = rating;
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
