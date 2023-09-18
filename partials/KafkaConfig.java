@@ -159,7 +159,7 @@ public class Config {
     {%- endif -%}
     {%- if saslJaasConfig %}
         props.put(SaslConfigs.SASL_JAAS_CONFIG, "{{ saslJaasConfig | safe }}");
-    {% endif -%}
+    {% endif %}
         props.put(JsonDeserializer.TYPE_MAPPINGS,
     {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
         {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}

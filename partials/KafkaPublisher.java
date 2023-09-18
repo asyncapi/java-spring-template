@@ -35,7 +35,7 @@ public class PublisherService {
     public void {{channel.subscribe().id() | camelCase}}(Integer key, {{varName | upperFirst}} {{varName}}) {
         Message<{{varName | upperFirst}}> message = MessageBuilder.withPayload({{varName}})
                 .setHeader(KafkaHeaders.TOPIC, "{{channelName}}")
-                .setHeader(KafkaHeaders.MESSAGE_KEY, key)
+                .setHeader(KafkaHeaders.{%- if params.springBoot2 %}MESSAGE_KEY{% else %}KEY{% endif -%}, key)
                 .build();
         kafkaTemplate.send(message);
     }
