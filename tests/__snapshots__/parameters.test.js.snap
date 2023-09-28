@@ -151,7 +151,7 @@ import com.asyncapi.model.LightMeasuredPayload;
 
 import javax.annotation.processing.Generated;
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-28T22:07:11.996Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
 public class MessageHandlerService {
 
@@ -188,7 +188,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-28T22:07:12.056Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasuredPayload {
     
     private @Valid Integer lumens;
@@ -273,7 +273,7 @@ import java.util.Objects;
 import java.util.List;
 
 
-@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-28T22:07:12.035Z")
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasured {
     private @Valid LightMeasuredPayload payload;
 
