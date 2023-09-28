@@ -149,6 +149,9 @@ import org.springframework.messaging.handler.annotation.Payload;
     
 import com.asyncapi.model.LightMeasuredPayload;
 
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-28T22:07:11.996Z")
 @Service
 public class MessageHandlerService {
 
@@ -180,10 +183,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Objects;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-28T22:07:12.056Z")
 public class LightMeasuredPayload {
     
     private @Valid Integer lumens;
@@ -261,12 +266,14 @@ public class LightMeasuredPayload {
 exports[`integration tests for generated files under different template parameters should generate spring 2 code with parameter 3`] = `
 "package com.asyncapi.model;
 
+import javax.annotation.processing.Generated;
 import javax.validation.Valid;
 
 import java.util.Objects;
 import java.util.List;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="2023-09-28T22:07:12.035Z")
 public class LightMeasured {
     private @Valid LightMeasuredPayload payload;
 
