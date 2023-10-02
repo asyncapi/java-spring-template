@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.processing.Generated;
 import java.util.Random;
 
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Component
 public class CommandLinePublisher implements CommandLineRunner {
 

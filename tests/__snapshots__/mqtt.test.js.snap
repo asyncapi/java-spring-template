@@ -23,6 +23,9 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Configuration
 public class Config {
 
@@ -171,6 +174,9 @@ exports[`template integration tests for generated files using the generator and 
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
 
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @MessagingGateway
 public interface PublisherService {
 
@@ -207,6 +213,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
 public class MessageHandlerService {
 
@@ -245,10 +254,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Objects;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class DimLightPayload {
     
     private @Valid Integer percentage;
@@ -334,10 +345,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Objects;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasuredPayload {
     
     private @Valid Integer lumens;
@@ -423,10 +436,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Objects;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class TurnOnOffPayload {
     
     public enum CommandEnum {
@@ -537,12 +552,14 @@ public class TurnOnOffPayload {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 7`] = `
 "package com.asyncapi.model;
 
+import javax.annotation.processing.Generated;
 
 import jakarta.validation.Valid;
 import java.util.Objects;
 import java.util.List;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class DimLight {
     private @Valid DimLightPayload payload;
 
@@ -593,12 +610,14 @@ public class DimLight {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 8`] = `
 "package com.asyncapi.model;
 
+import javax.annotation.processing.Generated;
 
 import jakarta.validation.Valid;
 import java.util.Objects;
 import java.util.List;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasured {
     private @Valid LightMeasuredPayload payload;
 
@@ -649,12 +668,14 @@ public class LightMeasured {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 9`] = `
 "package com.asyncapi.model;
 
+import javax.annotation.processing.Generated;
 
 import jakarta.validation.Valid;
 import java.util.Objects;
 import java.util.List;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class TurnOnOff {
     private @Valid TurnOnOffPayload payload;
 
@@ -730,6 +751,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.GenericContainer;
 
+import javax.annotation.processing.Generated;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -739,6 +761,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Example of tests for mqtt based on testcontainers library
  */
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestcontainerMqttTest {
@@ -909,6 +932,9 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Configuration
 public class Config {
 
@@ -1034,6 +1060,9 @@ exports[`template integration tests for generated files using the generator and 
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
 
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @MessagingGateway
 public interface PublisherService {
 
@@ -1058,6 +1087,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
 public class MessageHandlerService {
 
@@ -1092,10 +1124,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Objects;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasuredPayload {
     
     private @Valid Integer lumens;
@@ -1173,12 +1207,14 @@ public class LightMeasuredPayload {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 5`] = `
 "package com.asyncapi.model;
 
+import javax.annotation.processing.Generated;
 
 import jakarta.validation.Valid;
 import java.util.Objects;
 import java.util.List;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasured {
     private @Valid LightMeasuredPayload payload;
 
@@ -1250,6 +1286,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.GenericContainer;
 
+import javax.annotation.processing.Generated;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -1259,6 +1296,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Example of tests for mqtt based on testcontainers library
  */
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestcontainerMqttTest {

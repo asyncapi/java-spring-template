@@ -39,7 +39,8 @@ describe('template integration tests for generated files using the generator and
         ];
         for (const index in expectedFiles) {
             const file = await readFile(path.join(outputDir, expectedFiles[index]), 'utf8');
-            expect(file).toMatchSnapshot();
+            const fileWithAnyDate = file.replace(/date="\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)"/, 'date="AnyDate"');
+            expect(fileWithAnyDate).toMatchSnapshot();
         }
     });
 
@@ -63,7 +64,8 @@ describe('template integration tests for generated files using the generator and
         ];
         for (const index in expectedFiles) {
             const file = await readFile(path.join(outputDir, expectedFiles[index]), 'utf8');
-            expect(file).toMatchSnapshot();
+            const fileWithAnyDate = file.replace(/date="\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)"/, 'date="AnyDate"');
+            expect(fileWithAnyDate).toMatchSnapshot();
         }
     });
 });
