@@ -93,6 +93,8 @@ function toJavaType(str, isRequired) {
     case 'number':
     case 'double':
       resultType = 'double'; break;
+    case 'decimal':
+      resultType = 'java.math.BigDecimal'; break;
     case 'binary':
       resultType = 'byte[]'; break;
     default:
