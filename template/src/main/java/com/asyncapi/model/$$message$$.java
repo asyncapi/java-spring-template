@@ -1,5 +1,6 @@
 package {{ params['userJavaPackage'] }}.model;
 
+import javax.annotation.processing.Generated;
 {% if params.springBoot2 -%}
 import javax.validation.Valid;
 {% else %}
@@ -12,6 +13,7 @@ import java.util.List;
  * {{ line | safe}}{% endfor %}{% if message.examples() %}
  * Examples: {{message.examples() | examplesToString | safe}}{% endif %}
  */{% endif %}
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 public class {{messageName | camelCase | upperFirst}} {
     {%- if message.payload().anyOf() or message.payload().oneOf() %}
         {%- set payloadName = 'OneOf' %}{%- set hasPrimitive = false %}

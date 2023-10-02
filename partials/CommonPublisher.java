@@ -3,6 +3,9 @@
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
 
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @MessagingGateway
 public interface PublisherService {
 

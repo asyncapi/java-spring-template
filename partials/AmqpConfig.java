@@ -18,6 +18,9 @@ import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.messaging.MessageChannel;
 
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Configuration
 public class Config {
 
