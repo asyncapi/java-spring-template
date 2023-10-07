@@ -51,6 +51,7 @@ In order for the generator to know what names to use for some parameters it's ne
 |inverseOperations|Generate an application that will publish messages to `publish` operation of channels and read messages from `subscribe` operation of channels. Literally this flag will simply swap `publish` and `subscribe` operations in the channels. <br> This flag will be useful when you want to generate a code of mock for your main application. Be aware, generation could be incomplete and manual changes will be required e.g. if bindings are defined only for case of main application.| No       | `false`                  |
 |javaPackage|The Java package of the generated classes. Alternatively you can set the specification extension `info.x-java-package`. If both extension and parameter are used, parameter has more priority.| No       | `com.asyncapi`           |
 |springBoot2|Generate template files for the Spring Boot version 2. For kafka protocol it will also force to use spring-kafka 2.9.9| No       | `false`                    |
+|maven|Generate pom.xml Maven build file instead of Gradle build.|No       | `false`                  |
 |listenerPollTimeout|Only for Kafka. Timeout in ms to use when polling the consumer.| No       | `3000`                   |
 |listenerConcurrency|Only for Kafka. Number of threads to run in the listener containers.| No       | `3`                      |
 |addTypeInfoHeader|Only for Kafka. Add type information to message header.| No       | `true`                   |

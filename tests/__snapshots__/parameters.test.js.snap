@@ -1,5 +1,139 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`integration tests for generated files under different template parameters should generate gradle build 1`] = `
+"plugins {
+	id 'org.springframework.boot' version "$springBootVersion"
+	id 'io.spring.dependency-management' version "$springDependencyManager"
+	id 'java'
+}
+
+group = "com.asyncapi"
+version = "0.0.1-SNAPSHOT"
+sourceCompatibility = JavaVersion.VERSION_17
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation('org.springframework.kafka:spring-kafka')
+	testImplementation('org.springframework.kafka:spring-kafka-test')
+	testImplementation('junit:junit:4.13.1')
+	testImplementation('org.testcontainers:kafka:1.16.3')
+	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider')
+	implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+	implementation('jakarta.validation:jakarta.validation-api')
+	implementation('org.springframework.boot:spring-boot-starter-integration')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testImplementation('org.testcontainers:testcontainers:1.16.3')
+}
+"
+`;
+
+exports[`integration tests for generated files under different template parameters should generate gradle build 2`] = `
+"springBootVersion=3.1.3
+springDependencyManager=1.1.3"
+`;
+
+exports[`integration tests for generated files under different template parameters should generate maven build 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.asyncapi</groupId>
+    <artifactId>untitled</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <version>1.16.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-integration</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.16.3</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>3.1.3</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.1.3</version>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>"
+`;
+
 exports[`integration tests for generated files under different template parameters should generate spring 2 code with parameter 1`] = `
 "package com.asyncapi.service;
 
@@ -15,7 +149,9 @@ import org.springframework.messaging.handler.annotation.Payload;
     
 import com.asyncapi.model.LightMeasuredPayload;
 
+import javax.annotation.processing.Generated;
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
 public class MessageHandlerService {
 
@@ -32,7 +168,7 @@ public class MessageHandlerService {
     }
     
 
-    
+
 }
 "
 `;
@@ -48,10 +184,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Objects;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasuredPayload {
     
     private @Valid Integer lumens;
@@ -129,12 +267,14 @@ public class LightMeasuredPayload {
 exports[`integration tests for generated files under different template parameters should generate spring 2 code with parameter 3`] = `
 "package com.asyncapi.model;
 
+import javax.annotation.processing.Generated;
 import javax.validation.Valid;
 
 import java.util.Objects;
 import java.util.List;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class LightMeasured {
     private @Valid LightMeasuredPayload payload;
 

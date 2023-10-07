@@ -13,7 +13,9 @@ import {{params['userJavaPackage']}}.model.{{message.payload().uid() | camelCase
         {%- endfor -%}
     {% endif -%}
 {% endfor %}
+import javax.annotation.processing.Generated;
 
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Service
 public class PublisherService {
 

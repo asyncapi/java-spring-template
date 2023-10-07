@@ -41,6 +41,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.processing.Generated;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,6 +52,7 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 /**
  * Example of tests for kafka based on spring-kafka-test library
  */
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SimpleKafkaTest {

@@ -11,10 +11,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Objects;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class SongPayload {
     
     private @Valid java.util.UUID id;
@@ -24,6 +26,8 @@ public class SongPayload {
     private @Valid String uri;
     
     private @Valid String email;
+    
+    private @Valid java.math.BigDecimal rating;
     
 
     
@@ -79,6 +83,19 @@ public class SongPayload {
         this.email = email;
     }
     
+
+    /**
+     * Title rating
+     */
+    @JsonProperty("rating")
+    public java.math.BigDecimal getRating() {
+        return rating;
+    }
+
+    public void setRating(java.math.BigDecimal rating) {
+        this.rating = rating;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -92,12 +109,13 @@ public class SongPayload {
             Objects.equals(this.id, songPayload.id) &&
             Objects.equals(this.title, songPayload.title) &&
             Objects.equals(this.uri, songPayload.uri) &&
-            Objects.equals(this.email, songPayload.email);
+            Objects.equals(this.email, songPayload.email) &&
+            Objects.equals(this.rating, songPayload.rating);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, uri, email);
+        return Objects.hash(id, title, uri, email, rating);
     }
 
     @Override
@@ -108,6 +126,7 @@ public class SongPayload {
                 "    title: " + toIndentedString(title) + "\\n" +
                 "    uri: " + toIndentedString(uri) + "\\n" +
                 "    email: " + toIndentedString(email) + "\\n" +
+                "    rating: " + toIndentedString(rating) + "\\n" +
                 "}";
     }
 

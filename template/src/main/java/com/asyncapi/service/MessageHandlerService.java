@@ -37,6 +37,9 @@ import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCa
         {%- endif %}
         {%- endfor %}
         {% endif %}
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Service
 public class MessageHandlerService {
 

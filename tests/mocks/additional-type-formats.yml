@@ -38,3 +38,7 @@ components:
             description: Author email
             type: string
             format: email
+          rating:
+            description: Title rating
+            type: string
+            format: decimal
