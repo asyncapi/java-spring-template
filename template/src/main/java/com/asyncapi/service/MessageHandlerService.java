@@ -27,6 +27,16 @@ import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCa
         {%- endif %}
     {%- endfor %}
 {% endif %}
+{% if asyncapi | isProtocol('amqp') and hasPublish %}
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+    {% for channelName, channel in asyncapi.channels() %}
+            {%- if channel.hasPublish() %}
+            {%- for message in channel.publish().messages() %}
+import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}};
+        {%- endfor %}
+        {%- endif %}
+        {%- endfor %}
+        {% endif %}
 import javax.annotation.processing.Generated;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
@@ -55,9 +65,21 @@ public class MessageHandlerService {
     }
         {%- endif %}
     {% endfor %}
+
+    {% elif asyncapi | isProtocol('amqp')  %}
+    {% for channelName, channel in asyncapi.channels() %}
+    {% if channel.hasPublish() %}
+    {%- set schemaName = channel.publish().message().payload().uid() | camelCase | upperFirst %}
+    @RabbitListener(queues = "${amqp.{{- channelName -}}.queue}")
+    public void {{channel.publish().id() | camelCase}}({{schemaName}} {{channelName}}Payload ){
+        LOGGER.info("Message received from {{- channelName -}} : " + {{channelName}}Payload);
+    }
+    {% endif %}
+    {% endfor %}
+
 {% else %}
     {% for channelName, channel in asyncapi.channels() %}
-      {% if channel.hasPublish() %}
+    {% if channel.hasPublish() %}
     {% if channel.description() or channel.publish().description() %}/**{% for line in channel.description() | splitByLines %}
      * {{line | safe}}{% endfor %}{% for line in channel.publish().description() | splitByLines %}
      * {{line | safe}}{% endfor %}
