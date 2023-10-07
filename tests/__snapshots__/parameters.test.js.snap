@@ -75,7 +75,7 @@ exports[`integration tests for generated files under different template paramete
             <version>1.16.3</version>
             <scope>test</scope>
         </dependency>
-
+        
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
@@ -149,6 +149,7 @@ import org.springframework.messaging.handler.annotation.Payload;
     
 import com.asyncapi.model.LightMeasuredPayload;
 
+
 import javax.annotation.processing.Generated;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
@@ -168,7 +169,7 @@ public class MessageHandlerService {
     }
     
 
-
+    
 }
 "
 `;

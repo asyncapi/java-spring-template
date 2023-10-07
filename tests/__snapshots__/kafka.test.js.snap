@@ -142,6 +142,7 @@ import org.springframework.messaging.handler.annotation.Payload;
     
 import com.asyncapi.model.LightMeasuredPayload;
 
+
 import javax.annotation.processing.Generated;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
@@ -161,7 +162,7 @@ public class MessageHandlerService {
     }
     
 
-
+    
 }
 "
 `;
