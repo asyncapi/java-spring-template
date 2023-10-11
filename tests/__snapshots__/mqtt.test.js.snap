@@ -223,7 +223,7 @@ public class MessageHandlerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandlerService.class);
 
     
-
+    
     /**
      * The topic on which measured values may be produced and consumed.
      */
@@ -233,11 +233,11 @@ public class MessageHandlerService {
     }
       
     
-
     
-
     
-
+    
+    
+    
     
 
 }
@@ -257,8 +257,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.annotation.processing.Generated;
 import java.util.List;
-import java.util.Objects;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
@@ -349,8 +349,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.annotation.processing.Generated;
 import java.util.List;
-import java.util.Objects;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
@@ -441,8 +441,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.annotation.processing.Generated;
 import java.util.List;
-import java.util.Objects;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
@@ -559,9 +559,9 @@ exports[`template integration tests for generated files using the generator and 
 import javax.annotation.processing.Generated;
 
 import jakarta.validation.Valid;
-import java.util.Objects;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
@@ -618,9 +618,9 @@ exports[`template integration tests for generated files using the generator and 
 import javax.annotation.processing.Generated;
 
 import jakarta.validation.Valid;
-import java.util.Objects;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
@@ -677,9 +677,9 @@ exports[`template integration tests for generated files using the generator and 
 import javax.annotation.processing.Generated;
 
 import jakarta.validation.Valid;
-import java.util.Objects;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
@@ -1104,7 +1104,7 @@ public class MessageHandlerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandlerService.class);
 
     
-
+    
     /**
      * The topic on which measured values may be produced and consumed.
      */
@@ -1114,7 +1114,7 @@ public class MessageHandlerService {
     }
       
     
-
+    
     
 
 }
@@ -1134,8 +1134,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.annotation.processing.Generated;
 import java.util.List;
-import java.util.Objects;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
@@ -1219,9 +1219,9 @@ exports[`template integration tests for generated files using the generator and 
 import javax.annotation.processing.Generated;
 
 import jakarta.validation.Valid;
-import java.util.Objects;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")

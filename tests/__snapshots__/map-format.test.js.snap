@@ -3,18 +3,21 @@
 exports[`template integration tests for map format should generate DTO file with proper map types 1`] = `
 "package com.asyncapi.model;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class SongMetaData {
     
     private @Valid Map<String, String> tags;
@@ -33,7 +36,7 @@ public class SongMetaData {
     /**
      * Tags
      */
-    @JsonProperty(\\"tags\\")
+    @JsonProperty("tags")
     public Map<String, String> getTags() {
         return tags;
     }
@@ -46,7 +49,7 @@ public class SongMetaData {
     /**
      * Stats
      */
-    @JsonProperty(\\"stats\\")
+    @JsonProperty("stats")
     public Map<String, Long> getStats() {
         return stats;
     }
@@ -59,7 +62,7 @@ public class SongMetaData {
     /**
      * Flags
      */
-    @JsonProperty(\\"flags\\")
+    @JsonProperty("flags")
     public Map<String, Boolean> getFlags() {
         return flags;
     }
@@ -72,7 +75,7 @@ public class SongMetaData {
     /**
      * Album
      */
-    @JsonProperty(\\"album\\")
+    @JsonProperty("album")
     public Album getAlbum() {
         return album;
     }
@@ -85,7 +88,7 @@ public class SongMetaData {
     /**
      * Interprets
      */
-    @JsonProperty(\\"interprets\\")
+    @JsonProperty("interprets")
     public Map<String, Interpret> getInterprets() {
         return interprets;
     }
@@ -118,14 +121,14 @@ public class SongMetaData {
 
     @Override
     public String toString() {
-        return \\"class SongMetaData {\\\\n\\" +
+        return "class SongMetaData {\\n" +
         
-                \\"    tags: \\" + toIndentedString(tags) + \\"\\\\n\\" +
-                \\"    stats: \\" + toIndentedString(stats) + \\"\\\\n\\" +
-                \\"    flags: \\" + toIndentedString(flags) + \\"\\\\n\\" +
-                \\"    album: \\" + toIndentedString(album) + \\"\\\\n\\" +
-                \\"    interprets: \\" + toIndentedString(interprets) + \\"\\\\n\\" +
-                \\"}\\";
+                "    tags: " + toIndentedString(tags) + "\\n" +
+                "    stats: " + toIndentedString(stats) + "\\n" +
+                "    flags: " + toIndentedString(flags) + "\\n" +
+                "    album: " + toIndentedString(album) + "\\n" +
+                "    interprets: " + toIndentedString(interprets) + "\\n" +
+                "}";
     }
 
     /**
@@ -133,9 +136,9 @@ public class SongMetaData {
      */
     private String toIndentedString(Object o) {
         if (o == null) {
-           return \\"null\\";
+           return "null";
         }
-        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+        return o.toString().replace("\\n", "\\n    ");
     }
 }"
 `;
@@ -143,18 +146,21 @@ public class SongMetaData {
 exports[`template integration tests for map format should generate DTO file with proper map types 2`] = `
 "package com.asyncapi.model;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class SuccessResponse {
     
     private @Valid String originalEventId;
@@ -167,7 +173,7 @@ public class SuccessResponse {
     /**
      * Id of the original Event
      */
-    @JsonProperty(\\"originalEventId\\")
+    @JsonProperty("originalEventId")
     public String getOriginalEventId() {
         return originalEventId;
     }
@@ -180,7 +186,7 @@ public class SuccessResponse {
     /**
      * Shows whether or not the original Event was processed correctly
      */
-    @JsonProperty(\\"success\\")
+    @JsonProperty("success")
     public Boolean getSuccess() {
         return success;
     }
@@ -210,11 +216,11 @@ public class SuccessResponse {
 
     @Override
     public String toString() {
-        return \\"class SuccessResponse {\\\\n\\" +
+        return "class SuccessResponse {\\n" +
         
-                \\"    originalEventId: \\" + toIndentedString(originalEventId) + \\"\\\\n\\" +
-                \\"    success: \\" + toIndentedString(success) + \\"\\\\n\\" +
-                \\"}\\";
+                "    originalEventId: " + toIndentedString(originalEventId) + "\\n" +
+                "    success: " + toIndentedString(success) + "\\n" +
+                "}";
     }
 
     /**
@@ -222,9 +228,9 @@ public class SuccessResponse {
      */
     private String toIndentedString(Object o) {
         if (o == null) {
-           return \\"null\\";
+           return "null";
         }
-        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+        return o.toString().replace("\\n", "\\n    ");
     }
 }"
 `;
@@ -232,18 +238,21 @@ public class SuccessResponse {
 exports[`template integration tests for map format should generate DTO file with proper map types 3`] = `
 "package com.asyncapi.model;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 public class FailureResponse {
     
     private @Valid String originalEventId;
@@ -258,7 +267,7 @@ public class FailureResponse {
     /**
      * Id of the original Event
      */
-    @JsonProperty(\\"originalEventId\\")
+    @JsonProperty("originalEventId")
     public String getOriginalEventId() {
         return originalEventId;
     }
@@ -271,7 +280,7 @@ public class FailureResponse {
     /**
      * Shows whether or not the original Event was processed correctly
      */
-    @JsonProperty(\\"success\\")
+    @JsonProperty("success")
     public Boolean getSuccess() {
         return success;
     }
@@ -284,7 +293,7 @@ public class FailureResponse {
     /**
      * Meta-Information
      */
-    @JsonProperty(\\"meta\\")
+    @JsonProperty("meta")
     public Map<String, String> getMeta() {
         return meta;
     }
@@ -315,12 +324,12 @@ public class FailureResponse {
 
     @Override
     public String toString() {
-        return \\"class FailureResponse {\\\\n\\" +
+        return "class FailureResponse {\\n" +
         
-                \\"    originalEventId: \\" + toIndentedString(originalEventId) + \\"\\\\n\\" +
-                \\"    success: \\" + toIndentedString(success) + \\"\\\\n\\" +
-                \\"    meta: \\" + toIndentedString(meta) + \\"\\\\n\\" +
-                \\"}\\";
+                "    originalEventId: " + toIndentedString(originalEventId) + "\\n" +
+                "    success: " + toIndentedString(success) + "\\n" +
+                "    meta: " + toIndentedString(meta) + "\\n" +
+                "}";
     }
 
     /**
@@ -328,9 +337,9 @@ public class FailureResponse {
      */
     private String toIndentedString(Object o) {
         if (o == null) {
-           return \\"null\\";
+           return "null";
         }
-        return o.toString().replace(\\"\\\\n\\", \\"\\\\n    \\");
+        return o.toString().replace("\\n", "\\n    ");
     }
 }"
 `;

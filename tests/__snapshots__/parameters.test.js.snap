@@ -187,6 +187,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.annotation.processing.Generated;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -271,8 +272,9 @@ exports[`integration tests for generated files under different template paramete
 import javax.annotation.processing.Generated;
 import javax.validation.Valid;
 
-import java.util.Objects;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
