@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.annotation.processing.Generated;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 

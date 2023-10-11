@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.annotation.processing.Generated;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 {% if schema.description() or schema.examples() %}/**{% for line in schema.description() | splitByLines %}
@@ -24,7 +25,17 @@ import java.util.Objects;
 public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- set isRequired = propName | isRequired(schema.required()) %}
-        {%- if prop.type() === 'object' %}
+        {%- if prop.additionalProperties() %}
+            {%- if prop.additionalProperties() === true %}
+    private @Valid Map<String, Object> {{propName | camelCase}};
+            {%- elif prop.additionalProperties().type() === 'object' %}
+    private @Valid Map<String, {{prop.additionalProperties().uid() | camelCase | upperFirst}}> {{propName | camelCase}};
+            {%- elif prop.additionalProperties().format() %}
+    private @Valid Map<String, {{prop.additionalProperties().format() | toJavaType | toClass}}> {{propName | camelCase}};
+            {%- elif prop.additionalProperties().type() %}
+    private @Valid Map<String, {{prop.additionalProperties().type() | toJavaType | toClass}}> {{propName | camelCase}};
+            {%- endif %}
+        {%- elif prop.type() === 'object' %}
     private @Valid {{prop.uid() | camelCase | upperFirst}} {{propName | camelCase}};
         {%- elif prop.type() === 'array' %}
             {%- if prop.items().type() === 'object' %}

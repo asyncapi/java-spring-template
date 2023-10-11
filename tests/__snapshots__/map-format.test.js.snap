@@ -1,0 +1,454 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`template integration tests for map format should generate DTO file with proper map types 1`] = `
+"package com.asyncapi.model;
+
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import javax.annotation.processing.Generated;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
+public class SongMetaData {
+    
+    private @Valid Map<String, String> tags;
+    
+    private @Valid Map<String, Long> stats;
+    
+    private @Valid Map<String, Boolean> flags;
+    
+    private @Valid Album album;
+    
+    private @Valid Map<String, Interpret> interprets;
+    
+
+    
+
+    /**
+     * Tags
+     */
+    @JsonProperty("tags")
+    public Map<String, String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Map<String, String> tags) {
+        this.tags = tags;
+    }
+    
+
+    /**
+     * Stats
+     */
+    @JsonProperty("stats")
+    public Map<String, Long> getStats() {
+        return stats;
+    }
+
+    public void setStats(Map<String, Long> stats) {
+        this.stats = stats;
+    }
+    
+
+    /**
+     * Flags
+     */
+    @JsonProperty("flags")
+    public Map<String, Boolean> getFlags() {
+        return flags;
+    }
+
+    public void setFlags(Map<String, Boolean> flags) {
+        this.flags = flags;
+    }
+    
+
+    /**
+     * Album
+     */
+    @JsonProperty("album")
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
+    }
+    
+
+    /**
+     * Interprets
+     */
+    @JsonProperty("interprets")
+    public Map<String, Interpret> getInterprets() {
+        return interprets;
+    }
+
+    public void setInterprets(Map<String, Interpret> interprets) {
+        this.interprets = interprets;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SongMetaData songMetaData = (SongMetaData) o;
+        return 
+            Objects.equals(this.tags, songMetaData.tags) &&
+            Objects.equals(this.stats, songMetaData.stats) &&
+            Objects.equals(this.flags, songMetaData.flags) &&
+            Objects.equals(this.album, songMetaData.album) &&
+            Objects.equals(this.interprets, songMetaData.interprets);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tags, stats, flags, album, interprets);
+    }
+
+    @Override
+    public String toString() {
+        return "class SongMetaData {\\n" +
+        
+                "    tags: " + toIndentedString(tags) + "\\n" +
+                "    stats: " + toIndentedString(stats) + "\\n" +
+                "    flags: " + toIndentedString(flags) + "\\n" +
+                "    album: " + toIndentedString(album) + "\\n" +
+                "    interprets: " + toIndentedString(interprets) + "\\n" +
+                "}";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return "null";
+        }
+        return o.toString().replace("\\n", "\\n    ");
+    }
+}"
+`;
+
+exports[`template integration tests for map format should generate DTO file with proper map types 2`] = `
+"package com.asyncapi.model;
+
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import javax.annotation.processing.Generated;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
+public class SuccessResponse {
+    
+    private @Valid String originalEventId;
+    
+    private @Valid Boolean success;
+    
+    private @Valid Map<String, Object> meta;
+    
+
+    
+
+    /**
+     * Id of the original Event
+     */
+    @JsonProperty("originalEventId")
+    public String getOriginalEventId() {
+        return originalEventId;
+    }
+
+    public void setOriginalEventId(String originalEventId) {
+        this.originalEventId = originalEventId;
+    }
+    
+
+    /**
+     * Shows whether or not the original Event was processed correctly
+     */
+    @JsonProperty("success")
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+    
+
+    /**
+     * Meta-Information
+     */
+    @JsonProperty("meta")
+    public Map<String, Object> getMeta() {
+        return meta;
+    }
+
+    public void setMeta(Map<String, Object> meta) {
+        this.meta = meta;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SuccessResponse successResponse = (SuccessResponse) o;
+        return 
+            Objects.equals(this.originalEventId, successResponse.originalEventId) &&
+            Objects.equals(this.success, successResponse.success) &&
+            Objects.equals(this.meta, successResponse.meta);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(originalEventId, success, meta);
+    }
+
+    @Override
+    public String toString() {
+        return "class SuccessResponse {\\n" +
+        
+                "    originalEventId: " + toIndentedString(originalEventId) + "\\n" +
+                "    success: " + toIndentedString(success) + "\\n" +
+                "    meta: " + toIndentedString(meta) + "\\n" +
+                "}";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return "null";
+        }
+        return o.toString().replace("\\n", "\\n    ");
+    }
+}"
+`;
+
+exports[`template integration tests for map format should generate DTO file with proper map types 3`] = `
+"package com.asyncapi.model;
+
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import javax.annotation.processing.Generated;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
+public class FailureResponse {
+    
+    private @Valid String originalEventId;
+    
+    private @Valid Boolean success;
+    
+    private @Valid Map<String, String> meta;
+    
+
+    
+
+    /**
+     * Id of the original Event
+     */
+    @JsonProperty("originalEventId")
+    public String getOriginalEventId() {
+        return originalEventId;
+    }
+
+    public void setOriginalEventId(String originalEventId) {
+        this.originalEventId = originalEventId;
+    }
+    
+
+    /**
+     * Shows whether or not the original Event was processed correctly
+     */
+    @JsonProperty("success")
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+    
+
+    /**
+     * Meta-Information
+     */
+    @JsonProperty("meta")
+    public Map<String, String> getMeta() {
+        return meta;
+    }
+
+    public void setMeta(Map<String, String> meta) {
+        this.meta = meta;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        FailureResponse failureResponse = (FailureResponse) o;
+        return 
+            Objects.equals(this.originalEventId, failureResponse.originalEventId) &&
+            Objects.equals(this.success, failureResponse.success) &&
+            Objects.equals(this.meta, failureResponse.meta);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(originalEventId, success, meta);
+    }
+
+    @Override
+    public String toString() {
+        return "class FailureResponse {\\n" +
+        
+                "    originalEventId: " + toIndentedString(originalEventId) + "\\n" +
+                "    success: " + toIndentedString(success) + "\\n" +
+                "    meta: " + toIndentedString(meta) + "\\n" +
+                "}";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return "null";
+        }
+        return o.toString().replace("\\n", "\\n    ");
+    }
+}"
+`;
+
+exports[`template integration tests for map format should generate DTO file with proper map types 4`] = `
+"package com.asyncapi.model;
+
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import javax.annotation.processing.Generated;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
+public class Interpret {
+    
+    private @Valid String name;
+    
+    private @Valid Map<String, Object> meta;
+    
+
+    
+
+    /**
+     * Interpret name
+     */
+    @JsonProperty("name")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+
+    /**
+     * Meta-Information
+     */
+    @JsonProperty("meta")
+    public Map<String, Object> getMeta() {
+        return meta;
+    }
+
+    public void setMeta(Map<String, Object> meta) {
+        this.meta = meta;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Interpret interpret = (Interpret) o;
+        return 
+            Objects.equals(this.name, interpret.name) &&
+            Objects.equals(this.meta, interpret.meta);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, meta);
+    }
+
+    @Override
+    public String toString() {
+        return "class Interpret {\\n" +
+        
+                "    name: " + toIndentedString(name) + "\\n" +
+                "    meta: " + toIndentedString(meta) + "\\n" +
+                "}";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return "null";
+        }
+        return o.toString().replace("\\n", "\\n    ");
+    }
+}"
+`;
