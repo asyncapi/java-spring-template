@@ -26,7 +26,9 @@ public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- set isRequired = propName | isRequired(schema.required()) %}
         {%- if prop.additionalProperties() %}
-            {%- if prop.additionalProperties().type() === 'object' %}
+            {%- if prop.additionalProperties() === true %}
+    private @Valid Map<String, Object> {{propName | camelCase}};
+            {%- elif prop.additionalProperties().type() === 'object' %}
     private @Valid Map<String, {{prop.additionalProperties().uid() | camelCase | upperFirst}}> {{propName | camelCase}};
             {%- elif prop.additionalProperties().format() %}
     private @Valid Map<String, {{prop.additionalProperties().format() | toJavaType | toClass}}> {{propName | camelCase}};

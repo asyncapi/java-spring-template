@@ -32,6 +32,9 @@ components:
             description: Shows whether or not the original Event was processed correctly
             type: boolean
             example: true
+          meta:
+            description: Meta-Information
+            additionalProperties: true
     failure-response:
       payload:
         $id: FailureResponse
@@ -90,3 +93,6 @@ components:
         name:
           description: Interpret name
           type: string
+        meta:
+          description: Meta-Information
+          additionalProperties: true
