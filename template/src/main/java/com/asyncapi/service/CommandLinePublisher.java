@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.processing.Generated;
 import java.util.Random;
 
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Component
 public class CommandLinePublisher implements CommandLineRunner {
 
@@ -19,7 +21,8 @@ public class CommandLinePublisher implements CommandLineRunner {
         {%- for channelName, channel in asyncapi.channels() %}
             {%- if channel.hasSubscribe() %}
                 {%- for message in channel.subscribe().messages() %}
-        publisherService.{{channel.subscribe().id() | camelCase}}({% if asyncapi | isProtocol('kafka') %}(new Random()).nextInt(), new {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}}(){% else %}"Hello World from {{channelName}}"{% endif %});
+        publisherService.{{channel.subscribe().id() | camelCase}}({% if asyncapi | isProtocol('kafka') %}(new Random()).nextInt(), new {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}}()
+        {% elif asyncapi | isProtocol('amqp') %}{% else %}"Hello World from {{channelName}}"{% endif %});
                 {% endfor -%}
             {% endif -%}
         {%- endfor %}

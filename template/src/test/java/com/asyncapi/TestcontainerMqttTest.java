@@ -31,6 +31,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.GenericContainer;
 
+import javax.annotation.processing.Generated;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -40,6 +41,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Example of tests for mqtt based on testcontainers library
  */
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestcontainerMqttTest {

@@ -1,12 +1,18 @@
 package {{ params['userJavaPackage'] }}.model;
 
+{% if params.springBoot2 -%}
 import javax.validation.constraints.*;
 import javax.validation.Valid;
+{% else %}
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+{%- endif %}
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import javax.annotation.processing.Generated;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -15,6 +21,7 @@ import java.util.Objects;
  * {{ line | safe}}{% endfor %}{% if schema.examples() %}
  * Examples: {{schema.examples() | examplesToString | safe}}{% endif %}
  */{% endif %}
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- set isRequired = propName | isRequired(schema.required()) %}
@@ -30,11 +37,11 @@ public class {{schemaName | camelCase | upperFirst}} {
     private @Valid {{prop.uid() | camelCase | upperFirst}} {{propName | camelCase}};
         {%- elif prop.type() === 'array' %}
             {%- if prop.items().type() === 'object' %}
-    private @Valid List<{{prop.items().uid() | camelCase | upperFirst}}> {{propName | camelCase}}List;
+    private @Valid List<{{prop.items().uid() | camelCase | upperFirst}}> {{propName | camelCase}};
             {%- elif prop.items().format() %}
-    private @Valid List<{{prop.items().format() | toJavaType | toClass}}> {{propName | camelCase}}List;
+    private @Valid List<{{prop.items().format() | toJavaType | toClass}}> {{propName | camelCase}};
             {%- else %}
-    private @Valid List<{{prop.items().type() | toJavaType | toClass}}> {{propName | camelCase}}List;
+    private @Valid List<{{prop.items().type() | toJavaType | toClass}}> {{propName | camelCase}};
             {%- endif %}
         {%- elif prop.enum() and (prop.type() === 'string' or prop.type() === 'integer') %}
     public enum {{propName | camelCase | upperFirst}}Enum {
@@ -102,9 +109,6 @@ public class {{schemaName | camelCase | upperFirst}} {
                 {%- set className = obj.uid() | camelCase | upperFirst %}
                 {%- set propType = obj | defineType(obj.uid()) | safe %}
 
-                {%- if obj.type() === 'array' %}
-                    {%- set varName = obj.uid() | camelCase + 'List' %}
-                {%- endif %}
         private @Valid {{propType}} {{varName}};
 
         public {{propType}} get{{className}}() {
@@ -131,10 +135,6 @@ public class {{schemaName | camelCase | upperFirst}} {
         {%- set varName = propName | camelCase %}
         {%- set className = propName | camelCase | upperFirst %}
         {%- set propType = prop | defineType(propName) | safe %}
-
-        {%- if prop.type() === 'array' %}
-            {%- set varName = propName | camelCase + 'List' %}
-        {%- endif %}
 
     {% if prop.description() or prop.examples()%}/**{% for line in prop.description() | splitByLines %}
      * {{ line | safe}}{% endfor %}{% if prop.examples() %}
@@ -163,19 +163,19 @@ public class {{schemaName | camelCase | upperFirst}} {
             return false;
         }
         {{schemaName | camelCase | upperFirst}} {{schemaName | camelCase}} = ({{schemaName | camelCase | upperFirst}}) o;
-        return {% for propName, prop in schema.properties() %}{% set varName = propName | camelCase %}{% if prop.type() === 'array' %}{% set varName = propName | camelCase + 'List' %}{% endif %}
+        return {% for propName, prop in schema.properties() %}{% set varName = propName | camelCase %}
             Objects.equals(this.{{varName}}, {{schemaName | camelCase}}.{{varName}}){% if not loop.last %} &&{% else %};{% endif %}{% endfor %}
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash({% for propName, prop in schema.properties() %}{{propName | camelCase}}{% if prop.type() === 'array' %}List{% endif %}{% if not loop.last %}, {% endif %}{% endfor %});
+        return Objects.hash({% for propName, prop in schema.properties() %}{{propName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %});
     }{% endif %}
 
     @Override
     public String toString() {
         return "class {{schemaName | camelCase | upperFirst}} {\n" +
-        {% for propName, prop in schema.properties() %}{% set varName = propName | camelCase %}{% if prop.type() === 'array' %}{% set varName = propName | camelCase + 'List' %}{% endif %}
+        {% for propName, prop in schema.properties() %}{% set varName = propName | camelCase %}
                 "    {{varName}}: " + toIndentedString({{varName}}) + "\n" +{% endfor %}
                 "}";
     }

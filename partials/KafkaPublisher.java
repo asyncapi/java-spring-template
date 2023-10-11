@@ -13,7 +13,9 @@ import {{params['userJavaPackage']}}.model.{{message.payload().uid() | camelCase
         {%- endfor -%}
     {% endif -%}
 {% endfor %}
+import javax.annotation.processing.Generated;
 
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Service
 public class PublisherService {
 
@@ -33,7 +35,7 @@ public class PublisherService {
     public void {{channel.subscribe().id() | camelCase}}(Integer key, {{varName | upperFirst}} {{varName}}) {
         Message<{{varName | upperFirst}}> message = MessageBuilder.withPayload({{varName}})
                 .setHeader(KafkaHeaders.TOPIC, "{{channelName}}")
-                .setHeader(KafkaHeaders.MESSAGE_KEY, key)
+                .setHeader(KafkaHeaders.{%- if params.springBoot2 %}MESSAGE_KEY{% else %}KEY{% endif -%}, key)
                 .build();
         kafkaTemplate.send(message);
     }
