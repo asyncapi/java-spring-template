@@ -4,7 +4,7 @@ Java Spring template for the [AsyncAPI Generator](https://github.com/asyncapi/ge
 
 ---
 [![License](https://img.shields.io/github/license/asyncapi/java-spring-template)](https://github.com/asyncapi/java-spring-template/blob/master/LICENSE)
-![npm](https://img.shields.io/npm/v/@asyncapi/java-spring-template?style=flat-square)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![npm](https://img.shields.io/npm/v/@asyncapi/java-spring-template?style=flat-square)](https://www.npmjs.com/package/@asyncapi/java-spring-template)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)<!-- ALL-CONTRIBUTORS-BADGE:END -->
 ![downloads](https://img.shields.io/npm/dm/@asyncapi/java-spring-template?style=flat-square)
 ---
@@ -13,6 +13,14 @@ Java Spring template for the [AsyncAPI Generator](https://github.com/asyncapi/ge
 
 <!-- toc -->
 
+- [Usage](#usage)
+  * [AsyncAPI definitions](#asyncapi-definitions)
+  * [Supported parameters](#supported-parameters)
+  * [Examples](#examples)
+- [Run it](#run-it)
+- [Development](#development)
+  * [Missing features](#missing-features)
+- [Contributors ✨](#contributors-%E2%9C%A8)
 
 <!-- tocstop -->
 
@@ -55,7 +63,7 @@ It is RECOMMENDED to not use anonymous objects in payload and components definit
   ```  
 - Complete example for MQTT is [here](tests/mocks/mqtt.yml).
 
-#### Supported parameters
+### Supported parameters
 
 |Name|Description| Required | Default                  |
 |---|---|----------|--------------------------|
@@ -72,7 +80,7 @@ It is RECOMMENDED to not use anonymous objects in payload and components definit
 |completionTimeout|Only for MQTT. The completion timeout in milliseconds for operations. The default completion timeout is 30000 milliseconds.| No       | `30000`                  |
 |mqttClientId| Only for MQTT. Provides the client identifier for the MQTT server. This parameter overrides the value of the clientId if it's set in the AsyncAPI file.If both aren't provided, a default value is set.| No       |                          |
 |asyncapiFileDir| Path where original AsyncAPI file will be stored.| No       | `src/main/resources/api/` |
-#### Examples
+### Examples
 
 The shortest possible syntax:
 ```bash
@@ -147,13 +155,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/Tenischev"><img src="https://avatars1.githubusercontent.com/u/4137916?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Semen</b></sub></a><br /><a href="#maintenance-Tenischev" title="Maintenance">🚧</a><a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Documentation">📖</a> <a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Code">💻</a><a href="https://github.com/asyncapi/java-spring-template/issues?q=author%3ATenischev" title="Bug reports">🐛</a><a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3ATenischev" title="Reviewed Pull Requests">👀</a><a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/Tenischev"><img src="https://avatars1.githubusercontent.com/u/4137916?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Semen</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Documentation">📖</a> <a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Code">💻</a></td>
     <td align="center"><a href="https://www.linkedin.com/in/francesconobilia/"><img src="https://avatars1.githubusercontent.com/u/10063590?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Francesco Nobilia</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3Afnobilia" title="Reviewed Pull Requests">👀</a></td>
-    <td align="center"><a href="https://www.linkedin.com/in/derberg/"><img src="https://avatars.githubusercontent.com/u/6995927?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lukasz Gornicki</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3Aderberg" title="Reviewed Pull Requests">👀</a></td>
     <td align="center"><a href="http://www.amrutprabhu.com"><img src="https://avatars.githubusercontent.com/u/8725949?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Amrut Prabhu</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/commits?author=amrutprabhu" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/VaishnaviNandakumar"><img src="https://avatars.githubusercontent.com/u/41518119?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Vaishnavi Nandakumar</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/commits?author=VaishnaviNandakumar" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/taotao100"><img src="https://avatars.githubusercontent.com/u/7056867?v=4?s=100" width="100px;" alt=""/><br /><sub><b>taotao100</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/issues?q=is%3Aissue+author%3Ataotao100" title="Bug reports">🐛</a>
-    <td align="center"><a href="https://github.com/jbiscella"><img src="https://avatars.githubusercontent.com/u/7963565?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jacopo Biscella</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/issues?q=is%3Aissue+author%3Ajbiscella" title="Bug reports">🐛</a>
   </tr>
 </table>
 
