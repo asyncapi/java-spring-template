@@ -1,17 +1,43 @@
-# Java Spring generator
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-_Use your AsyncAPI definition to generate java code to subscribe and publish messages_
+[![AsyncAPI Java Spring Template](assets/github-repobanner-javaspringtemp.png)](https://www.asyncapi.com)
 
+Java Spring template for the [AsyncAPI Generator](https://github.com/asyncapi/generator).
+
+---
+[![License](https://img.shields.io/github/license/asyncapi/java-spring-template)](https://github.com/asyncapi/java-spring-template/blob/master/LICENSE)
+![npm](https://img.shields.io/npm/v/@asyncapi/java-spring-template?style=flat-square)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)<!-- ALL-CONTRIBUTORS-BADGE:END -->
+![downloads](https://img.shields.io/npm/dm/@asyncapi/java-spring-template?style=flat-square)
+---
+
+<!-- toc is generated with GitHub Actions do not remove toc markers -->
+
+<!-- toc -->
+
+
+<!-- tocstop -->
 
 ## Usage
+
+Install AsyncAPI CLI, for details follow the [guide](https://www.asyncapi.com/tools/cli).
+
+```bash
+npm install -g @asyncapi/cli
+```
+
+Generate using CLI.
+
+```bash
+asyncapi generate fromTemplate <asyncapi.yaml> @asyncapi/java-spring-template
+```
+
+You can replace `<asyncapi.yaml>` with local path or URL pointing to [any AsyncAPI document](https://raw.githubusercontent.com/asyncapi/java-spring-template/master/tests/mocks/kafka.yml).
 
 ### AsyncAPI definitions
 To have correctly generated code, your AsyncAPI file MUST define `operationId` for every operation.
 
-In order for the generator to know what names to use for some parameters it's necessary to make use of [AsyncAPI specification bindings](https://www.asyncapi.com/docs/specifications/2.0.0/#operationBindingsObject). 
+In order for the generator to know what names to use for some parameters [AsyncAPI specification bindings](https://www.asyncapi.com/docs/reference/specification/v2.0.0#operationBindingsObject) SHOULD be used.
 
+It is RECOMMENDED to not use anonymous objects in payload and components definition, if changing of data model is not possible, you MAY use `$id` to set name of element.
 
 - Complete example for Kafka is [here](tests/mocks/kafka.yml). Notice information about binding.
   ```yml
@@ -28,20 +54,6 @@ In order for the generator to know what names to use for some parameters it's ne
           $ref: '#/components/messages/lightMeasured'
   ```  
 - Complete example for MQTT is [here](tests/mocks/mqtt.yml).
-
-
-### From the command-line interface (CLI)
-
-```bash
-  Usage: ag [options] <asyncapi> @asyncapi/java-spring-template
-
-  Options:
-
-    -V, --version                 output the version number
-    -o, --output <outputDir>       directory where to put the generated files (defaults to current directory)
-    -p, --param <name=value>       additional param to pass to templates
-    -h, --help                    output usage information
-```
 
 #### Supported parameters
 
@@ -64,18 +76,18 @@ In order for the generator to know what names to use for some parameters it's ne
 
 The shortest possible syntax:
 ```bash
-ag asyncapi.yaml @asyncapi/java-spring-template
+asyncapi generate fromTemplate asyncapi.yaml @asyncapi/java-spring-template
 ```
 
-Specify where to put the result and define poll timeout:
+Specify where to put the result with `-o` option and define parameter of poll timeout with `-p` option:
 ```bash
-ag -o ./src asyncapi.yaml -p listenerPollTimeout=5000 @asyncapi/java-spring-template
+asyncapi generate fromTemplate asyncapi.yaml @asyncapi/java-spring-template -o ./src -p listenerPollTimeout=5000
 ```
+## Run it
 
-If you don't have the AsyncAPI Generator installed, you can install it like this:
-
-```
-npm install -g @asyncapi/generator
+Go to the root folder of the generated code and run this command (you need the JDK 17):
+```bash
+./gradlew bootRun
 ```
 
 ## Development
@@ -97,9 +109,9 @@ npm install -g @asyncapi/generator
 
    ```bash
    # for MQTT protocol test with below
-   ag tests/mocks/mqtt.yml ./ --output output
+   asyncapi generate fromTemplate tests/mocks/mqtt.yml ./ -o output
    # for Kafka protocol test with below
-   ag tests/mocks/kafka.yml ./ --output output
+   asyncapi generate fromTemplate tests/mocks/kafka.yml ./ -o output
    ```
 1. Explore generated files in `output` directory
 
@@ -107,19 +119,6 @@ npm install -g @asyncapi/generator
 - `--debug` enables the debug mode. 
 - `--watch-template` enables a watcher of changes that you make in the template. It regenerates your template whenever it detects a change.
 - `--install` enforces reinstallation of the template.
-
-## Run it
-
-Go to the root folder of the generated code and run this command (you need the JDK1.8):
-```bash
-./gradlew bootRun
-```
-
-
-Generated source contains RabbitMQ docker-compose. So you could use it to test amqp with:
-```bash
-docker-compose -f src/main/docker/rabbitmq.yml up -d
-```
 
 ### Missing features
 
@@ -148,9 +147,13 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/Tenischev"><img src="https://avatars1.githubusercontent.com/u/4137916?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Semen</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Documentation">📖</a> <a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Tenischev"><img src="https://avatars1.githubusercontent.com/u/4137916?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Semen</b></sub></a><br /><a href="#maintenance-Tenischev" title="Maintenance">🚧</a><a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Documentation">📖</a> <a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Code">💻</a><a href="https://github.com/asyncapi/java-spring-template/issues?q=author%3ATenischev" title="Bug reports">🐛</a><a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3ATenischev" title="Reviewed Pull Requests">👀</a><a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://www.linkedin.com/in/francesconobilia/"><img src="https://avatars1.githubusercontent.com/u/10063590?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Francesco Nobilia</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3Afnobilia" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://www.linkedin.com/in/derberg/"><img src="https://avatars.githubusercontent.com/u/6995927?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lukasz Gornicki</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3Aderberg" title="Reviewed Pull Requests">👀</a></td>
     <td align="center"><a href="http://www.amrutprabhu.com"><img src="https://avatars.githubusercontent.com/u/8725949?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Amrut Prabhu</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/commits?author=amrutprabhu" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/VaishnaviNandakumar"><img src="https://avatars.githubusercontent.com/u/41518119?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Vaishnavi Nandakumar</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/commits?author=VaishnaviNandakumar" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/taotao100"><img src="https://avatars.githubusercontent.com/u/7056867?v=4?s=100" width="100px;" alt=""/><br /><sub><b>taotao100</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/issues?q=is%3Aissue+author%3Ataotao100" title="Bug reports">🐛</a>
+    <td align="center"><a href="https://github.com/jbiscella"><img src="https://avatars.githubusercontent.com/u/7963565?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jacopo Biscella</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/issues?q=is%3Aissue+author%3Ajbiscella" title="Bug reports">🐛</a>
   </tr>
 </table>
 
