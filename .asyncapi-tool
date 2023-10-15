@@ -5,6 +5,8 @@ filters:
   - javascript
   technology:
   - Springboot
+  - Maven
+  - Gradle
   categories:
   - generator-template
   hasCommercial: false
