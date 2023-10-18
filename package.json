@@ -34,7 +34,8 @@
     "fs-extra": "^9.0.0",
     "lodash": "^4.17.21",
     "replace-in-file": "^6.1.0",
-    "tmp": "^0.2.1"
+    "tmp": "^0.2.1",
+    "@asyncapi/modelina": "^1.9.0"
   },
   "devDependencies": {
     "@asyncapi/generator": "^1.14.0",
