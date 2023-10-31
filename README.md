@@ -117,7 +117,7 @@ Go to the root folder of the generated code and run this command (you need the J
    If there falling tests examine diff report and make an appropriate changes in template files or snapshots.
 1. Check output generation project. Install AsyncAPI Generator:
    ```
-   npm install -g @asyncapi/generator
+   npm install -g @asyncapi/cli
    ```
 1. Run generation (assuming you are in template folder):
 
