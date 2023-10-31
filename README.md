@@ -101,19 +101,25 @@ Go to the root folder of the generated code and run this command (you need the J
 ## Development
 
 1. Clone the repository:
-   ```
+   ```sh
    git clone https://github.com/asyncapi/java-spring-template
    cd java-spring-template
    ```
-1. Make sure template has all the dependencies:
-   ```
+1. Download all template dependencies:
+   ```sh
    npm install
    ```
-1. Install AsyncAPI Generator:
+1. Make required changes in the template.
+2. Run snapshot tests:
+   ```sh
+   npm test
+   ```
+   If there falling tests examine diff report and make an appropriate changes in template files or snapshots.
+1. Check output generation project. Install AsyncAPI Generator:
    ```
    npm install -g @asyncapi/generator
    ```
-1. Run generation:
+1. Run generation (assuming you are in template folder):
 
    ```bash
    # for MQTT protocol test with below
@@ -121,7 +127,8 @@ Go to the root folder of the generated code and run this command (you need the J
    # for Kafka protocol test with below
    asyncapi generate fromTemplate tests/mocks/kafka.yml ./ -o output
    ```
-1. Explore generated files in `output` directory
+1. Explore generated files in `output` directory. Generated project shouldn't contain syntax or compilation errors. 
+Preferably generated tests should pass.
 
 > For local development, you need different variations of this command. First of all, you need to know about three important CLI flags:
 - `--debug` enables the debug mode. 
