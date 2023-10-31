@@ -1,7 +1,6 @@
 title: Java Spring Template
 filters:
   language: 
-  - Java
   - javascript
   technology:
   - Springboot
