@@ -22,7 +22,8 @@
   "scripts": {
     "test": "rimraf test/temp && jest --modulePathIgnorePatterns='./template'",
     "lint": "echo \"No linter specified yet\"",
-    "generate:assets": "echo 'No additional assets need to be generated at the moment'",
+    "generate:readme:toc": "markdown-toc -i README.md",
+    "generate:assets": "npm run generate:readme:toc",
     "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION"
   },
   "publishConfig": {
@@ -40,7 +41,8 @@
     "@asyncapi/generator": "^1.14.1",
     "jest": "^29.6.4",
     "node-fetch": "^2.6.1",
-    "rimraf": "^2.2.8"
+    "rimraf": "^2.2.8",
+    "markdown-toc": "^1.2.0"
   },
   "generator": {
     "supportedProtocols": [
