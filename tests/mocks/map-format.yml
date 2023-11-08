@@ -76,6 +76,9 @@ components:
             additionalProperties:
               $ref: '#/components/schemas/Interpret'
   schemas:
+    emptyObject:
+      type: object
+      description: Test correct generation of object without parameters
     Album:
       description: Album
       type: object
