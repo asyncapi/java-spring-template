@@ -156,9 +156,9 @@ public class {{schemaName | camelCase | upperFirst}} {
         this.{{varName}} = {{varName}};
     }
     {% endfor %}
-    {% if params.disableEqualsHashCode === 'false' %}@Override
+    {% if params.disableEqualsHashCode === 'false' %}@Override{% set hasProps = schema.properties() | length > 0 %}
     public boolean equals(Object o) {
-    {%- if schema.properties() | length === 0 %}
+    {%- if not hasProps %}
         return super.equals(o);
     {% else %}
         if (this == o) {
@@ -175,7 +175,7 @@ public class {{schemaName | camelCase | upperFirst}} {
 
     @Override
     public int hashCode() {
-    {%- if schema.properties() | length === 0 %}
+    {%- if not hasProps %}
         return super.hashCode();
     {% else %}
         return Objects.hash({% for propName, prop in schema.properties() %}{{propName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %});
