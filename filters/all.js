@@ -196,3 +196,15 @@ function replaceAll(originalStr, replacePattern, replaceString) {
     return originalStr.replaceAll(replacePattern, replaceString)
 }
 filter.replaceAll = replaceAll;
+
+function toTopicString(channelName, hasParameters, parameters) {
+    if (hasParameters) {
+        let topicName = replaceAll(channelName, ".", "\.")
+        Object.keys(parameters).forEach(value => topicName = topicName.replace("{" + value + "}", ".*"))
+        return topicName
+    } else {
+        return channelName
+    }
+}
+
+filter.toTopicString = toTopicString
