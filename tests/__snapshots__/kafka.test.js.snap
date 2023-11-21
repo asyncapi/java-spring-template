@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided kafka 1`] = `
+exports[`template integration tests for generated files using the generator and kafka example should generate proper config, services and DTOs files for provided kafka 1`] = `
 "package com.asyncapi.infrastructure;
 
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -21,8 +21,10 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import javax.annotation.processing.Generated;
+
 import java.util.HashMap;
 import java.util.Map;
+
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Configuration
@@ -37,6 +39,7 @@ public class Config {
 
     @Value("\${spring.kafka.listener.concurrency}")
     private int concurrency;
+
     @Bean
     public KafkaTemplate<Integer, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
@@ -95,7 +98,7 @@ public class Config {
 "
 `;
 
-exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided kafka 2`] = `
+exports[`template integration tests for generated files using the generator and kafka example should generate proper config, services and DTOs files for provided kafka 2`] = `
 "package com.asyncapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +130,7 @@ public class PublisherService {
 "
 `;
 
-exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided kafka 3`] = `
+exports[`template integration tests for generated files using the generator and kafka example should generate proper config, services and DTOs files for provided kafka 3`] = `
 "package com.asyncapi.service;
 
 import org.slf4j.Logger;
@@ -167,7 +170,7 @@ public class MessageHandlerService {
 "
 `;
 
-exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided kafka 4`] = `
+exports[`template integration tests for generated files using the generator and kafka example should generate proper config, services and DTOs files for provided kafka 4`] = `
 "package com.asyncapi.model;
 
 
@@ -259,7 +262,7 @@ public class LightMeasuredPayload {
 }"
 `;
 
-exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided kafka 5`] = `
+exports[`template integration tests for generated files using the generator and kafka example should generate proper config, services and DTOs files for provided kafka 5`] = `
 "package com.asyncapi.model;
 
 import javax.annotation.processing.Generated;
@@ -318,7 +321,7 @@ public class LightMeasured {
 }"
 `;
 
-exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided kafka 6`] = `
+exports[`template integration tests for generated files using the generator and kafka example should generate proper config, services and DTOs files for provided kafka 6`] = `
 "package com.asyncapi;
 
  
@@ -482,7 +485,7 @@ public class TestcontainerKafkaTest {
 "
 `;
 
-exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided kafka 7`] = `
+exports[`template integration tests for generated files using the generator and kafka example should generate proper config, services and DTOs files for provided kafka 7`] = `
 "plugins {
 	id 'org.springframework.boot' version "$springBootVersion"
 	id 'io.spring.dependency-management' version "$springDependencyManager"
@@ -512,7 +515,149 @@ dependencies {
 "
 `;
 
-exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided kafka 8`] = `
+exports[`template integration tests for generated files using the generator and kafka example should generate proper config, services and DTOs files for provided kafka 8`] = `
 "springBootVersion=3.1.3
 springDependencyManager=1.1.3"
+`;
+
+exports[`template integration tests for generated files using the generator and kafka with parameters example should generate proper config and message handler for provided kafka 1`] = `
+"package com.asyncapi.infrastructure;
+
+import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.IntegerDeserializer;
+import org.apache.kafka.common.serialization.IntegerSerializer;
+import org.apache.kafka.common.config.SaslConfigs;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.config.KafkaListenerContainerFactory;
+import org.springframework.kafka.core.*;
+import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.support.serializer.JsonSerializer;
+
+import javax.annotation.processing.Generated;
+import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
+@Configuration
+@EnableKafka
+public class Config {
+
+    @Value("\${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
+    @Value("\${spring.kafka.listener.poll-timeout}")
+    private long pollTimeout;
+
+    @Value("\${spring.kafka.listener.concurrency}")
+    private int concurrency;
+
+    @Bean
+    public RoutingKafkaTemplate<Integer, Object> kafkaTemplate() {
+        ProducerFactory<Object, Object> producerFactory = producerFactory();
+
+        Map<Pattern, ProducerFactory<Object, Object>> map = new LinkedHashMap<>();
+        map.put(Pattern.compile(event&#92;.lighting&#92;..*&#92;.measured&#92;..*), producerFactory);
+        return new RoutingKafkaTemplate<>(map);
+    }
+
+    @Bean
+    public ProducerFactory<Object, Object> producerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public Map<String, Object> producerConfigs() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "PLAINTEXT");
+        props.put(JsonSerializer.TYPE_MAPPINGS,
+        "lightMeasuredPayload:com.asyncapi.model.LightMeasuredPayload"
+        );
+        // See https://kafka.apache.org/documentation/#producerconfigs for more properties
+        return props;
+    }
+
+    @Bean
+    KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, Object>>
+    kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<Integer, Object> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
+        factory.setConcurrency(concurrency);
+        factory.getContainerProperties().setPollTimeout(pollTimeout);
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<Integer, Object> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs());
+    }
+
+    @Bean
+    public Map<String, Object> consumerConfigs() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "PLAINTEXT");
+        props.put(JsonDeserializer.TYPE_MAPPINGS,
+        "lightMeasuredPayload:com.asyncapi.model.LightMeasuredPayload"
+        );
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.asyncapi.model");
+        return props;
+    }
+
+}
+"
+`;
+
+exports[`template integration tests for generated files using the generator and kafka with parameters example should generate proper config and message handler for provided kafka 2`] = `
+"package com.asyncapi.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.messaging.Message;
+import org.springframework.stereotype.Service;
+
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
+    
+import com.asyncapi.model.LightMeasuredPayload;
+
+
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
+@Service
+public class MessageHandlerService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandlerService.class);
+
+    
+    
+    @KafkaListener(topicPattern = "event&#92;.lighting&#92;..*&#92;.measured&#92;..*", groupId = "my-group")
+    public void readLightMeasurement(@Payload LightMeasuredPayload payload,
+                       @Header(KafkaHeaders.RECEIVED_KEY) Integer key,
+                       @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
+                       @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {
+        LOGGER.info("Key: " + key + ", Payload: " + payload.toString() + ", Timestamp: " + timestamp + ", Partition: " + partition);
+    }
+    
+
+    
+}
+"
 `;

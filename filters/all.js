@@ -191,3 +191,8 @@ function addBackSlashToPattern(val) {
 filter.addBackSlashToPattern = addBackSlashToPattern;
 
 filter.currentTime = () => (new Date(Date.now())).toISOString();
+
+function replaceAll(originalStr, replacePattern, replaceString) {
+    return originalStr.replaceAll(replacePattern, replaceString)
+}
+filter.replaceAll = replaceAll;

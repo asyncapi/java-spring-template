@@ -56,7 +56,14 @@ public class MessageHandlerService {
      * {{line | safe}}{% endfor %}{% for line in channel.publish().description() | splitByLines %}
      * {{line | safe}}{% endfor %}
      */{% endif %}
-    @KafkaListener(topics = "{{channelName}}"{% if channel.publish().binding('kafka') %}, groupId = "{{channel.publish().binding('kafka').groupId}}"{% endif %})
+{%- set route = channelName %}
+{%- if channel.hasParameters() %}
+    {%- set route = route | replaceAll(".", "\\.") %}
+    {%- for parameterName, parameter in channel.parameters() %}
+        {%- set route = route | replace("{" + parameterName + "}", ".*") %}
+    {%- endfor %}
+{%- endif %}
+    @KafkaListener({% if channel.hasParameters() %}topicPattern{% else %}topics{% endif %} = "{{route}}"{% if channel.publish().binding('kafka') %}, groupId = "{{channel.publish().binding('kafka').groupId}}"{% endif %})
     public void {{channel.publish().id() | camelCase}}(@Payload {{typeName}} payload,
                        @Header(KafkaHeaders.{%- if params.springBoot2 %}RECEIVED_MESSAGE_KEY{% else %}RECEIVED_KEY{% endif -%}) Integer key,
                        @Header(KafkaHeaders.{%- if params.springBoot2 %}RECEIVED_PARTITION_ID{% else %}RECEIVED_PARTITION{% endif -%}) int partition,
