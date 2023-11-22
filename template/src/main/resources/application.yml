@@ -53,9 +53,9 @@ mqtt:
       {% if server.binding('mqtt') and server.binding('mqtt').keepAlive | isDefined %}keepAlive: {{server.binding('mqtt').keepAlive}}{% endif %}
   topic:
     {%- for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
-    {{channel.publish().id() | camelCase}}: {{channelName | toTopicString(channel.hasParameters(), channel.parameters()) }}
+    {{channel.publish().id() | camelCase}}: {{channelName | toMqttTopicString(channel.hasParameters(), channel.parameters()) }}
     {%- elif channel.hasSubscribe() %}
-    {{channel.subscribe().id() | camelCase}}: {{channelName | toTopicString(channel.hasParameters(), channel.parameters())}}
+    {{channel.subscribe().id() | camelCase}}: {{channelName | toMqttTopicString(channel.hasParameters(), channel.parameters()) }}
     {%- endif %}{% endfor %}
 {% endif %}{% endfor %}
 

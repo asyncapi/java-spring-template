@@ -197,14 +197,21 @@ function replaceAll(originalStr, replacePattern, replaceString) {
 }
 filter.replaceAll = replaceAll;
 
-function toTopicString(channelName, hasParameters, parameters) {
+function toTopicString(channelName, hasParameters, parameters, convertDots, replaceValue) {
     if (hasParameters) {
-        let topicName = replaceAll(channelName, ".", "\.")
-        Object.keys(parameters).forEach(value => topicName = topicName.replace("{" + value + "}", ".*"))
+        let topicName = channelName
+        if (convertDots) {
+            topicName = replaceAll(topicName, ".", "\.")
+        }
+        Object.keys(parameters).forEach(value => topicName = topicName.replace("{" + value + "}", replaceValue))
         return topicName
     } else {
         return channelName
     }
 }
 
-filter.toTopicString = toTopicString
+function toMqttTopicString(channelName, hasParameters, parameters) {
+    return toTopicString(channelName, hasParameters, parameters, false, "+")
+}
+
+filter.toMqttTopicString = toMqttTopicString
