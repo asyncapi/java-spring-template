@@ -19,10 +19,10 @@ public class CommandLinePublisher implements CommandLineRunner {
         System.out.println("******* Sending message: *******");
 
         {%- for channelName, channel in asyncapi.channels() %}
-            {%- if channel.hasSubscribe() %}
+            {%- if channel.hasSubscribe() %}{% set hasParameters = channel.hasParameters() %}
                 {%- for message in channel.subscribe().messages() %}
         publisherService.{{channel.subscribe().id() | camelCase}}({% if asyncapi | isProtocol('kafka') %}(new Random()).nextInt(), new {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}}()
-        {% elif asyncapi | isProtocol('amqp') %}{% else %}"Hello World from {{channelName}}"{% endif %});
+        {% elif asyncapi | isProtocol('amqp') %}{% else %}new {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCase | upperFirst}}(){% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}, new {% if parameter.schema().type() === 'object'%}{{ params['userJavaPackage'] }}.model.{{parameterName | camelCase | upperFirst}}{% else %}{{parameter.schema().type() | toJavaType(false)}}{% endif %}(){% endfor %}{% endif %}{% endif %});
                 {% endfor -%}
             {% endif -%}
         {%- endfor %}

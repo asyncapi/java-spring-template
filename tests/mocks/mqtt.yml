@@ -45,10 +45,12 @@ channels:
       message:
         $ref: '#/components/messages/lightMeasured'
 
-  smartylighting/streetlights/1/0/action/{streetlightId}/turn/on:
+  smartylighting/streetlights/1/0/action/{streetlightId}/turn/on/{zoneId}:
     parameters:
       streetlightId:
         $ref: '#/components/parameters/streetlightId'
+      zoneId:
+        $ref: '#/components/parameters/zoneId'
     subscribe:
       bindings:
         mqtt:
@@ -106,3 +108,11 @@ components:
       description: The ID of the streetlight.
       schema:
         type: string
+
+    zoneId:
+      description: The ID of the streetlight.
+      schema:
+        type: object
+        properties:
+          id:
+            type: integer

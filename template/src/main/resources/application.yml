@@ -55,7 +55,7 @@ mqtt:
     {%- for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
     {{channel.publish().id() | camelCase}}: {{channelName | toMqttTopicString(channel.hasParameters(), channel.parameters()) }}
     {%- elif channel.hasSubscribe() %}
-    {{channel.subscribe().id() | camelCase}}: {{channelName | toMqttTopicString(channel.hasParameters(), channel.parameters()) }}
+    {{channel.subscribe().id() | camelCase}}: {{channelName}}
     {%- endif %}{% endfor %}
 {% endif %}{% endfor %}
 
