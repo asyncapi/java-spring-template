@@ -101,31 +101,16 @@ public class Config {
 exports[`template integration tests for generated files using the generator and kafka example should generate proper config, services and DTOs files for provided kafka 2`] = `
 "package com.asyncapi.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.stereotype.Service;
 
 import com.asyncapi.model.LightMeasuredPayload;
 import javax.annotation.processing.Generated;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
-@Service
-public class PublisherService {
+public interface PublisherService {
 
-    @Autowired
-    private KafkaTemplate<Integer, Object> kafkaTemplate;
 
     
-    public void updateLightMeasurement(Integer key, LightMeasuredPayload lightMeasuredPayload) {
-        Message<LightMeasuredPayload> message = MessageBuilder.withPayload(lightMeasuredPayload)
-                .setHeader(KafkaHeaders.TOPIC, "event.lighting.measured")
-                .setHeader(KafkaHeaders.KEY, key)
-                .build();
-        kafkaTemplate.send(message);
-    }
+    public void updateLightMeasurement(Integer key, LightMeasuredPayload lightMeasuredPayload);
 }
 "
 `;
@@ -518,6 +503,38 @@ dependencies {
 exports[`template integration tests for generated files using the generator and kafka example should generate proper config, services and DTOs files for provided kafka 8`] = `
 "springBootVersion=3.1.3
 springDependencyManager=1.1.3"
+`;
+
+exports[`template integration tests for generated files using the generator and kafka example should generate proper config, services and DTOs files for provided kafka 9`] = `
+"package com.asyncapi.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.stereotype.Service;
+
+import com.asyncapi.model.LightMeasuredPayload;
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
+@Service
+public class PublisherServiceImpl implements PublisherService {
+
+    @Autowired
+    private KafkaTemplate<Integer, Object> kafkaTemplate;
+
+    
+    public void updateLightMeasurement(Integer key, LightMeasuredPayload lightMeasuredPayload) {
+        Message<LightMeasuredPayload> message = MessageBuilder.withPayload(lightMeasuredPayload)
+                .setHeader(KafkaHeaders.TOPIC, "event.lighting.measured")
+                .setHeader(KafkaHeaders.KEY, key)
+                .build();
+        kafkaTemplate.send(message);
+    }
+}
+"
 `;
 
 exports[`template integration tests for generated files using the generator and kafka with parameters example should generate proper config and message handler for provided kafka 1`] = `

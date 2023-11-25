@@ -16,7 +16,7 @@ import javax.annotation.processing.Generated;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Service
-public class PublisherServiceImpl {
+public class PublisherServiceImpl implements PublisherService {
     @Autowired
     private RabbitTemplate template;
 

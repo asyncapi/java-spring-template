@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.endpoint.MessageProducerSupport;
 import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
@@ -92,7 +91,7 @@ public class Config {
     
     @Bean
     public IntegrationFlow receiveLightMeasurementFlow() {
-        return IntegrationFlows.from(receiveLightMeasurementInbound())
+        return IntegrationFlow.from(receiveLightMeasurementInbound())
                 .handle(messageHandlerService::handleReceiveLightMeasurement)
                 .get();
     }
@@ -115,7 +114,7 @@ public class Config {
     }
 
     @Bean
-    @ServiceActivator(inputChannel = "turnOnOutboundChannel")
+    @ServiceActivator(outputChannel = "turnOnOutboundChannel")
     public MessageHandler turnOnOutbound() {
         MqttPahoMessageHandler pahoMessageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
         pahoMessageHandler.setAsync(true);
@@ -133,7 +132,7 @@ public class Config {
     }
 
     @Bean
-    @ServiceActivator(inputChannel = "turnOffOutboundChannel")
+    @ServiceActivator(outputChannel = "turnOffOutboundChannel")
     public MessageHandler turnOffOutbound() {
         MqttPahoMessageHandler pahoMessageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
         pahoMessageHandler.setAsync(true);
@@ -151,7 +150,7 @@ public class Config {
     }
 
     @Bean
-    @ServiceActivator(inputChannel = "dimLightOutboundChannel")
+    @ServiceActivator(outputChannel = "dimLightOutboundChannel")
     public MessageHandler dimLightOutbound() {
         MqttPahoMessageHandler pahoMessageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
         pahoMessageHandler.setAsync(true);
@@ -171,34 +170,27 @@ public class Config {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 2`] = `
 "package com.asyncapi.service;
 
-import org.springframework.integration.annotation.Gateway;
-import org.springframework.integration.annotation.MessagingGateway;
 
+import com.asyncapi.model.TurnOnOffPayload;
+import com.asyncapi.model.TurnOnOffPayload;
+import com.asyncapi.model.DimLightPayload;
 import javax.annotation.processing.Generated;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
-@MessagingGateway
 public interface PublisherService {
 
     
+    
+    
+    void turnOn(TurnOnOffPayload turnOnOffPayload, String streetlightId);
         
     
+    
+    void turnOff(TurnOnOffPayload turnOnOffPayload, String streetlightId);
         
     
-    @Gateway(requestChannel = "turnOnOutboundChannel")
-    void turnOn(String data);
-        
     
-        
-    
-    @Gateway(requestChannel = "turnOffOutboundChannel")
-    void turnOff(String data);
-        
-    
-        
-    
-    @Gateway(requestChannel = "dimLightOutboundChannel")
-    void dimLight(String data);
+    void dimLight(DimLightPayload dimLightPayload, String streetlightId);
         
     
 }
@@ -833,7 +825,7 @@ public class TestcontainerMqttTest {
             receivedMessages.add(message);
         });
 
-        publisherService.turnOn(payload.toString());
+        publisherService.turnOn(payload, new String());
 
         MqttMessage message = receivedMessages.get(receivedMessages.size() - 1);
 
@@ -850,7 +842,7 @@ public class TestcontainerMqttTest {
             receivedMessages.add(message);
         });
 
-        publisherService.turnOff(payload.toString());
+        publisherService.turnOff(payload, new String());
 
         MqttMessage message = receivedMessages.get(receivedMessages.size() - 1);
 
@@ -867,7 +859,7 @@ public class TestcontainerMqttTest {
             receivedMessages.add(message);
         });
 
-        publisherService.dimLight(payload.toString());
+        publisherService.dimLight(payload, new String());
 
         MqttMessage message = receivedMessages.get(receivedMessages.size() - 1);
 
@@ -916,6 +908,110 @@ exports[`template integration tests for generated files using the generator and 
 springDependencyManager=1.1.3"
 `;
 
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for basic example 13`] = `
+"package com.asyncapi.service;
+
+
+import com.asyncapi.model.TurnOnOffPayload;
+import com.asyncapi.model.TurnOnOffPayload;
+import com.asyncapi.model.DimLightPayload;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.integration.mqtt.support.MqttHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.support.GenericMessage;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.processing.Generated;
+import java.util.HashMap;
+import java.util.Map;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
+@Service
+public class PublisherServiceImpl implements PublisherService {
+    @Value("\${mqtt.topic.turnOn}")
+    private String turnOnTopic;
+
+    @Autowired
+    private MessageHandler turnOnOutbound;
+    @Value("\${mqtt.topic.turnOff}")
+    private String turnOffTopic;
+
+    @Autowired
+    private MessageHandler turnOffOutbound;
+    @Value("\${mqtt.topic.dimLight}")
+    private String dimLightTopic;
+
+    @Autowired
+    private MessageHandler dimLightOutbound;
+    
+        
+    
+        
+    
+    public void turnOn(TurnOnOffPayload turnOnOffPayload, String streetlightId) {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(MqttHeaders.TOPIC, getturnOnTopic(streetlightId));
+        Message<TurnOnOffPayload> message = new GenericMessage<>(turnOnOffPayload, headers);
+        turnOnOutbound.handleMessage(message);
+    }
+
+    private String getturnOnTopic(String streetlightId) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("streetlightId", streetlightId);
+        return replaceParameters(turnOnTopic, parameters);
+    }
+        
+    
+        
+    
+    public void turnOff(TurnOnOffPayload turnOnOffPayload, String streetlightId) {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(MqttHeaders.TOPIC, getturnOffTopic(streetlightId));
+        Message<TurnOnOffPayload> message = new GenericMessage<>(turnOnOffPayload, headers);
+        turnOffOutbound.handleMessage(message);
+    }
+
+    private String getturnOffTopic(String streetlightId) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("streetlightId", streetlightId);
+        return replaceParameters(turnOffTopic, parameters);
+    }
+        
+    
+        
+    
+    public void dimLight(DimLightPayload dimLightPayload, String streetlightId) {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(MqttHeaders.TOPIC, getdimLightTopic(streetlightId));
+        Message<DimLightPayload> message = new GenericMessage<>(dimLightPayload, headers);
+        dimLightOutbound.handleMessage(message);
+    }
+
+    private String getdimLightTopic(String streetlightId) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("streetlightId", streetlightId);
+        return replaceParameters(dimLightTopic, parameters);
+    }
+        
+    
+
+    private String replaceParameters(String topic, Map<String, String> parameters) {
+        if (parameters != null) {
+            String compiledTopic = topic;
+            for (String key : parameters.keySet()) {
+                compiledTopic = compiledTopic.replace("{" + key + "}", parameters.get(key));
+            }
+            return compiledTopic;
+        }
+        return topic;
+    }
+}
+"
+`;
+
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 1`] = `
 "package com.asyncapi.infrastructure;
 
@@ -928,7 +1024,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.endpoint.MessageProducerSupport;
 import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
@@ -1021,7 +1116,7 @@ public class Config {
     
     @Bean
     public IntegrationFlow receiveLightMeasurementFlow() {
-        return IntegrationFlows.from(receiveLightMeasurementInbound())
+        return IntegrationFlow.from(receiveLightMeasurementInbound())
                 .handle(messageHandlerService::handleReceiveLightMeasurement)
                 .get();
     }
@@ -1044,7 +1139,7 @@ public class Config {
     }
 
     @Bean
-    @ServiceActivator(inputChannel = "turnOnOutboundChannel")
+    @ServiceActivator(outputChannel = "turnOnOutboundChannel")
     public MessageHandler turnOnOutbound() {
         MqttPahoMessageHandler pahoMessageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
         pahoMessageHandler.setAsync(true);
@@ -1064,22 +1159,18 @@ public class Config {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 2`] = `
 "package com.asyncapi.service;
 
-import org.springframework.integration.annotation.Gateway;
-import org.springframework.integration.annotation.MessagingGateway;
 
+import com.asyncapi.model.TurnOnOffPayload;
+import com.asyncapi.model.ZoneId;
 import javax.annotation.processing.Generated;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
-@MessagingGateway
 public interface PublisherService {
 
     
-        
     
-        
     
-    @Gateway(requestChannel = "turnOnOutboundChannel")
-    void turnOn(String data);
+    void turnOn(TurnOnOffPayload turnOnOffPayload, String streetlightId, ZoneId zoneId);
         
     
 }
@@ -1365,7 +1456,7 @@ public class TestcontainerMqttTest {
             receivedMessages.add(message);
         });
 
-        publisherService.turnOn(payload.toString());
+        publisherService.turnOn(payload, new String(), new com.asyncapi.model.ZoneId());
 
         MqttMessage message = receivedMessages.get(receivedMessages.size() - 1);
 
@@ -1412,4 +1503,66 @@ dependencies {
 exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 8`] = `
 "springBootVersion=3.1.3
 springDependencyManager=1.1.3"
+`;
+
+exports[`template integration tests for generated files using the generator and mqtt example should generate proper config, services and DTOs files for provided mqtt 9`] = `
+"package com.asyncapi.service;
+
+
+import com.asyncapi.model.TurnOnOffPayload;
+import com.asyncapi.model.ZoneId;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.integration.mqtt.support.MqttHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.support.GenericMessage;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.processing.Generated;
+import java.util.HashMap;
+import java.util.Map;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
+@Service
+public class PublisherServiceImpl implements PublisherService {
+    @Value("\${mqtt.topic.turnOn}")
+    private String turnOnTopic;
+
+    @Autowired
+    private MessageHandler turnOnOutbound;
+    
+        
+    
+        
+    
+    public void turnOn(TurnOnOffPayload turnOnOffPayload, String streetlightId, ZoneId zoneId) {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(MqttHeaders.TOPIC, getturnOnTopic(streetlightId, zoneId));
+        Message<TurnOnOffPayload> message = new GenericMessage<>(turnOnOffPayload, headers);
+        turnOnOutbound.handleMessage(message);
+    }
+
+    private String getturnOnTopic(String streetlightId, ZoneId zoneId) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("streetlightId", streetlightId);
+        parameters.put("zoneId", zoneId.toString());
+        return replaceParameters(turnOnTopic, parameters);
+    }
+        
+    
+
+    private String replaceParameters(String topic, Map<String, String> parameters) {
+        if (parameters != null) {
+            String compiledTopic = topic;
+            for (String key : parameters.keySet()) {
+                compiledTopic = compiledTopic.replace("{" + key + "}", parameters.get(key));
+            }
+            return compiledTopic;
+        }
+        return topic;
+    }
+}
+"
 `;

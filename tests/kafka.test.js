@@ -29,7 +29,8 @@ describe('template integration tests for generated files using the generator and
             '/src/main/java/com/asyncapi/model/LightMeasured.java',
             '/src/test/java/com/asyncapi/TestcontainerKafkaTest.java',
             '/build.gradle',
-            '/gradle.properties'
+            '/gradle.properties',
+            '/src/main/java/com/asyncapi/service/PublisherServiceImpl.java'
         ];
         for (const index in expectedFiles) {
             const file = await readFile(path.join(outputDir, expectedFiles[index]), 'utf8');

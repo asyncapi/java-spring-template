@@ -17,7 +17,7 @@ import javax.annotation.processing.Generated;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Service
-public class PublisherService {
+public class PublisherServiceImpl implements PublisherService {
 
     @Autowired
     private KafkaTemplate<Integer, Object> kafkaTemplate;
