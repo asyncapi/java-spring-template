@@ -1,5 +1,11 @@
-{% macro kafkaPublisher(asyncapi, params) %}
+{% macro kafkaPublisherImpl(asyncapi, params) %}
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.stereotype.Service;
 {% for channelName, channel in asyncapi.channels() %}
     {%- if channel.hasSubscribe() %}
         {%- for message in channel.subscribe().messages() %}
@@ -10,8 +16,11 @@ import {{params['userJavaPackage']}}.model.{{message.payload().uid() | camelCase
 import javax.annotation.processing.Generated;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
-public interface PublisherService {
+@Service
+public class PublisherService {
 
+    @Autowired
+    private KafkaTemplate<Integer, Object> kafkaTemplate;
 {% for channelName, channel in asyncapi.channels() %}
     {%- if channel.hasSubscribe() %}
         {%- if channel.subscribe().hasMultipleMessages() %}
@@ -23,7 +32,13 @@ public interface PublisherService {
      * {{line | safe}}{% endfor %}{% for line in channel.subscribe().description() | splitByLines %}
      * {{line | safe}}{% endfor %}
      */{% endif %}
-    public void {{channel.subscribe().id() | camelCase}}(Integer key, {{varName | upperFirst}} {{varName}});
+    public void {{channel.subscribe().id() | camelCase}}(Integer key, {{varName | upperFirst}} {{varName}}) {
+        Message<{{varName | upperFirst}}> message = MessageBuilder.withPayload({{varName}})
+                .setHeader(KafkaHeaders.TOPIC, "{{channelName}}")
+                .setHeader(KafkaHeaders.{%- if params.springBoot2 %}MESSAGE_KEY{% else %}KEY{% endif -%}, key)
+                .build();
+        kafkaTemplate.send(message);
+    }
     {%- endif %}
 {%- endfor %}
 }
