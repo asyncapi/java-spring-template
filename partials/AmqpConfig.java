@@ -32,20 +32,44 @@ public class Config {
 
 
     {% for channelName, channel in asyncapi.channels() %}
-    {% if channel.hasSubscribe() %}
-    @Value("${amqp.{{- channelName -}}.exchange}")
-    private String {{channelName}}Exchange;
-
-    @Value("${amqp.{{- channelName -}}.routingKey}")
-    private String {{channelName}}RoutingKey;
+    {% set varName = channelName | toAmqpNeutral(channel.hasParameters(), channel.parameters()) %}
+    {% if channel.binding('amqp') and channel.binding('amqp').exchange %}
+    @Value("${amqp.{{- varName -}}.exchange}")
+    private String {{varName}}Exchange;
     {% endif %}
 
-    {% if channel.hasPublish() %}
-    @Value("${amqp.{{- channelName -}}.queue}")
-    private String {{channelName}}Queue;
+    @Value("${amqp.{{- varName -}}.routingKey}")
+    private String {{varName}}RoutingKey;
+
+    {% if channel.binding('amqp') and channel.binding('amqp').queue %}
+    @Value("${amqp.{{- varName -}}.queue}")
+    private String {{varName}}Queue;
     {% endif %}
 
-    {% endfor %}
+    {% set name = varName | camelCase %}
+    {% if channel.binding('amqp') and channel.binding('amqp').exchange %}
+    {% if channel.binding('amqp').exchange.type and channel.binding('amqp').exchange.type !== 'default' %}{% set type = channel.binding('amqp').exchange.type | camelCase %}{% else %}{% set type = 'Topic' %}{% endif %}
+    {% set type = type + 'Exchange' %}
+    @Bean
+    public {{type}} {{name}}Exchange() {
+        return new {{type}}({{varName}}Exchange, {% if channel.binding('amqp').exchange.durable %}{{channel.binding('amqp').exchange.durable}}{% else %}true{% endif%}, {% if channel.binding('amqp').exchange.exclusive %}{{channel.binding('amqp').exchange.exclusive}}{% else %}false{% endif%});
+    }
+
+    {% if channel.binding('amqp') and channel.binding('amqp').queue %}
+    @Bean
+    public Binding binding{{name | upperFirst}}({{type}} {{name}}Exchange, Queue {{name}}Queue) {
+        return BindingBuilder.bind({{name}}Queue).to({{name}}Exchange){% if channel.binding('amqp').exchange.type !== 'fanout' %}.with({{varName}}RoutingKey){% endif %};
+    }
+    {% endif %}{% endif %}
+
+    {% if channel.binding('amqp') and channel.binding('amqp').queue %}
+    @Bean
+    public Queue {{name}}Queue() {
+        return new Queue({{varName}}Queue, {% if channel.binding('amqp').queue.durable %}{{channel.binding('amqp').queue.durable}}{% else %}true{% endif%}, {% if channel.binding('amqp').queue.exclusive %}{{channel.binding('amqp').queue.exclusive}}{% else %}false{% endif%}, {% if channel.binding('amqp').queue.autoDelete %}{{channel.binding('amqp').queue.autoDelete}}{% else %}false{% endif%});
+    }
+    {% endif %}
+    {%- endfor %}
+
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -55,24 +79,6 @@ public class Config {
         connectionFactory.setPort(port);
         return connectionFactory;
     }
-
-    @Bean
-    public Declarables exchanges() {
-        return new Declarables(
-                {% for channelName, channel in asyncapi.channels() %}{% if channel.hasSubscribe() %}
-        new TopicExchange({{channelName}}Exchange, true, false){% if not loop.last %},{% endif %}
-        {% endif %}{% endfor %}
-                );
-    }
-
-    @Bean
-    public Declarables queues() {
-        return new Declarables(
-                {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
-        new Queue({{channelName}}Queue, true, false, false){% if not loop.last %},{% endif %}
-        {% endif %}{% endfor %}
-                );
-
 
     @Bean
     public MessageConverter converter() {

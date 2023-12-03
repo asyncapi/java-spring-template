@@ -1,0 +1,121 @@
+asyncapi: '2.0.0'
+info:
+  title: Streetlights API
+  version: '1.0.0'
+  description: |
+    The Smartylighting Streetlights API allows you to remotely manage the city lights.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  production:
+    url: localhost
+    protocol: amqp
+    description: RabbitMQ
+    variables:
+      port:
+        default: '5672'
+      username:
+        default: guest
+    
+          
+defaultContentType: application/json
+
+channels:
+  smartylighting.streetlights.event.{streetlightId}.lighting.measured:
+    description: The topic on which measured values may be produced and consumed.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: lightMeasurementExchange
+          durable: false
+          autoDelete: true
+        queue:
+          name: lightMeasurementQueue
+          durable: false
+          autoDelete: true
+          exclusive: true
+    parameters:
+      streetlightId:
+        $ref: '#/components/parameters/streetlightId'
+    publish:
+      summary: Inform about environmental lighting conditions of a particular streetlight.
+      operationId: receiveLightMeasurement
+      message:
+        $ref: '#/components/messages/lightMeasured'
+
+  smartylighting.streetlights.1.0.action.{streetlightId}.turn.on.{zoneId}:
+    bindings:
+      amqp:
+        is: routingKey
+        queue:
+          name: lightMeasurementQueue
+          durable: false
+          autoDelete: true
+          exclusive: true
+    parameters:
+      streetlightId:
+        $ref: '#/components/parameters/streetlightId'
+      zoneId:
+        $ref: '#/components/parameters/zoneId'
+    subscribe:
+      operationId: turnOn
+      message:
+        $ref: '#/components/messages/turnOnOff'
+
+components:
+  messages:
+    lightMeasured:
+      name: lightMeasured
+      title: Light measured
+      summary: Inform about environmental lighting conditions of a particular streetlight.
+      payload:
+        $ref: "#/components/schemas/lightMeasuredPayload"
+    turnOnOff:
+      name: turnOnOff
+      title: Turn on/off
+      summary: Command a particular streetlight to turn the lights on or off.
+      payload:
+        $ref: "#/components/schemas/turnOnOffPayload"
+
+  schemas:
+    lightMeasuredPayload:
+      type: object
+      properties:
+        lumens:
+          type: integer
+          minimum: 0
+          description: Light intensity measured in lumens.
+        sentAt:
+          $ref: "#/components/schemas/sentAt"
+    turnOnOffPayload:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+            - on
+            - off
+          description: Whether to turn on or off the light.
+        sentAt:
+          $ref: "#/components/schemas/sentAt"
+    sentAt:
+      type: string
+      format: date-time
+      description: Date and time when the message was sent.
+
+  parameters:
+    streetlightId:
+      description: The ID of the streetlight.
+      schema:
+        type: string
+
+    zoneId:
+      description: The ID of the streetlight.
+      schema:
+        type: object
+        properties:
+          id:
+            type: integer
