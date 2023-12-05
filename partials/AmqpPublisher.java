@@ -14,8 +14,16 @@ public interface PublisherService {
 
     {% for channelName, channel in asyncapi.channels() %}
     {% if channel.hasSubscribe() %}
-    {%- set schemaName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %}
-    void {{channel.subscribe().id() | camelCase}}();
+        {%- if channel.subscribe().hasMultipleMessages() %}
+            {%- set varName = "object" %}
+        {%- else %}
+            {%- set varName = channel.subscribe().message().payload().uid() | camelCase %}
+        {%- endif %}
+    {% if channel.description() or channel.subscribe().description() %}/**{% for line in channel.description() | splitByLines %}
+     * {{line | safe}}{% endfor %}{% for line in channel.subscribe().description() | splitByLines %}
+     * {{line | safe}}{% endfor %}
+     */{% endif %}
+    void {{channel.subscribe().id() | camelCase}}({{varName | upperFirst}} payload);
 
     {% endif %}
     {% endfor %}

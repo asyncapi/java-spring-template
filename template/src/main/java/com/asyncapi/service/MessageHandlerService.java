@@ -77,9 +77,10 @@ public class MessageHandlerService {
     {% for channelName, channel in asyncapi.channels() %}
     {% if channel.hasPublish() %}
     {%- set schemaName = channel.publish().message().payload().uid() | camelCase | upperFirst %}
-    @RabbitListener(queues = "${amqp.{{- channelName -}}.queue}")
-    public void {{channel.publish().id() | camelCase}}({{schemaName}} {{channelName}}Payload ){
-        LOGGER.info("Message received from {{- channelName -}} : " + {{channelName}}Payload);
+    {%- set varName = channelName | toAmqpNeutral(channel.hasParameters(), channel.parameters()) %}
+    @RabbitListener(queues = "${amqp.{{- varName -}}.queue}")
+    public void {{channel.publish().id() | camelCase}}({{schemaName}} payload){
+        LOGGER.info("Message received from {{- varName -}} : " + payload);
     }
     {% endif %}
     {% endfor %}
