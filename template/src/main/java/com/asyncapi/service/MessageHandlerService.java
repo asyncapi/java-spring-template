@@ -12,6 +12,7 @@ package {{ params['userJavaPackage'] }}.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 {% if asyncapi | isProtocol('kafka') and hasPublish %}
@@ -29,6 +30,8 @@ import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCa
 {% endif %}
 {% if asyncapi | isProtocol('amqp') and hasPublish %}
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.messaging.handler.annotation.Header;
     {% for channelName, channel in asyncapi.channels() %}
             {%- if channel.hasPublish() %}
             {%- for message in channel.publish().messages() %}
@@ -38,6 +41,8 @@ import {{ params['userJavaPackage'] }}.model.{{message.payload().uid() | camelCa
         {%- endfor %}
         {% endif %}
 import javax.annotation.processing.Generated;
+import java.util.ArrayList;
+import java.util.List;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Service
@@ -74,17 +79,54 @@ public class MessageHandlerService {
     {% endfor %}
 
     {% elif asyncapi | isProtocol('amqp')  %}
+    {%- set anyChannelHasParameter = false %}
     {% for channelName, channel in asyncapi.channels() %}
     {% if channel.hasPublish() %}
+    {%- set anyChannelHasParameter = anyChannelHasParameter or channel.hasParameters() %}
     {%- set schemaName = channel.publish().message().payload().uid() | camelCase | upperFirst %}
     {%- set varName = channelName | toAmqpNeutral(channel.hasParameters(), channel.parameters()) %}
+    {%- if channel.hasParameters() %}
+    @Value("${amqp.{{- varName -}}.routingKey}")
+    private String {{varName}}RoutingKey;
+
+    {%- endif %}
     @RabbitListener(queues = "${amqp.{{- varName -}}.queue}")
-    public void {{channel.publish().id() | camelCase}}({{schemaName}} payload){
+    public void {{channel.publish().id() | camelCase}}({{schemaName}} payload, @Header(AmqpHeaders.RECEIVED_ROUTING_KEY) String routKey) {
+        {%- if channel.hasParameters() %}
+        List<String> parameters = decompileRoutingKey({{varName}}RoutingKey, routKey);
+        {{channel.publish().id() | camelCase}}({%- for parameterName, parameter in channel.parameters() %}parameters.get({{loop.index0}}), {%- endfor %}payload);
+        {% endif %}
         LOGGER.info("Message received from {{- varName -}} : " + payload);
     }
+    {%- if channel.hasParameters() %}
+    public void {{channel.publish().id() | camelCase}}({%- for parameterName, parameter in channel.parameters() %}String {{parameterName}}, {%- endfor %}{{schemaName}} payload) {
+        // parametrized listener
+    }
+    {% endif %}
     {% endif %}
     {% endfor %}
-
+    {%- if anyChannelHasParameter %}
+    private List<String> decompileRoutingKey(String pattern, String routKey) {
+        List<String> parameters = new ArrayList<>();
+        int routeKeyPossition = 0;
+        int patternPosition = 0;
+        while (routeKeyPossition < routKey.length()) {
+            while (pattern.charAt(patternPosition) == routKey.charAt(routeKeyPossition)) {
+                routeKeyPossition++;
+                patternPosition++;
+            }
+            routeKeyPossition++;
+            patternPosition += 2; // skip .*
+            StringBuilder parameter = new StringBuilder();
+            while (pattern.charAt(patternPosition) != routKey.charAt(routeKeyPossition)) {
+                parameter.append(routKey.charAt(routeKeyPossition));
+                routeKeyPossition++;
+            }
+            parameters.add(parameter.toString());
+        }
+        return parameters;
+    }
+    {%- endif %}
 {% else %}
     {% for channelName, channel in asyncapi.channels() %}
     {% if channel.hasPublish() %}

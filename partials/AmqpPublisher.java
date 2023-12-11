@@ -24,7 +24,9 @@ public interface PublisherService {
      * {{line | safe}}{% endfor %}
      */{% endif %}
     void {{channel.subscribe().id() | camelCase}}({{varName | upperFirst}} payload);
-
+    {%- if channel.hasParameters() %}
+    void {{channel.subscribe().id() | camelCase}}({%- for parameterName, parameter in channel.parameters() %}String {{parameterName}}, {% endfor %}{{varName | upperFirst}} payload);
+    {% endif %}
     {% endif %}
     {% endfor %}
 

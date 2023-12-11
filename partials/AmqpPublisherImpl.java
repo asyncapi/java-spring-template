@@ -30,7 +30,9 @@ public class PublisherServiceImpl implements PublisherService {
     {%- endif %}
     {% endfor %}
 
+    {%- set anyChannelHasParameter = false %}
     {% for channelName, channel in asyncapi.channels() %}
+    {%- set anyChannelHasParameter = anyChannelHasParameter or channel.hasParameters() %}
     {%- if channel.hasSubscribe() %}
         {%- if channel.subscribe().hasMultipleMessages() %}
             {%- set varName = "object" %}
@@ -46,8 +48,33 @@ public class PublisherServiceImpl implements PublisherService {
         template.convertAndSend({{channelVariable}}Exchange, {{channelVariable}}RoutingKey,  payload);
     }
 
+    {%- if channel.hasParameters() %}
+    public void {{channel.subscribe().id() | camelCase}}({%- for parameterName, parameter in channel.parameters() %}String {{parameterName}}, {% endfor %}{{varName | upperFirst}} payload) {
+        String compiledRoutingKey = compileRoutingKey({{channelVariable}}RoutingKey, {% for parameterName, parameter in channel.parameters() %}{{parameterName}}{% if not loop.last %}, {% endif %}{%- endfor %});
+        template.convertAndSend({{channelVariable}}Exchange, compiledRoutingKey,  payload);
+    }
+    {% endif %}
+
     {% endif %}
     {% endfor %}
+
+    {%- if anyChannelHasParameter %}
+    private String compileRoutingKey(String routingKeyTemplate, String... parameters) {
+        StringBuilder result = new StringBuilder();
+        int routeKeyPossition = 0;
+        int parametersIndex = 0;
+        while (routeKeyPossition < routingKeyTemplate.length()) {
+            while (routingKeyTemplate.charAt(routeKeyPossition) != '*') {
+                routeKeyPossition++;
+                result.append(routingKeyTemplate.charAt(routeKeyPossition));
+            }
+            routeKeyPossition++;
+            String parameter = parameters[parametersIndex++];
+            result.append(parameter != null ? parameter : "*");
+        }
+        return result.toString();
+    }
+    {%- endif %}
 
 }
 

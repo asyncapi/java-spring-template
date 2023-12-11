@@ -50,11 +50,10 @@ channels:
     bindings:
       amqp:
         is: routingKey
-        queue:
-          name: lightMeasurementQueue
+        exchange:
+          name: lightMeasurementExchange
           durable: false
           autoDelete: true
-          exclusive: true
     parameters:
       streetlightId:
         $ref: '#/components/parameters/streetlightId'
