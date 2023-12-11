@@ -202,35 +202,72 @@ exports[`template integration tests for generated files using the generator and 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
+import org.springframework.integration.mqtt.support.MqttHeaders;
+
+import com.asyncapi.model.LightMeasuredPayload;
+
+
 
 
 import javax.annotation.processing.Generated;
+import java.util.ArrayList;
+import java.util.List;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
 public class MessageHandlerService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandlerService.class);
 
-    
-    
+
+        
+        
+        
+    @Value("\${mqtt.topic.receiveLightMeasurement}")
+    private String receiveLightMeasurementTopic;
     /**
-     * The topic on which measured values may be produced and consumed.
-     */
+    * The topic on which measured values may be produced and consumed.
+    */
     public void handleReceiveLightMeasurement(Message<?> message) {
-        LOGGER.info("handler smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured");
-        LOGGER.info(String.valueOf(message.getPayload().toString()));
+        String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
+        List<String> parameters = decodeTopic(receiveLightMeasurementTopic, topic);
+        receiveLightMeasurement(parameters.get(0), (LightMeasuredPayload) message.getPayload());
     }
-      
+    /**
+    * The topic on which measured values may be produced and consumed.
+    */
+    public void receiveLightMeasurement(String streetlightId, LightMeasuredPayload payload) {
+        LOGGER.info("handler smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured");
+        LOGGER.info(String.valueOf(payload.toString()));
+    }
     
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+    private List<String> decodeTopic(String topicPattern, String topic) {
+        List<String> parameters = new ArrayList<>();
+        int topicPossition = 0;
+        int patternPosition = 0;
+        while (topicPossition < topic.length()) {
+            while (topicPattern.charAt(patternPosition) == topic.charAt(topicPossition)) {
+                topicPossition++;
+                patternPosition++;
+            }
+            topicPossition++;
+            patternPosition += 2; // skip +
+            StringBuilder parameter = new StringBuilder();
+            while (topicPattern.charAt(patternPosition) != topic.charAt(topicPossition)) {
+                parameter.append(topic.charAt(topicPossition));
+                topicPossition++;
+            }
+            parameters.add(parameter.toString());
+        }
+        return parameters;
+    }
 
 }
 "
@@ -1182,31 +1219,68 @@ exports[`template integration tests for generated files using the generator and 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
+import org.springframework.integration.mqtt.support.MqttHeaders;
+
+import com.asyncapi.model.LightMeasuredPayload;
 
 
 import javax.annotation.processing.Generated;
+import java.util.ArrayList;
+import java.util.List;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
 public class MessageHandlerService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandlerService.class);
 
-    
-    
+
+        
+        
+        
+    @Value("\${mqtt.topic.receiveLightMeasurement}")
+    private String receiveLightMeasurementTopic;
     /**
-     * The topic on which measured values may be produced and consumed.
-     */
+    * The topic on which measured values may be produced and consumed.
+    */
     public void handleReceiveLightMeasurement(Message<?> message) {
-        LOGGER.info("handler smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured");
-        LOGGER.info(String.valueOf(message.getPayload().toString()));
+        String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
+        List<String> parameters = decodeTopic(receiveLightMeasurementTopic, topic);
+        receiveLightMeasurement(parameters.get(0), (LightMeasuredPayload) message.getPayload());
     }
-      
+    /**
+    * The topic on which measured values may be produced and consumed.
+    */
+    public void receiveLightMeasurement(String streetlightId, LightMeasuredPayload payload) {
+        LOGGER.info("handler smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured");
+        LOGGER.info(String.valueOf(payload.toString()));
+    }
     
-    
-    
+
+
+
+    private List<String> decodeTopic(String topicPattern, String topic) {
+        List<String> parameters = new ArrayList<>();
+        int topicPossition = 0;
+        int patternPosition = 0;
+        while (topicPossition < topic.length()) {
+            while (topicPattern.charAt(patternPosition) == topic.charAt(topicPossition)) {
+                topicPossition++;
+                patternPosition++;
+            }
+            topicPossition++;
+            patternPosition += 2; // skip +
+            StringBuilder parameter = new StringBuilder();
+            while (topicPattern.charAt(patternPosition) != topic.charAt(topicPossition)) {
+                parameter.append(topic.charAt(topicPossition));
+                topicPossition++;
+            }
+            parameters.add(parameter.toString());
+        }
+        return parameters;
+    }
 
 }
 "
