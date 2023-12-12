@@ -22,8 +22,10 @@ public class CommandLinePublisher implements CommandLineRunner {
             {%- if channel.hasSubscribe() %}{% set hasParameters = channel.hasParameters() %}
                 {%- for message in channel.subscribe().messages() %}
                 {%- set payloadType = params['userJavaPackage'] + '.model.' + message.payload().uid() | camelCase | upperFirst %}
-        publisherService.{{channel.subscribe().id() | camelCase}}({% if asyncapi | isProtocol('kafka') %}(new Random()).nextInt(), new {{payloadType}}()
-        {% elif asyncapi | isProtocol('amqp') %}new {{payloadType}}(){% else %}new {{payloadType}}(){% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}, new {% if parameter.schema().type() === 'object'%}{{payloadType}}{% else %}{{parameter.schema().type() | toJavaType(false)}}{% endif %}(){% endfor %}{% endif %}{% endif %});
+        publisherService.{{channel.subscribe().id() | camelCase}}(
+                {%- if asyncapi | isProtocol('kafka') %}(new Random()).nextInt(), new {{payloadType}}(){% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}, new {% if parameter.schema().type() === 'object'%}{{payloadType}}{% else %}{{parameter.schema().type() | toJavaType(false)}}{% endif %}(){% endfor %}{% endif %}
+                {%- elif asyncapi | isProtocol('amqp') %}new {{payloadType}}()
+                {%- else %}new {{payloadType}}(){% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}, new {% if parameter.schema().type() === 'object'%}{{payloadType}}{% else %}{{parameter.schema().type() | toJavaType(false)}}{% endif %}(){% endfor %}{% endif %}{% endif %});
                 {% endfor -%}
             {% endif -%}
         {%- endfor %}
