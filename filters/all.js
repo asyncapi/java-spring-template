@@ -197,7 +197,7 @@ function replaceAll(originalStr, replacePattern, replaceString) {
 }
 filter.replaceAll = replaceAll;
 
-function toTopicString(channelName, hasParameters, parameters, convertDots, replaceParameterValue, replaceDots = "\.") {
+function toTopicString(channelName, hasParameters, parameters, convertDots, replaceParameterValue, replaceDots = "\\\\.") {
     if (hasParameters) {
         let topicName = channelName
         if (convertDots) {
@@ -209,6 +209,11 @@ function toTopicString(channelName, hasParameters, parameters, convertDots, repl
         return channelName
     }
 }
+
+function toKafkaTopicString(channelName, hasParameters, parameters) {
+    return toTopicString(channelName, hasParameters, parameters, true, ".*")
+}
+filter.toKafkaTopicString = toKafkaTopicString
 
 function toMqttTopicString(channelName, hasParameters, parameters) {
     return toTopicString(channelName, hasParameters, parameters, false, "+")

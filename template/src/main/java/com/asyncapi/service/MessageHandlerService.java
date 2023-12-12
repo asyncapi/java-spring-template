@@ -20,6 +20,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 {%- endif %}
 {%- if asyncapi | isProtocol('mqtt') and hasPublish %}
 import org.springframework.integration.mqtt.support.MqttHeaders;
@@ -71,21 +73,27 @@ public class MessageHandlerService {
             {%- set javaDoc = javaDoc + '    */' %}
         {% endif %}
     {%- if asyncapi | isProtocol('kafka') %}
-        {%- set route = channelName %}
-        {%- if hasParameters %}
-            {%- set route = route | replaceAll(".", "\\.") %}
-            {%- for parameterName, parameter in channel.parameters() %}
-                {%- set route = route | replace("{" + parameterName + "}", ".*") %}
-            {%- endfor %}
-        {%- endif %}
+        {%- set route = channelName | toKafkaTopicString(channel.hasParameters(), channel.parameters()) | safe %}
     {{javaDoc}}
     @KafkaListener({% if hasParameters %}topicPattern{% else %}topics{% endif %} = "{{route}}"{% if channel.publish().binding('kafka') %}, groupId = "{{channel.publish().binding('kafka').groupId}}"{% endif %})
     public void {{methodName}}(@Payload {{typeName}} payload,
+                       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                        @Header(KafkaHeaders.{%- if params.springBoot2 %}RECEIVED_MESSAGE_KEY{% else %}RECEIVED_KEY{% endif -%}) Integer key,
                        @Header(KafkaHeaders.{%- if params.springBoot2 %}RECEIVED_PARTITION_ID{% else %}RECEIVED_PARTITION{% endif -%}) int partition,
                        @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {
         LOGGER.info("Key: " + key + ", Payload: " + payload.toString() + ", Timestamp: " + timestamp + ", Partition: " + partition);
+        {%- if hasParameters %}
+        List<String> parameters = decompileTopic("{{route}}", topic);
+        {{methodName}}({%- for parameterName, parameter in channel.parameters() %}parameters.get({{loop.index0}}), {% endfor %}payload, topic, key, partition, timestamp);
+        {%- endif %}
     }
+    {%- if hasParameters %}
+    {{javaDoc}}
+    public void {{methodName}}({%- for parameterName, parameter in channel.parameters() %}String {{parameterName}}, {% endfor %}{{typeName}} payload,
+                       String topic, Integer key, int partition, long timestamp) {
+        // parametrized listener
+    }
+    {%- endif %}
     {% elif asyncapi | isProtocol('amqp') %}
         {%- set propertyValueName = channelName | toAmqpNeutral(hasParameters, channel.parameters()) %}
         {%- if hasParameters %}
@@ -132,6 +140,18 @@ public class MessageHandlerService {
 
 {%- if anyChannelHasParameter %}
     {%- if asyncapi | isProtocol('kafka') %}
+    private List<String> decompileTopic(String topicPattern, String topic) {
+        topicPattern = topicPattern.replaceAll("\\.\\*", "(.*)");
+        List<String> parameters = new ArrayList<>();
+        Pattern pattern  = Pattern.compile(topicPattern);
+        Matcher matcher = pattern.matcher(topic);
+        if (matcher.find()) {
+            for (int i = 0; i < matcher.groupCount(); i++) {
+                parameters.add(matcher.group(i + 1));
+            }
+        }
+        return parameters;
+    }
     {%- elif asyncapi | isProtocol('amqp') %}
     private List<String> decompileRoutingKey(String pattern, String routKey) {
         List<String> parameters = new ArrayList<>();

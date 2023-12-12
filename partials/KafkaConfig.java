@@ -101,21 +101,15 @@ public class Config {
 {%- if hasSubscribe %}
 {% if hasParameters %}
     @Bean
-    public RoutingKafkaTemplate<Integer, Object> kafkaTemplate() {
+    public RoutingKafkaTemplate kafkaTemplate() {
         ProducerFactory<Object, Object> producerFactory = producerFactory();
 
         Map<Pattern, ProducerFactory<Object, Object>> map = new LinkedHashMap<>();
         {%- for channelName, channel in asyncapi.channels() %}
-            {%- set route = channelName %}
-            {%- if channel.hasParameters() %}
-                {%- set route = route | replaceAll(".", "\\.") %}
-                {%- for parameterName, parameter in channel.parameters() %}
-                    {%- set route = route | replace("{" + parameterName + "}", ".*") %}
-                {%- endfor %}
-            {%- endif %}
-        map.put(Pattern.compile({{route}}), producerFactory);
+            {%- set route = channelName | toKafkaTopicString(channel.hasParameters(), channel.parameters()) | safe %}
+        map.put(Pattern.compile("{{route}}"), producerFactory);
         {%- endfor %}
-        return new RoutingKafkaTemplate<>(map);
+        return new RoutingKafkaTemplate(map);
     }
 
     @Bean
