@@ -12,6 +12,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.asyncapi.model.AnonymousSchema1;
 import com.asyncapi.model.AnonymousSchema7;
@@ -31,6 +33,7 @@ public class MessageHandlerService {
     
     @KafkaListener(topics = "song.released")
     public void release(@Payload Object payload,
+                       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                        @Header(KafkaHeaders.RECEIVED_KEY) Integer key,
                        @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
                        @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {

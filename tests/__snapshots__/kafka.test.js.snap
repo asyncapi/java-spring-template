@@ -127,6 +127,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.asyncapi.model.LightMeasuredPayload;
 
@@ -145,6 +147,7 @@ public class MessageHandlerService {
     
     @KafkaListener(topics = "event.lighting.measured", groupId = "my-group")
     public void readLightMeasurement(@Payload LightMeasuredPayload payload,
+                       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                        @Header(KafkaHeaders.RECEIVED_KEY) Integer key,
                        @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
                        @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {
@@ -519,6 +522,8 @@ import org.springframework.stereotype.Service;
 
 import com.asyncapi.model.LightMeasuredPayload;
 import javax.annotation.processing.Generated;
+import java.util.HashMap;
+import java.util.Map;
 
 @Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
 @Service
@@ -530,10 +535,25 @@ public class PublisherServiceImpl implements PublisherService {
     
     public void updateLightMeasurement(Integer key, LightMeasuredPayload lightMeasuredPayload) {
         Message<LightMeasuredPayload> message = MessageBuilder.withPayload(lightMeasuredPayload)
-                .setHeader(KafkaHeaders.TOPIC, "event.lighting.measured")
+                .setHeader(KafkaHeaders.TOPIC, getUpdateLightMeasurementTopic())
                 .setHeader(KafkaHeaders.KEY, key)
                 .build();
         kafkaTemplate.send(message);
+    }
+
+    private String getUpdateLightMeasurementTopic() {
+        Map<String, String> parameters = null;
+        return replaceParameters("event.lighting.measured", parameters);
+    }
+    private String replaceParameters(String topic, Map<String, String> parameters) {
+        if (parameters != null) {
+            String compiledTopic = topic;
+            for (String key : parameters.keySet()) {
+                compiledTopic = compiledTopic.replace("{" + key + "}", parameters.get(key));
+            }
+            return compiledTopic;
+        }
+        return topic;
     }
 }
 "
@@ -580,12 +600,12 @@ public class Config {
     private int concurrency;
 
     @Bean
-    public RoutingKafkaTemplate<Integer, Object> kafkaTemplate() {
+    public RoutingKafkaTemplate kafkaTemplate() {
         ProducerFactory<Object, Object> producerFactory = producerFactory();
 
         Map<Pattern, ProducerFactory<Object, Object>> map = new LinkedHashMap<>();
-        map.put(Pattern.compile(event&#92;.lighting&#92;..*&#92;.measured&#92;..*), producerFactory);
-        return new RoutingKafkaTemplate<>(map);
+        map.put(Pattern.compile("event\\\\.lighting\\\\..*\\\\.measured\\\\..*"), producerFactory);
+        return new RoutingKafkaTemplate(map);
     }
 
     @Bean
@@ -653,6 +673,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.asyncapi.model.LightMeasuredPayload;
 
@@ -669,16 +691,36 @@ public class MessageHandlerService {
         
         
     
-    @KafkaListener(topicPattern = "event&#92;.lighting&#92;..*&#92;.measured&#92;..*", groupId = "my-group")
+    @KafkaListener(topicPattern = "event\\\\.lighting\\\\..*\\\\.measured\\\\..*", groupId = "my-group")
     public void readLightMeasurement(@Payload LightMeasuredPayload payload,
+                       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                        @Header(KafkaHeaders.RECEIVED_KEY) Integer key,
                        @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
                        @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {
         LOGGER.info("Key: " + key + ", Payload: " + payload.toString() + ", Timestamp: " + timestamp + ", Partition: " + partition);
+        List<String> parameters = decompileTopic("event\\\\.lighting\\\\..*\\\\.measured\\\\..*", topic);
+        readLightMeasurement(parameters.get(0), parameters.get(1), payload, topic, key, partition, timestamp);
+    }
+    
+    public void readLightMeasurement(String streetlightId, String zoneId, LightMeasuredPayload payload,
+                       String topic, Integer key, int partition, long timestamp) {
+        // parametrized listener
     }
     
 
 
+    private List<String> decompileTopic(String topicPattern, String topic) {
+        topicPattern = topicPattern.replaceAll("\\\\.\\\\*", "(.*)");
+        List<String> parameters = new ArrayList<>();
+        Pattern pattern  = Pattern.compile(topicPattern);
+        Matcher matcher = pattern.matcher(topic);
+        if (matcher.find()) {
+            for (int i = 0; i < matcher.groupCount(); i++) {
+                parameters.add(matcher.group(i + 1));
+            }
+        }
+        return parameters;
+    }
 
 }
 "

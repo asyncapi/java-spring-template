@@ -146,6 +146,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.asyncapi.model.LightMeasuredPayload;
 
@@ -164,6 +166,7 @@ public class MessageHandlerService {
     
     @KafkaListener(topics = "event.lighting.measured", groupId = "my-group")
     public void readLightMeasurement(@Payload LightMeasuredPayload payload,
+                       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                        @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Integer key,
                        @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
                        @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {
