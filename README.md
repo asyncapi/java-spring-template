@@ -13,6 +13,7 @@ Java Spring template for the [AsyncAPI Generator](https://github.com/asyncapi/ge
 
 <!-- toc -->
 
+- [Attention, AsyncAPI v3 is not currently supported by this template](#attention-asyncapi-v3-is-not-currently-supported-by-this-template)
 - [Usage](#usage)
   * [AsyncAPI definitions](#asyncapi-definitions)
   * [Supported parameters](#supported-parameters)
