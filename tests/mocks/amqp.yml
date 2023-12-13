@@ -10,32 +10,33 @@ info:
 
 servers:
   production:
-    url: mqtt://localhost:{port}
-    protocol: mqtt
-    description: dummy MQTT broker
-    bindings:
-      mqtt:
-        clientId: guest
-        cleanSession: false
-        keepAlive: 0
-        lastWill:
-          topic: /will
-          qos: 0
-          message: Guest gone offline.
-          retain: false
+    url: localhost
+    protocol: amqp
+    description: RabbitMQ
     variables:
       port:
-        enum:
-          - '8883'
-          - '8884'
-        default: '8883'
+        default: '5672'
+      username:
+        default: guest
     
           
 defaultContentType: application/json
 
 channels:
-  smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured:
+  smartylighting.streetlights.event.{streetlightId}.lighting.measured:
     description: The topic on which measured values may be produced and consumed.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: lightMeasurementExchange
+          durable: false
+          autoDelete: true
+        queue:
+          name: lightMeasurementQueue
+          durable: false
+          autoDelete: true
+          exclusive: true
     parameters:
       streetlightId:
         $ref: '#/components/parameters/streetlightId'
@@ -45,17 +46,20 @@ channels:
       message:
         $ref: '#/components/messages/lightMeasured'
 
-  smartylighting/streetlights/1/0/action/{streetlightId}/turn/on/{zoneId}:
+  smartylighting.streetlights.1.0.action.{streetlightId}.turn.on.{zoneId}:
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: lightMeasurementExchange
+          durable: false
+          autoDelete: true
     parameters:
       streetlightId:
         $ref: '#/components/parameters/streetlightId'
       zoneId:
         $ref: '#/components/parameters/zoneId'
     subscribe:
-      bindings:
-        mqtt:
-          qos: 0
-          retain: false
       operationId: turnOn
       message:
         $ref: '#/components/messages/turnOnOff'
@@ -83,7 +87,6 @@ components:
           type: integer
           minimum: 0
           description: Light intensity measured in lumens.
-          x-pi: false
         sentAt:
           $ref: "#/components/schemas/sentAt"
     turnOnOffPayload:
@@ -95,7 +98,6 @@ components:
             - on
             - off
           description: Whether to turn on or off the light.
-          x-pi: false
         sentAt:
           $ref: "#/components/schemas/sentAt"
     sentAt:

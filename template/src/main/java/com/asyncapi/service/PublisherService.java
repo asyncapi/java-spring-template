@@ -7,5 +7,5 @@ package {{ params['userJavaPackage'] }}.service;
 {%- elif asyncapi | isProtocol('amqp') -%}
 {{- amqpPublisher(asyncapi, params) -}}
 {%- else -%}
-{{- commonPublisher(asyncapi) -}}
+{{- commonPublisher(asyncapi, params) -}}
 {%- endif -%}

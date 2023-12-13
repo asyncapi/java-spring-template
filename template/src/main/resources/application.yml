@@ -18,10 +18,10 @@ amqp:
     username: {% if server.variable('username') %}{{server.variable('username').defaultValue()}}{% endif %}
     password:
   {% for channelName, channel in asyncapi.channels() %}
-  {{channelName}}:
-    {% if channel.hasSubscribe() %} exchange: {{channel.subscribe().binding('amqp').exchange.name}} {% endif %}
-    {% if channel.hasSubscribe() %} routingKey: {{channel.subscribe().binding('amqp').routingKey}}{% endif %}
-    {% if channel.hasPublish() %} queue: {{channel.publish().binding('amqp').queue.name}}{% endif %}
+  {{channelName | toAmqpNeutral(channel.hasParameters(), channel.parameters())}}:
+    {% if channel.binding('amqp') and channel.binding('amqp').exchange %}exchange: {{channel.binding('amqp').exchange.name}}{% endif %}
+    routingKey: {{channelName | toAmqpKey(channel.hasParameters(), channel.parameters())}}
+    {% if channel.binding('amqp') and channel.binding('amqp').queue %}queue: {{channel.binding('amqp').queue.name}}{% endif %}
   {% endfor %}
   {% endif %}
 
@@ -52,11 +52,11 @@ mqtt:
       connection: {{params.connectionTimeout}}
       {% if server.binding('mqtt') and server.binding('mqtt').keepAlive | isDefined %}keepAlive: {{server.binding('mqtt').keepAlive}}{% endif %}
   topic:
-    {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
-    {{channel.publish().id() | camelCase}}: {{channelName}}
-    {% elif channel.hasSubscribe() %}
+    {%- for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
+    {{channel.publish().id() | camelCase}}: {{channelName | toMqttTopicString(channel.hasParameters(), channel.parameters()) }}
+    {%- elif channel.hasSubscribe() %}
     {{channel.subscribe().id() | camelCase}}: {{channelName}}
-    {% endif %}{% endfor %}
+    {%- endif %}{% endfor %}
 {% endif %}{% endfor %}
 
 {%- if asyncapi | isProtocol('kafka') %}
