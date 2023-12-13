@@ -452,3 +452,56 @@ public class Interpret {
     }
 }"
 `;
+
+exports[`template integration tests for map format should generate correct DTO for empty object 1`] = `
+"package com.asyncapi.model;
+
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import javax.annotation.processing.Generated;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * Test correct generation of object without parameters
+ */
+@Generated(value="com.asyncapi.generator.template.spring", date="AnyDate")
+public class EmptyObject {
+    
+
+    
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "class EmptyObject {\\n" +
+        
+                "}";
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+           return "null";
+        }
+        return o.toString().replace("\\n", "\\n    ");
+    }
+}"
+`;
