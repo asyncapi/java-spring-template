@@ -91,7 +91,7 @@ public class TestcontainerMqttTest {
             receivedMessages.add(message);
         });
 
-        publisherService.{{channel.subscribe().id() | camelCase}}(payload.toString());
+        publisherService.{{channel.subscribe().id() | camelCase}}(payload{% if channel.hasParameters() %}{%for parameterName, parameter in channel.parameters() %}, new {% if parameter.schema().type() === 'object'%}{{ params['userJavaPackage'] }}.model.{{parameterName | camelCase | upperFirst}}{% else %}{{parameter.schema().type() | toJavaType(false)}}{% endif %}(){% endfor %}{% endif %});
 
         MqttMessage message = receivedMessages.get(receivedMessages.size() - 1);
 

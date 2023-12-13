@@ -72,7 +72,7 @@ public class TestcontainerKafkaTest {
     public static void kafkaProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
     }
-    {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
+    {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}{% set hasParameters = channel.hasParameters() %}
     {%- if channel.subscribe().hasMultipleMessages() %}{% set typeName = "Object" %}{% else %}{% set typeName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %}{% endif %}
     @Test
     public void {{channel.subscribe().id() | camelCase}}ProducerTestcontainers() {
@@ -82,7 +82,7 @@ public class TestcontainerKafkaTest {
 
         consumeMessages({{channel.subscribe().id() | upper-}}_SUBSCRIBE_TOPIC);
 
-        publisherService.{{channel.subscribe().id() | camelCase}}(key, payload);
+        publisherService.{{channel.subscribe().id() | camelCase}}(key, payload{% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}, new {% if parameter.schema().type() === 'object'%}{{payloadType}}{% else %}{{parameter.schema().type() | toJavaType(false)}}{% endif %}(){% endfor %}{% endif %});
 
         ConsumerRecord<Integer, Object> consumedMessage = consumeMessage({{channel.subscribe().id() |  upper-}}_SUBSCRIBE_TOPIC);
 

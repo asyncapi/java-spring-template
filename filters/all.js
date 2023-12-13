@@ -191,3 +191,42 @@ function addBackSlashToPattern(val) {
 filter.addBackSlashToPattern = addBackSlashToPattern;
 
 filter.currentTime = () => (new Date(Date.now())).toISOString();
+
+function replaceAll(originalStr, replacePattern, replaceString) {
+    return originalStr.replaceAll(replacePattern, replaceString)
+}
+filter.replaceAll = replaceAll;
+
+function toTopicString(channelName, hasParameters, parameters, convertDots, replaceParameterValue, replaceDots = "\\\\.") {
+    if (hasParameters) {
+        let topicName = channelName
+        if (convertDots) {
+            topicName = replaceAll(topicName, ".", replaceDots)
+        }
+        Object.keys(parameters).forEach(value => topicName = topicName.replace("{" + value + "}", replaceParameterValue))
+        return topicName
+    } else {
+        return channelName
+    }
+}
+
+function toKafkaTopicString(channelName, hasParameters, parameters) {
+    return toTopicString(channelName, hasParameters, parameters, true, ".*")
+}
+filter.toKafkaTopicString = toKafkaTopicString
+
+function toMqttTopicString(channelName, hasParameters, parameters) {
+    return toTopicString(channelName, hasParameters, parameters, false, "+")
+}
+
+filter.toMqttTopicString = toMqttTopicString
+
+function toAmqpNeutral(channelName, hasParameters, parameters) {
+    return toTopicString(_.camelCase(channelName), hasParameters, parameters, true, "", "")
+}
+filter.toAmqpNeutral = toAmqpNeutral
+
+function toAmqpKey(channelName, hasParameters, parameters) {
+    return toTopicString(channelName, hasParameters, parameters, true, "*")
+}
+filter.toAmqpKey = toAmqpKey

@@ -104,7 +104,7 @@ public class SimpleKafkaTest {
         producer = new DefaultKafkaProducerFactory<>(producerConfigs, new IntegerSerializer(), new JsonSerializer()).createProducer();
         {% endif %}
     }
-    {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
+    {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}{% set hasParameters = channel.hasParameters() %}
     @Test
     public void {{channel.subscribe().id() | camelCase}}ProducerTest() {
         {%- if channel.subscribe().hasMultipleMessages() %} {% set typeName = "Object" %} {% else %} {% set typeName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %} {% endif %}
@@ -113,7 +113,7 @@ public class SimpleKafkaTest {
 
         KafkaTestUtils.getRecords(consumer{{ channelName | camelCase | upperFirst}});
 
-        publisherService.{{channel.subscribe().id() | camelCase}}(key, payload);
+        publisherService.{{channel.subscribe().id() | camelCase}}(key, payload{% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}, new {% if parameter.schema().type() === 'object'%}{{payloadType}}{% else %}{{parameter.schema().type() | toJavaType(false)}}{% endif %}(){% endfor %}{% endif %});
 
         ConsumerRecord<Integer, {{typeName}}> singleRecord = KafkaTestUtils.getSingleRecord(consumer{{ channelName | camelCase | upperFirst}}, {{channel.subscribe().id() | upper-}}_SUBSCRIBE_TOPIC);
 
