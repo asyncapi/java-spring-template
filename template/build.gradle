@@ -19,6 +19,10 @@ dependencies {
 	{%- if asyncapi | isProtocol('mqtt') %}
 	implementation('org.springframework.integration:spring-integration-mqtt')
 	{% endif -%}
+	{%- if asyncapi | isProtocol('ws') %}
+	implementation('org.springframework:spring-websocket')
+	implementation('org.springframework:spring-messaging')
+	{% endif -%}
 	{%- if asyncapi | isProtocol('kafka') %}
 	{%- if params.springBoot2 %}
 	implementation('org.springframework.kafka:spring-kafka:2.9.12')

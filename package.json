@@ -48,7 +48,8 @@
     "supportedProtocols": [
       "kafka",
       "amqp",
-      "mqtt"
+      "mqtt",
+      "ws"
     ],
     "nonRenderableFiles": [
       "**/*.jar"
