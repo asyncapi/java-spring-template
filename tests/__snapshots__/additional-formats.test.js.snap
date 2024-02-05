@@ -75,7 +75,7 @@ public class SongPayload {
     /**
      * Author email
      */
-    @JsonProperty("email")@Pattern(regexp="(^\\s*[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(.[a-zA-Z0-9-]+)*.[a-zA-Z]{2,}\\s*$)"
+    @JsonProperty("email")@Pattern(regexp="(^\\s*[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(.[a-zA-Z0-9-]+)*.[a-zA-Z]{2,}\\s*$)")
     public String getEmail() {
         return email;
     }
