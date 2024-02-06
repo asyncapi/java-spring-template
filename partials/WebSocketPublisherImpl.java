@@ -30,5 +30,7 @@ public class PublisherServiceImpl implements PublisherService {
     public void {{methodName}}(Integer key, {{varName | upperFirst}} {{varName}}{% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}, {% if parameter.schema().type() === 'object'%}{{parameterName | camelCase | upperFirst}}{% else %}{{parameter.schema().type() | toJavaType(false)}}{% endif %} {{parameterName | camelCase}}{% endfor %}{% endif %}) {
 
     }
+    {%- endif %}
+{% endfor %}
 }
 {% endmacro %}
