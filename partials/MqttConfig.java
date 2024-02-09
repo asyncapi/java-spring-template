@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.endpoint.MessageProducerSupport;
 import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
@@ -20,6 +19,9 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.processing.Generated;
+
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Configuration
 public class Config {
 
@@ -99,7 +101,7 @@ public class Config {
     {% for channelName, channel in asyncapi.channels() %}{% if channel.hasPublish() %}
     @Bean
     public IntegrationFlow {{channel.publish().id() | camelCase}}Flow() {
-        return IntegrationFlows.from({{channel.publish().id() | camelCase}}Inbound())
+        return IntegrationFlow.from({{channel.publish().id() | camelCase}}Inbound())
                 .handle(messageHandlerService::handle{{channel.publish().id() | camelCase | upperFirst}})
                 .get();
     }
@@ -122,7 +124,7 @@ public class Config {
     }
 
     @Bean
-    @ServiceActivator(inputChannel = "{{channel.subscribe().id() | camelCase}}OutboundChannel")
+    @ServiceActivator(outputChannel = "{{channel.subscribe().id() | camelCase}}OutboundChannel")
     public MessageHandler {{channel.subscribe().id() | camelCase}}Outbound() {
         MqttPahoMessageHandler pahoMessageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
         pahoMessageHandler.setAsync(true);

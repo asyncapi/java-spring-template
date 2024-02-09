@@ -2,7 +2,17 @@ const filter = module.exports;
 const _ = require('lodash');
 
 function defineType(prop, propName) {
-    if (prop.type() === 'object') {
+    if (prop.additionalProperties()) {
+        if (prop.additionalProperties() === true) {
+            return 'Map<String, Object>';
+        } else if (prop.additionalProperties().type() === 'object') {
+            return 'Map<String, ' + _.upperFirst(_.camelCase(prop.additionalProperties().uid())) + '>';
+        } else if (prop.additionalProperties().format()) {
+            return 'Map<String, ' + toClass(toJavaType(prop.additionalProperties().format())) + '>';
+        } else if (prop.additionalProperties().type()) {
+            return 'Map<String, ' + toClass(toJavaType(prop.additionalProperties().type())) + '>';
+        }
+    } else if (prop.type() === 'object') {
         return _.upperFirst(_.camelCase(prop.uid()));
     } else if (prop.type() === 'array') {
         if (prop.items().type() === 'object') {
@@ -93,6 +103,8 @@ function toJavaType(str, isRequired) {
     case 'number':
     case 'double':
       resultType = 'double'; break;
+    case 'decimal':
+      resultType = 'java.math.BigDecimal'; break;
     case 'binary':
       resultType = 'byte[]'; break;
     default:
@@ -177,6 +189,47 @@ function addBackSlashToPattern(val) {
   return result;
 }
 filter.addBackSlashToPattern = addBackSlashToPattern;
+
+filter.currentTime = () => (new Date(Date.now())).toISOString();
+
+function replaceAll(originalStr, replacePattern, replaceString) {
+    return originalStr.replaceAll(replacePattern, replaceString)
+}
+filter.replaceAll = replaceAll;
+
+function toTopicString(channelName, hasParameters, parameters, convertDots, replaceParameterValue, replaceDots = "\\\\.") {
+    if (hasParameters) {
+        let topicName = channelName
+        if (convertDots) {
+            topicName = replaceAll(topicName, ".", replaceDots)
+        }
+        Object.keys(parameters).forEach(value => topicName = topicName.replace("{" + value + "}", replaceParameterValue))
+        return topicName
+    } else {
+        return channelName
+    }
+}
+
+function toKafkaTopicString(channelName, hasParameters, parameters) {
+    return toTopicString(channelName, hasParameters, parameters, true, ".*")
+}
+filter.toKafkaTopicString = toKafkaTopicString
+
+function toMqttTopicString(channelName, hasParameters, parameters) {
+    return toTopicString(channelName, hasParameters, parameters, false, "+")
+}
+
+filter.toMqttTopicString = toMqttTopicString
+
+function toAmqpNeutral(channelName, hasParameters, parameters) {
+    return toTopicString(_.camelCase(channelName), hasParameters, parameters, true, "", "")
+}
+filter.toAmqpNeutral = toAmqpNeutral
+
+function toAmqpKey(channelName, hasParameters, parameters) {
+    return toTopicString(channelName, hasParameters, parameters, true, "*")
+}
+filter.toAmqpKey = toAmqpKey
 
 const javaUnsafe = [
   'abstract',

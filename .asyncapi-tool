@@ -1,0 +1,11 @@
+title: Java Spring Template
+filters:
+  language: 
+  - javascript
+  technology:
+  - Springboot
+  - Maven
+  - Gradle
+  categories:
+  - generator-template
+  hasCommercial: false

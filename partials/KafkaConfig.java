@@ -1,12 +1,16 @@
 {% macro kafkaConfig(asyncapi, params) %}
 {%- set hasSubscribe = false -%}
 {%- set hasPublish = false -%}
+{%- set hasParameters = false -%}
 {%- for channelName, channel in asyncapi.channels() -%}
     {%- if channel.hasPublish() -%}
         {%- set hasPublish = true -%}
     {%- endif -%}
     {%- if channel.hasSubscribe() -%}
         {%- set hasSubscribe = true -%}
+    {%- endif -%}
+    {%- if channel.hasParameters() -%}
+        {%- set hasParameters = true -%}
     {%- endif -%}
 {%- endfor %}
 
@@ -75,9 +79,13 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
+import javax.annotation.processing.Generated;
+{% if hasParameters %}import java.util.LinkedHashMap;{% endif %}
 import java.util.HashMap;
 import java.util.Map;
+{% if hasParameters %}import java.util.regex.Pattern;{% endif %}
 
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Configuration
 {% if hasPublish %}@EnableKafka{% endif %}
 public class Config {
@@ -91,6 +99,24 @@ public class Config {
     @Value("${spring.kafka.listener.concurrency}")
     private int concurrency;{% endif %}
 {%- if hasSubscribe %}
+{% if hasParameters %}
+    @Bean
+    public RoutingKafkaTemplate kafkaTemplate() {
+        ProducerFactory<Object, Object> producerFactory = producerFactory();
+
+        Map<Pattern, ProducerFactory<Object, Object>> map = new LinkedHashMap<>();
+        {%- for channelName, channel in asyncapi.channels() %}
+            {%- set route = channelName | toKafkaTopicString(channel.hasParameters(), channel.parameters()) | safe %}
+        map.put(Pattern.compile("{{route}}"), producerFactory);
+        {%- endfor %}
+        return new RoutingKafkaTemplate(map);
+    }
+
+    @Bean
+    public ProducerFactory<Object, Object> producerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+{% else %}
     @Bean
     public KafkaTemplate<Integer, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
@@ -100,7 +126,7 @@ public class Config {
     public ProducerFactory<Integer, Object> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
-
+{% endif %}
     @Bean
     public Map<String, Object> producerConfigs() {
         Map<String, Object> props = new HashMap<>();
@@ -157,7 +183,7 @@ public class Config {
     {%- endif -%}
     {%- if saslJaasConfig %}
         props.put(SaslConfigs.SASL_JAAS_CONFIG, "{{ saslJaasConfig | safe }}");
-    {% endif -%}
+    {% endif %}
         props.put(JsonDeserializer.TYPE_MAPPINGS,
     {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
         {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}

@@ -26,19 +26,20 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.IntegerSerializer;
-import org.apache.kafka.connect.json.JsonDeserializer;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.shaded.com.google.common.collect.Lists;
 
+import javax.annotation.processing.Generated;
 import java.time.Duration;
 import java.util.*;
 
@@ -51,6 +52,7 @@ import static org.junit.Assert.assertNotEquals;
 /**
  * Example of tests for kafka based on testcontainers library
  */
+@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestcontainerKafkaTest {
@@ -70,7 +72,7 @@ public class TestcontainerKafkaTest {
     public static void kafkaProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
     }
-    {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}
+    {% for channelName, channel in asyncapi.channels() %} {% if channel.hasSubscribe() %}{% set hasParameters = channel.hasParameters() %}
     {%- if channel.subscribe().hasMultipleMessages() %}{% set typeName = "Object" %}{% else %}{% set typeName = channel.subscribe().message().payload().uid() | camelCase | upperFirst %}{% endif %}
     @Test
     public void {{channel.subscribe().id() | camelCase}}ProducerTestcontainers() {
@@ -80,7 +82,7 @@ public class TestcontainerKafkaTest {
 
         consumeMessages({{channel.subscribe().id() | upper-}}_SUBSCRIBE_TOPIC);
 
-        publisherService.{{channel.subscribe().id() | camelCase}}(key, payload);
+        publisherService.{{channel.subscribe().id() | camelCase}}(key, payload{% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}, new {% if parameter.schema().type() === 'object'%}{{payloadType}}{% else %}{{parameter.schema().type() | toJavaType(false)}}{% endif %}(){% endfor %}{% endif %});
 
         ConsumerRecord<Integer, Object> consumedMessage = consumeMessage({{channel.subscribe().id() |  upper-}}_SUBSCRIBE_TOPIC);
 
@@ -160,6 +162,14 @@ public class TestcontainerKafkaTest {
         configs.put(AUTO_OFFSET_RESET_CONFIG, "earliest");
         configs.put(KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class.getName());
         configs.put(VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class.getName());
+        configs.put(JsonDeserializer.TYPE_MAPPINGS,
+                  {%- for schema in asyncapi.allSchemas().values() | isObjectType %}
+        {%- if schema.uid() | first !== '<' and schema.type() === 'object' %}
+        "{{schema.uid()}}:{{params['userJavaPackage']}}.model.{{schema.uid() | camelCase | upperFirst}}{% if not loop.last %}," +{% else %}"{% endif %}
+        {% endif -%}
+        {% endfor -%}
+        );
+        configs.put(JsonDeserializer.TRUSTED_PACKAGES, "{{params['userJavaPackage']}}.model");
         return configs;
     }
     {% endif %}
