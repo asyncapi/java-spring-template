@@ -113,6 +113,11 @@
         "default": false,
         "required": false
       },
+      "onlyModels": {
+        "description": "Only generate the models for mqtt, not the config and test. This was added by Unifly because the generated config and test don't support custom converters",
+        "default": false,
+        "required": false
+      },
       "maven": {
         "description": "Generate pom.xml Maven build file instead of Gradle build",
         "default": false,

@@ -18,7 +18,7 @@ module.exports = {
         if (!hasAmqp) {
             // remove filers from template related only to amqp
         }
-        if (!hasMqtt) {
+        if (!hasMqtt || generator.templateParams.onlyModels) {
             // remove filers from template related only to mqtt
             fs.unlinkSync(path.resolve(generator.targetDir, 'src/test/java/com/asyncapi/TestcontainerMqttTest.java'));
         }

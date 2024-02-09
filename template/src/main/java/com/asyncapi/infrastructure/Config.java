@@ -8,7 +8,9 @@ package {{ params['userJavaPackage'] }}.infrastructure;
 {{- amqpConfig(asyncapi, params) -}}
 {%- endif -%}
 {%- if asyncapi | isProtocol('mqtt') -%}
+{%- if params.onlyModels !== true %}
 {{- mqttConfig(asyncapi, params) -}}
+{%- endif -%}
 {%- endif -%}
 {%- if (asyncapi | isProtocol('kafka')) or (asyncapi | isProtocol('kafka-secure')) -%}
 {{- kafkaConfig(asyncapi, params) -}}
