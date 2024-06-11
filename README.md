@@ -47,6 +47,13 @@ asyncapi generate fromTemplate <asyncapi.yaml> @asyncapi/java-spring-template
 
 You can replace `<asyncapi.yaml>` with local path or URL pointing to [any AsyncAPI document](https://raw.githubusercontent.com/asyncapi/java-spring-template/master/tests/mocks/kafka.yml).
 
+#### Supported protocols
+
+- Kafka
+- AMQP
+- MQTT
+- WebSocket
+
 ### AsyncAPI definitions
 To have correctly generated code, your AsyncAPI file MUST define `operationId` for every operation.
 

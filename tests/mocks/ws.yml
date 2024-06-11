@@ -1,0 +1,45 @@
+asyncapi: '2.0.0'
+info:
+  title: Chat Application
+  version: '1.0.0'
+  description: A simple chat application using WebSocket protocol
+servers:
+  production:
+    url: 'ws://example.com/websocket'
+    protocol: ws
+    description: Endpoint address for connections
+channels:
+  chat:
+    description: Channel for sending messages
+    subscribe:
+      operationId: sendMessage
+      summary: Send a message
+      message:
+        $ref: '#/components/messages/ChatMessage'
+  chatResponse:
+    description: Channel for receiving messages
+    publish:
+      operationId: receiveMessage
+      summary: Receive a message
+      message:
+        $ref: '#/components/messages/ChatMessage'
+components:
+  messages:
+    ChatMessage:
+      summary: The message in a chat
+      payload:
+        $ref: "#/components/schemas/MessagePayload"
+  schemas:
+    MessagePayload:
+      type: object
+      properties:
+        username:
+          type: string
+        content:
+          type: string
+        sentAt:
+          $ref: "#/components/schemas/sentAt"
+    sentAt:
+      type: string
+      format: date-time
+      description: Date and time when the message was sent.
