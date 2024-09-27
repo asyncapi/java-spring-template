@@ -38,6 +38,7 @@ components:
             description: Author email
             type: string
             format: email
+            pattern: "(^\\s*[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(.[a-zA-Z0-9-]+)*.[a-zA-Z]{2,}\\s*$)"
           rating:
             description: Title rating
             type: string
