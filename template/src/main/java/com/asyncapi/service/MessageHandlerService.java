@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
+{%- if asyncapi | isProtocol('ws') and hasPublish %}
+import org.springframework.messaging.handler.annotation.MessageMapping;
+{%- endif %}
 {%- if asyncapi | isProtocol('kafka') and hasPublish %}
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -115,6 +118,11 @@ public class MessageHandlerService {
         // parametrized listener
     }
         {%- endif %}
+    {% elif asyncapi | isProtocol('ws') %}
+    @MessageMapping("/{{channelName}}")
+    public void handle{{methodName | upperFirst}}({{typeName}} payload) {
+        LOGGER.info("Message received from {{- channelName -}} : " + payload);
+    }
     {%- else %}
         {%- if hasParameters %}
     @Value("${mqtt.topic.{{-methodName-}}}")

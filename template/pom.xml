@@ -29,6 +29,18 @@
             <scope>compile</scope>
         </dependency>
         {% endif -%}
+        {%- if asyncapi | isProtocol('ws') %}
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        {% endif -%}
         {%- if asyncapi | isProtocol('kafka') %}
         {%- if params.springBoot2 %}
         <dependency>
