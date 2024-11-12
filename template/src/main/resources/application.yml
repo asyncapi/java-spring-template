@@ -71,3 +71,9 @@ spring:
       concurrency: {{params.listenerConcurrency}}
   {% endif %}
 {% endif %}
+
+{%- if asyncapi | isProtocol('ws') %}
+ws:
+  server: {% for serverName, server in asyncapi.servers() %}
+    {{serverName}}: {% if server.variable('port') %}{{server.url() | replace('{port}', server.variable('port').defaultValue())}}{% else %}{{server.url()}}{% endif %}{% endfor %}
+{% endif %}
