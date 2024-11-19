@@ -152,8 +152,9 @@ public class {{schemaName | camelCase | upperFirst}} {
     public {{propType}} get{{className}}() {
         return {{varName}};
     }
-
-    {% if prop.deprecated() -%}@Deprecated{%- endif %}
+{% if prop.deprecated() %}
+    @Deprecated
+{%- endif %}
     public void set{{className}}({{propType}} {{varName}}) {
         this.{{varName}} = {{varName}};
     }
