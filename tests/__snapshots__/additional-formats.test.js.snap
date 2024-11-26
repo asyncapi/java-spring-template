@@ -30,6 +30,8 @@ public class SongPayload {
     
     private @Valid java.math.BigDecimal rating;
     
+    private @Valid Integer stars;
+    
 
     
 
@@ -97,6 +99,20 @@ public class SongPayload {
         this.rating = rating;
     }
     
+
+    /**
+     * Number of stars. Deprecated: Use rating
+     */
+    @JsonProperty("stars")@Deprecated
+    public Integer getStars() {
+        return stars;
+    }
+
+    @Deprecated
+    public void setStars(Integer stars) {
+        this.stars = stars;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -111,12 +127,13 @@ public class SongPayload {
             Objects.equals(this.title, songPayload.title) &&
             Objects.equals(this.uri, songPayload.uri) &&
             Objects.equals(this.email, songPayload.email) &&
-            Objects.equals(this.rating, songPayload.rating);
+            Objects.equals(this.rating, songPayload.rating) &&
+            Objects.equals(this.stars, songPayload.stars);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, uri, email, rating);
+        return Objects.hash(id, title, uri, email, rating, stars);
     }
 
     @Override
@@ -128,6 +145,7 @@ public class SongPayload {
                 "    uri: " + toIndentedString(uri) + "\\n" +
                 "    email: " + toIndentedString(email) + "\\n" +
                 "    rating: " + toIndentedString(rating) + "\\n" +
+                "    stars: " + toIndentedString(stars) + "\\n" +
                 "}";
     }
 

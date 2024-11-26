@@ -42,3 +42,7 @@ components:
             description: Title rating
             type: string
             format: decimal
+          stars:
+            description: "Number of stars. Deprecated: Use rating"
+            type: integer
+            deprecated: true
