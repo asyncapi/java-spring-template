@@ -72,6 +72,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "maltesmann",
+      "name": "Malte Otten",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42797596?v=4",
+      "profile": "https://github.com/maltesmann",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -79,5 +88,7 @@
   "projectOwner": "asyncapi",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs",
+  "commitConvention": "angular"
 }
