@@ -66,5 +66,4 @@ public class PublisherServiceImpl implements PublisherService {
         }
     }
 
-    // Additional methods and logic as required
 }
