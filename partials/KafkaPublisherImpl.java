@@ -21,7 +21,7 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Autowired
     private KafkaTemplate<Integer, Object> kafkaTemplate;
-    {% for channelName, channel in asyncapi.channels() %}
+{% for channelName, channel in asyncapi.channels() %}
     {%- if channel.hasSubscribe() %}
         {%- set hasParameters = channel.hasParameters() %}
         {%- set methodName = channel.subscribe().id() | camelCase %}
@@ -46,6 +46,23 @@ public class PublisherServiceImpl implements PublisherService {
                 .setHeader(KafkaHeaders.KEY, key)
                 .build();
 
+    private String get{{methodName | upperFirst-}}Topic({% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}{% if parameter.schema().type() === 'object'%}{{parameterName | camelCase | upperFirst}}{% else %}{{parameter.schema().type() | toJavaType(false)}}{% endif %} {{parameterName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}) {
+        Map<String, String> parameters = {% if hasParameters %}new HashMap<>(){% else %}null{% endif %};
+        {%- if hasParameters %}
+            {%- for parameterName, parameter in channel.parameters() %}
+        parameters.put("{{parameterName}}", {{parameterName | camelCase}}{% if parameter.schema().type() !== 'string'%}.toString(){% endif %});
+            {%- endfor %}
+        {%- endif %}
+        return replaceParameters("{{channelName}}", parameters);
+    }
+    {%- endif %}
+{%- endfor %}
+             
+    private String replaceParameters(String topic, Map<String, String> parameters) {
+        if (parameters != null) {
+            String compiledTopic = topic;
+            for (String key : parameters.keySet()) {
+                compiledTopic = compiledTopic.replace("{" + key + "}", parameters.get(key));
         // Asynchronous send with callback
         ListenableFuture<SendResult<Integer, Object>> future = kafkaTemplate.send(message);
         future.addCallback(new ListenableFutureCallback<SendResult<Integer, Object>>() {
