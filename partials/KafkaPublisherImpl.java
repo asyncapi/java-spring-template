@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-@Generated(value = "com.asyncapi.generator.template.spring", date = "2025-03-06T09:11:34.123Z")
+@Generated(value = "com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
 @Service
 public class PublisherServiceImpl implements PublisherService {
 
