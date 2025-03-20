@@ -21,6 +21,23 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Autowired
     private KafkaTemplate<Integer, Object> kafkaTemplate;
+    {% for channelName, channel in asyncapi.channels() %}
+    {%- if channel.hasSubscribe() %}
+        {%- set hasParameters = channel.hasParameters() %}
+        {%- set methodName = channel.subscribe().id() | camelCase %}
+        {%- if channel.subscribe().hasMultipleMessages() %}
+            {%- set varName = "object" %}
+        {%- else %}
+            {%- set varName = channel.subscribe().message().payload().uid() | camelCase %}
+        {%- endif %}
+    {% if channel.description() or channel.subscribe().description() %}/**{% for line in channel.description() | splitByLines %}
+     * {{line | safe}}{% endfor %}{% for line in channel.subscribe().description() | splitByLines %}
+     * {{line | safe}}{% endfor %}
+     */{% endif %}
+    public void {{methodName}}(Integer key, {{varName | upperFirst}} {{varName}}{% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}, {% if parameter.schema().type() === 'object'%}{{parameterName | camelCase | upperFirst}}{% else %}{{parameter.schema().type() | toJavaType(false)}}{% endif %} {{parameterName | camelCase}}{% endfor %}{% endif %}) {
+        Message<{{varName | upperFirst}}> message = MessageBuilder.withPayload({{varName}})
+                .setHeader(KafkaHeaders.TOPIC, get{{methodName | upperFirst-}}Topic({% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}{{parameterName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}))
+                .setHeader(KafkaHeaders.{%- if params.springBoot2 %}MESSAGE_KEY{% else %}KEY{% endif -%}, key)
 
     // Example method for publishing messages
     public void publishMessage(Integer key, YourMessageType messagePayload) {
