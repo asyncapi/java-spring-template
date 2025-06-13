@@ -46,3 +46,15 @@ components:
             description: "Number of stars. Deprecated: Use rating"
             type: integer
             deprecated: true
+          length:
+            description: Length of the song in minutes
+            type: number
+            format: float
+            minimum: 0.5
+            maximum: 10.5
+          playtime:
+            description: Playtime of the song in minutes
+            type: number
+            format: double
+            exclusiveMinimum: 1.5
+            exclusiveMaximum: 11.5

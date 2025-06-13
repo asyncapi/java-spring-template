@@ -32,6 +32,10 @@ public class SongPayload {
     
     private @Valid Integer stars;
     
+    private @Valid Float length;
+    
+    private @Valid Double playtime;
+    
 
     
 
@@ -113,6 +117,32 @@ public class SongPayload {
         this.stars = stars;
     }
     
+
+    /**
+     * Length of the song in minutes
+     */
+    @JsonProperty("length")@DecimalMin(value = "0.5", inclusive = true)@DecimalMax(value = "10.5", inclusive = true)
+    public Float getLength() {
+        return length;
+    }
+
+    public void setLength(Float length) {
+        this.length = length;
+    }
+    
+
+    /**
+     * Playtime of the song in minutes
+     */
+    @JsonProperty("playtime")@DecimalMin(value = "1.5", inclusive = false)@DecimalMax(value = "11.5", inclusive = false)
+    public Double getPlaytime() {
+        return playtime;
+    }
+
+    public void setPlaytime(Double playtime) {
+        this.playtime = playtime;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -128,12 +158,14 @@ public class SongPayload {
             Objects.equals(this.uri, songPayload.uri) &&
             Objects.equals(this.email, songPayload.email) &&
             Objects.equals(this.rating, songPayload.rating) &&
-            Objects.equals(this.stars, songPayload.stars);
+            Objects.equals(this.stars, songPayload.stars) &&
+            Objects.equals(this.length, songPayload.length) &&
+            Objects.equals(this.playtime, songPayload.playtime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, uri, email, rating, stars);
+        return Objects.hash(id, title, uri, email, rating, stars, length, playtime);
     }
 
     @Override
@@ -146,6 +178,8 @@ public class SongPayload {
                 "    email: " + toIndentedString(email) + "\\n" +
                 "    rating: " + toIndentedString(rating) + "\\n" +
                 "    stars: " + toIndentedString(stars) + "\\n" +
+                "    length: " + toIndentedString(length) + "\\n" +
+                "    playtime: " + toIndentedString(playtime) + "\\n" +
                 "}";
     }
 
