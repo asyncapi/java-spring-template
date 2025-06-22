@@ -6,6 +6,13 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+{% for channelName, channel in asyncapi.channels() %}
+    {%- if channel.hasSubscribe() %}
+        {%- for message in channel.subscribe().messages() %}
+import {{params['userJavaPackage']}}.model.{{message.payload().uid() | camelCase | upperFirst}};
+        {%- endfor -%}
+    {% endif -%}
+{% endfor %}
 
 import javax.annotation.processing.Generated;
 import java.util.HashMap;
