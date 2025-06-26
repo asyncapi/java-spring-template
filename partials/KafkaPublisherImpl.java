@@ -53,9 +53,9 @@ public class PublisherServiceImpl implements PublisherService {
 
         future.whenComplete((result, ex) -> {
             if (ex == null) {
-                System.out.println("✅ Message successfully sent to topic: " + get{{methodName | upperFirst}}Topic({% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}{{parameterName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}) + " with key: " + key);
+                System.out.println("Message successfully sent to topic: " + get{{methodName | upperFirst}}Topic({% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}{{parameterName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}) + " with key: " + key);
             } else {
-                System.err.println("❌ Failed to send message to topic: " + get{{methodName | upperFirst}}Topic({% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}{{parameterName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}) + " with key: " + key);
+                System.err.println("Failed to send message to topic: " + get{{methodName | upperFirst}}Topic({% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}{{parameterName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}) + " with key: " + key);
                 ex.printStackTrace();
             }
         });
@@ -69,9 +69,9 @@ public class PublisherServiceImpl implements PublisherService {
 
         try {
             kafkaTemplate.send(message).get(10, TimeUnit.SECONDS);
-            System.out.println("✅ Message successfully sent synchronously to topic: " + get{{methodName | upperFirst}}Topic({% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}{{parameterName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}) + " with key: " + key);
+            System.out.println("Message successfully sent synchronously to topic: " + get{{methodName | upperFirst}}Topic({% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}{{parameterName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}) + " with key: " + key);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            System.err.println("❌ Failed to send message synchronously to topic: " + get{{methodName | upperFirst}}Topic({% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}{{parameterName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}) + " with key: " + key);
+            System.err.println("Failed to send message synchronously to topic: " + get{{methodName | upperFirst}}Topic({% if hasParameters %}{%for parameterName, parameter in channel.parameters() %}{{parameterName | camelCase}}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}) + " with key: " + key);
             e.printStackTrace();
         }
     }
