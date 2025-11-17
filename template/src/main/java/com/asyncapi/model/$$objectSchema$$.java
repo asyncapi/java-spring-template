@@ -147,8 +147,13 @@ public class {{schemaName | camelCase | upperFirst}} {
     {%- if prop.deprecated() %}@Deprecated{% endif %}
     {%- if prop.minLength() or prop.maxLength() or prop.maxItems() or prop.minItems() %}@Size({% if prop.minLength() or prop.minItems() %}min = {{prop.minLength()}}{{prop.minItems()}}{% endif %}{% if prop.maxLength() or prop.maxItems() %}{% if prop.minLength() or prop.minItems() %},{% endif %}max = {{prop.maxLength()}}{{prop.maxItems()}}{% endif %}){% endif %}    
     {%- if prop.pattern() %}@Pattern(regexp="{{prop.pattern() | addBackSlashToPattern}}"){% endif %}
-    {%- if prop.minimum() %}@Min({{prop.minimum()}}){% endif %}{% if prop.exclusiveMinimum() %}@Min({{prop.exclusiveMinimum() + 1}}){% endif %}
-    {%- if prop.maximum() %}@Max({{prop.maximum()}}){% endif %}{% if prop.exclusiveMaximum() %}@Max({{prop.exclusiveMaximum() + 1}}){% endif %}
+    {%- if prop.type() == 'number' and (prop.format() == 'float' or prop.format() == 'double') %}
+        {%- if prop.minimum() %}@DecimalMin(value = "{{prop.minimum()}}", inclusive = true){% endif %}{%- if prop.exclusiveMinimum() %}@DecimalMin(value = "{{prop.exclusiveMinimum()}}", inclusive = false){% endif %}
+        {%- if prop.maximum() %}@DecimalMax(value = "{{prop.maximum()}}", inclusive = true){% endif %}{%- if prop.exclusiveMaximum() %}@DecimalMax(value = "{{prop.exclusiveMaximum()}}", inclusive = false){% endif %}
+    {%- else %}
+        {%- if prop.minimum() %}@Min({{prop.minimum()}}){% endif %}{% if prop.exclusiveMinimum() %}@Min({{prop.exclusiveMinimum() + 1}}){% endif %}
+        {%- if prop.maximum() %}@Max({{prop.maximum()}}){% endif %}{% if prop.exclusiveMaximum() %}@Max({{prop.exclusiveMaximum() + 1}}){% endif %}
+    {%- endif %}
     public {{propType}} get{{className}}() {
         return {{varName}};
     }
