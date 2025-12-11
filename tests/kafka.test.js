@@ -28,6 +28,7 @@ describe('template integration tests for generated files using the generator and
             '/src/main/java/com/asyncapi/model/LightMeasuredPayload.java',
             '/src/main/java/com/asyncapi/model/LightMeasured.java',
             '/src/test/java/com/asyncapi/TestcontainerKafkaTest.java',
+            '/src/test/resources/docker-java.properties',
             '/build.gradle',
             '/gradle.properties',
             '/src/main/java/com/asyncapi/service/PublisherServiceImpl.java'
