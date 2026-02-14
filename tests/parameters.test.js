@@ -86,4 +86,40 @@ describe('integration tests for generated files under different template paramet
             expect(existsSync(path.join(outputDir, notExpectedFiles[index]))).toBeFalsy();
         }
     });
+
+    it('should include timestamp in @Generated annotation when generateTimestamp is true', async () => {
+        const outputDir = generateFolderName();
+        const params = { generateTimestamp: 'true' };
+        const kafkaExamplePath = './mocks/kafka.yml';
+
+        const generator = new Generator(path.normalize('./'), outputDir, { forceWrite: true, templateParams: params });
+        await generator.generateFromFile(path.resolve('tests', kafkaExamplePath));
+
+        const filesToCheck = [
+            '/src/main/java/com/asyncapi/model/LightMeasured.java',
+            '/src/main/java/com/asyncapi/model/LightMeasuredPayload.java'
+        ];
+        for (const index in filesToCheck) {
+            const generatedFile = await readFile(path.join(outputDir, filesToCheck[index]), 'utf8');
+           expect(generatedFile).toMatch(/date=".*"/);
+        }
+    });
+
+    it('should not include timestamp in @Generated annotation when generateTimestamp is false', async () => {
+        const outputDir = generateFolderName();
+        const params = { generateTimestamp: 'false' };
+        const kafkaExamplePath = './mocks/kafka.yml';
+
+        const generator = new Generator(path.normalize('./'), outputDir, { forceWrite: true, templateParams: params });
+        await generator.generateFromFile(path.resolve('tests', kafkaExamplePath));
+
+        const filesToCheck = [
+            '/src/main/java/com/asyncapi/model/LightMeasured.java',
+            '/src/main/java/com/asyncapi/model/LightMeasuredPayload.java'
+        ];
+        for (const index in filesToCheck) {
+            const generatedFile = await readFile(path.join(outputDir, filesToCheck[index]), 'utf8');
+            expect(generatedFile).not.toMatch(/date=".*"/);
+        }
+    });
 });
