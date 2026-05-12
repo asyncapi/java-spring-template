@@ -5,7 +5,8 @@ Java Spring template for the [AsyncAPI Generator](https://github.com/asyncapi/ge
 ---
 [![License](https://img.shields.io/github/license/asyncapi/java-spring-template)](https://github.com/asyncapi/java-spring-template/blob/master/LICENSE)
 [![npm](https://img.shields.io/npm/v/@asyncapi/java-spring-template?style=flat-square)](https://www.npmjs.com/package/@asyncapi/java-spring-template)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)<!-- ALL-CONTRIBUTORS-BADGE:END -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 ![downloads](https://img.shields.io/npm/dm/@asyncapi/java-spring-template?style=flat-square)
 ---
 
@@ -166,15 +167,20 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tr>
-    <td align="center"><a href="https://github.com/Tenischev"><img src="https://avatars1.githubusercontent.com/u/4137916?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Semen</b></sub></a><br /><a href="#maintenance-Tenischev" title="Maintenance">🚧</a><a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Documentation">📖</a> <a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Code">💻</a><a href="https://github.com/asyncapi/java-spring-template/issues?q=author%3ATenischev" title="Bug reports">🐛</a><a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3ATenischev" title="Reviewed Pull Requests">👀</a><a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Tests">⚠️</a></td>
-    <td align="center"><a href="https://www.linkedin.com/in/francesconobilia/"><img src="https://avatars1.githubusercontent.com/u/10063590?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Francesco Nobilia</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3Afnobilia" title="Reviewed Pull Requests">👀</a></td>
-    <td align="center"><a href="https://www.linkedin.com/in/derberg/"><img src="https://avatars.githubusercontent.com/u/6995927?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lukasz Gornicki</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3Aderberg" title="Reviewed Pull Requests">👀</a></td>
-    <td align="center"><a href="http://www.amrutprabhu.com"><img src="https://avatars.githubusercontent.com/u/8725949?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Amrut Prabhu</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/commits?author=amrutprabhu" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/VaishnaviNandakumar"><img src="https://avatars.githubusercontent.com/u/41518119?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Vaishnavi Nandakumar</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/commits?author=VaishnaviNandakumar" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/taotao100"><img src="https://avatars.githubusercontent.com/u/7056867?v=4?s=100" width="100px;" alt=""/><br /><sub><b>taotao100</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/issues?q=is%3Aissue+author%3Ataotao100" title="Bug reports">🐛</a>
-    <td align="center"><a href="https://github.com/jbiscella"><img src="https://avatars.githubusercontent.com/u/7963565?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jacopo Biscella</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/issues?q=is%3Aissue+author%3Ajbiscella" title="Bug reports">🐛</a>
-  </tr>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Tenischev"><img src="https://avatars1.githubusercontent.com/u/4137916?v=4?s=100" width="100px;" alt="Semen"/><br /><sub><b>Semen</b></sub></a><br /><a href="#maintenance-Tenischev" title="Maintenance">🚧</a> <a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Documentation">📖</a> <a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Code">💻</a> <a href="https://github.com/asyncapi/java-spring-template/issues?q=author%3ATenischev" title="Bug reports">🐛</a> <a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3ATenischev" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/asyncapi/java-spring-template/commits?author=Tenischev" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/francesconobilia/"><img src="https://avatars1.githubusercontent.com/u/10063590?v=4?s=100" width="100px;" alt="Francesco Nobilia"/><br /><sub><b>Francesco Nobilia</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3Afnobilia" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/derberg/"><img src="https://avatars.githubusercontent.com/u/6995927?v=4?s=100" width="100px;" alt="Lukasz Gornicki"/><br /><sub><b>Lukasz Gornicki</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/pulls?q=is%3Apr+reviewed-by%3Aderberg" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.amrutprabhu.com"><img src="https://avatars.githubusercontent.com/u/8725949?v=4?s=100" width="100px;" alt="Amrut Prabhu"/><br /><sub><b>Amrut Prabhu</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/commits?author=amrutprabhu" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/VaishnaviNandakumar"><img src="https://avatars.githubusercontent.com/u/41518119?v=4?s=100" width="100px;" alt="Vaishnavi Nandakumar"/><br /><sub><b>Vaishnavi Nandakumar</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/commits?author=VaishnaviNandakumar" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/taotao100"><img src="https://avatars.githubusercontent.com/u/7056867?v=4?s=100" width="100px;" alt="taotao100"/><br /><sub><b>taotao100</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/issues?q=author%3Ataotao100" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jbiscella"><img src="https://avatars.githubusercontent.com/u/7963565?v=4?s=100" width="100px;" alt="Jacopo Biscella"/><br /><sub><b>Jacopo Biscella</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/issues?q=author%3Ajbiscella" title="Bug reports">🐛</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/maltesmann"><img src="https://avatars.githubusercontent.com/u/42797596?v=4?s=100" width="100px;" alt="Malte Otten"/><br /><sub><b>Malte Otten</b></sub></a><br /><a href="https://github.com/asyncapi/java-spring-template/commits?author=maltesmann" title="Code">💻</a></td>
+    </tr>
+  </tbody>
 </table>
 
 <!-- markdownlint-restore -->
