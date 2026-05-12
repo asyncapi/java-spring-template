@@ -21,7 +21,7 @@ import java.util.Objects;
  * {{ line | safe}}{% endfor %}{% if schema.examples() %}
  * Examples: {{schema.examples() | examplesToString | safe}}{% endif %}
  */{% endif %}
-@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
+@Generated(value="com.asyncapi.generator.template.spring"{% if params.generateTimestamp === 'true' %}, date="{{''|currentTime }}"{%- endif %})
 public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- set isRequired = propName | isRequired(schema.required()) %}
