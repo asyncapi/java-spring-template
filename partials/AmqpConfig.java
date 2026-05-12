@@ -55,13 +55,13 @@ public class Config {
         return new {{type}}({{varName}}Exchange, {% if channel.binding('amqp').exchange.durable %}{{channel.binding('amqp').exchange.durable}}{% else %}true{% endif%}, {% if channel.binding('amqp').exchange.exclusive %}{{channel.binding('amqp').exchange.exclusive}}{% else %}false{% endif%});
     }
 
-    {% if channel.binding('amqp') and channel.binding('amqp').queue %}
+   {% if channel.binding('amqp') and channel.binding('amqp').queue %}
     @Bean
     public Binding binding{{name | upperFirst}}({{type}} {{name}}Exchange, Queue {{name}}Queue) {
-        return BindingBuilder.bind({{name}}Queue).to({{name}}Exchange){% if channel.binding('amqp').exchange.type !== 'fanout' %}.with({{varName}}RoutingKey){% endif %};
+        return BindingBuilder.bind({{name}}Queue).to({{name}}Exchange)
+        {% if channel.binding('amqp').exchange.type !== 'fanout' %}.with({{varName}}RoutingKey)}{% endif %};
     }
-    {% endif %}{% endif %}
-
+{% endif %}
     {% if channel.binding('amqp') and channel.binding('amqp').queue %}
     @Bean
     public Queue {{name}}Queue() {
