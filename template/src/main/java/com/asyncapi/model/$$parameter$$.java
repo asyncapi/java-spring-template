@@ -20,7 +20,7 @@ import java.util.Objects;
 {% if parameter.hasDescription() %}/**{% for line in parameter.description() | splitByLines %}
  * {{ line | safe}}{% endfor %}
  */{% endif %}
-@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
+@Generated(value="com.asyncapi.generator.template.spring"{% if params.generateTimestamp === 'true' %}, date="{{''|currentTime }}"{%- endif %})
 public class {{parameterName | camelCase | upperFirst}} {
 {% set schema = parameter.schema() %}
 {% for propName, prop in schema.properties() %}

@@ -87,6 +87,7 @@ It is RECOMMENDED to not use anonymous objects in payload and components definit
 |completionTimeout|Only for MQTT. The completion timeout in milliseconds for operations. The default completion timeout is 30000 milliseconds.| No       | `30000`                  |
 |mqttClientId| Only for MQTT. Provides the client identifier for the MQTT server. This parameter overrides the value of the clientId if it's set in the AsyncAPI file.If both aren't provided, a default value is set.| No       |                          |
 |asyncapiFileDir| Path where original AsyncAPI file will be stored.| No       | `src/main/resources/api/` |
+|generateTimestamp| Adds the generation timestamp to the @Generated annotation.| No       | `true`                   |
 ### Examples
 
 The shortest possible syntax:
