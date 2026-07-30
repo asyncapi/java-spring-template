@@ -14,7 +14,7 @@ import java.util.Objects;
  * {{ line | safe}}{% endfor %}{% if message.examples() %}
  * Examples: {{message.examples() | examplesToString | safe}}{% endif %}
  */{% endif %}
-@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
+@Generated(value="com.asyncapi.generator.template.spring"{% if params.generateTimestamp === 'true' %}, date="{{''|currentTime }}"{%- endif %})
 public class {{messageName | camelCase | upperFirst}} {
     {%- if message.payload().anyOf() or message.payload().oneOf() %}
         {%- set payloadName = 'OneOf' %}{%- set hasPrimitive = false %}
